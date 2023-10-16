@@ -64,6 +64,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -1114,7 +1115,14 @@ public class SimpleShopManager implements ShopManager, Reloadable {
                     }
                 }
             }
-            int max = plugin.getRankLimiter().getShopLimit(p);
+            int additional = 0;
+            try {
+                additional = (int) Class.forName("dev.dan.quickshoplimit.QuickShopLimit").getMethod("getAdditionalCount", Player.class).invoke(additional, p.getBukkitPlayer().get());
+            } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
+                     InvocationTargetException e){
+                e.printStackTrace();
+            }
+            int max = plugin.getRankLimiter().getShopLimit(p) + additional;
             Log.debug("CanBuildShop check for " + p.getDisplay() + " owned: " + owned + "; max: " + max);
             return owned + 1 > max;
         }

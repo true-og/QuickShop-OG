@@ -33,10 +33,15 @@ public class VirtualDisplayItemManager {
     private boolean testPassed = true;
 
     public VirtualDisplayItemManager(QuickShop plugin) {
-        this.plugin = plugin;
-        this.protocolManager = ProtocolLibrary.getProtocolManager();
-        this.entityIdCounter = new AtomicInteger(Integer.MAX_VALUE);
-        load();
+        try {
+            this.plugin = plugin;
+            this.protocolManager = ProtocolLibrary.getProtocolManager();
+            this.entityIdCounter = new AtomicInteger(Integer.MAX_VALUE);
+            load();
+        } catch (NoClassDefFoundError noClassDefFoundError) {
+            plugin.logger().error("DisplayType already set to VIRTUAL_DISPLAY_ITEM, but ProtocolLib not installed on your server, please download ProtocolLib and install it from https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/ or change the display type to REAL_DISPLAY_ITEM (0) or disable display system.");
+            throw new IllegalStateException("ProtocolLib not installed on this server");
+        }
     }
 
     public void load() {
@@ -52,7 +57,7 @@ public class VirtualDisplayItemManager {
             case v1_18_R1, v1_18_R2 -> new v1_18(plugin, this);
             case v1_19_R1 -> new v1_19_R1(plugin, this);
             case v1_19_R2, v1_19_R3, v1_20_R1 -> new v1_19_R2_TO_v1_20_R1(plugin, this);
-            case v1_20_R2 -> new v1_20_R2(plugin, this);
+            case v1_20_R2, v1_20_R3 -> new v1_20_R2(plugin, this);
             default ->
                     throw new IllegalStateException("Unsupported Virtual Display Minecraft version: " + plugin.getGameVersion());
         };

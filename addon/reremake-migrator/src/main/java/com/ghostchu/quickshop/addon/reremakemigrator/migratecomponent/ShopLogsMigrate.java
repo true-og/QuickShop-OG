@@ -49,17 +49,22 @@ public class ShopLogsMigrate extends AbstractMigrateComponent {
         text("modules.shop-logs.start-migrate").send();
         File logsFile = new File(getReremake().getDataFolder(), "appended-qs.log");
         File filteredFile = new File(getReremake().getDataFolder(), "filtered-qs.log");
+        File formattedFile = new File(getReremake().getDataFolder(), "formatted-qs.log");
         try (PrintWriter printWriter = new PrintWriter(logsFile, StandardCharsets.UTF_8)) {
             logsFile.createNewFile();
             filteredFile.createNewFile();
             appendFiles(getReremake().getDataFolder(), printWriter);
             printWriter.flush();
             migrateAppendedLogs(logsFile, filteredFile);
-            readAndFormatEntire(filteredFile);
-            importToDatabase(filteredFile);
+            readAndFormatEntire(filteredFile, formattedFile);
+            importToDatabase(formattedFile);
         } catch (Exception ex) {
             getHikari().logger().warn("Failed to migrate logs", ex);
             return true;
+        } finally {
+            logsFile.delete();
+            filteredFile.delete();
+            formattedFile.delete();
         }
         return true;
     }
@@ -68,10 +73,10 @@ public class ShopLogsMigrate extends AbstractMigrateComponent {
         long sumLines = countLines(filteredFile);
         BufferedReader bufferedReader = new BufferedReader(new FileReader(filteredFile));
         try (bufferedReader) {
-            String cursor = null;
+            String cursor;
             long count = 0;
-            try {
-                while ((cursor = bufferedReader.readLine()) != null) {
+            while ((cursor = bufferedReader.readLine()) != null) {
+                try {
                     count++;
                     text("modules.shop-logs.import-entry", "<ENTRY TOO  LONG>", count, sumLines);
                     DatedLogEntry entry = JsonUtil.standard().fromJson(new String(Base64.getDecoder().decode(cursor), StandardCharsets.UTF_8), DatedLogEntry.class);
@@ -93,9 +98,9 @@ public class ShopLogsMigrate extends AbstractMigrateComponent {
 //                    continue;
 //                }
                     getHikari().logger().warn("Invalid record {}, skipping", entry);
+                } catch (Exception e2) {
+                    getHikari().logger().warn("Parse the log failed, cursor [{}]", cursor, e2);
                 }
-            } catch (Exception e) {
-                getHikari().logger().warn("Parse the log failed, cursor [{}]", cursor, e);
             }
         }
     }
@@ -158,9 +163,8 @@ public class ShopLogsMigrate extends AbstractMigrateComponent {
         getHikari().getDatabaseHelper().insertMetricRecord(shopMetricRecord);
     }
 
-    private void readAndFormatEntire(File filteredFile) throws IOException {
+    private void readAndFormatEntire(File filteredFile, File formattedFile) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(filteredFile));
-        File formattedFile = new File(getReremake().getDataFolder(), "formatted-qs.log");
         formattedFile.createNewFile();
         PrintWriter writer = new PrintWriter(formattedFile, StandardCharsets.UTF_8);
         StringBuilder buffer = new StringBuilder();
@@ -255,7 +259,6 @@ public class ShopLogsMigrate extends AbstractMigrateComponent {
             try {
                 logsFile.println(Files.readString(mainLogFile.toPath()));
             } catch (MalformedInputException e) {
-                getHikari().logger().warn("Encoding determine failed, file not a UTF-8 encoding file, re-read by platform encoding...", e);
                 logsFile.println(Files.readString(mainLogFile.toPath(), Charset.defaultCharset()));
             }
         } else {

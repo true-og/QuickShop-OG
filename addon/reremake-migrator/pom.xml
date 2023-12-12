@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.ghostchu</groupId>
         <artifactId>quickshop-hikari</artifactId>
-        <version>5.2.0.5</version>
+        <version>5.2.0.7</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>com.ghostchu.quickshop.addon</groupId>
@@ -139,19 +139,19 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.13.0</version>
+            <version>3.14.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.maxgamer</groupId>
             <artifactId>QuickShop</artifactId>
-            <version>5.1.2.4</version>
+            <version>5.1.2.5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>de.themoep</groupId>
             <artifactId>minedown-adventure</artifactId>
-            <version>1.7.1-SNAPSHOT</version>
+            <version>1.7.2-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

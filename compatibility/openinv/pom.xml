@@ -54,9 +54,9 @@
             <artifactId>spigot-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.jikoo.OpenInv</groupId>
+            <groupId>com.github.true-og.OpenInv</groupId>
             <artifactId>openinvapi</artifactId>
-            <version>4.4.1</version>
+            <version>a85e8ebc28</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

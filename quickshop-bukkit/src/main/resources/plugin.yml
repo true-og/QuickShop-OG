@@ -1,4 +1,4 @@
-name: QuickShop-Hikari
+name: QuickShop-OG
 main: com.ghostchu.quickshop.QuickShopBukkit
 softdepend:
   - Vault

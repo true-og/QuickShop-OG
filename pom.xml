@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                        http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.ghostchu</groupId>
@@ -65,14 +68,11 @@
     </ciManagement>
 
     <pluginRepositories>
-        <!--        <pluginRepository>-->
-        <!--            <id>apache.snapshots</id>-->
-        <!--            <url>https://repository.apache.org/snapshots/</url>-->
-        <!--        </pluginRepository>-->
+        <!-- Add plugin repositories here if needed -->
     </pluginRepositories>
 
-
     <build>
+        <!-- Define plugin versions and default configs in pluginManagement -->
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -84,79 +84,13 @@
                         <target>${java.version}</target>
                     </configuration>
                 </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
                     <version>3.5.1</version>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>shade</goal>
-                            </goals>
-                            <configuration>
-                                <finalName>${name}-${version}</finalName>
-                                <!--                                <outputDirectory>${rootDir}/build-artifacts</outputDirectory>-->
-                                <createDependencyReducedPom>true</createDependencyReducedPom>
-                                <minimizeJar>false</minimizeJar>
-                                <createSourcesJar>false</createSourcesJar>
-                                <createTestSourcesJar>false</createTestSourcesJar>
-                                <shadeSourcesContent>true</shadeSourcesContent>
-                                <shadedArtifactAttached>true</shadedArtifactAttached>
-                                <artifactSet>
-                                    <includes>
-                                        <include>com.ghostchu:quickshop*:*</include>
-                                        <include>com.ghostchu.quickshop.compatibility:*:*</include>
-                                        <include>com.ghostchu.quickshop.addon:*:*</include>
-                                        <include>de.tr7zw:item-nbt-api:*</include>
-                                        <include>io.papermc:paperlib:*</include>
-                                        <include>org.bstats:*</include>
-                                    </includes>
-                                </artifactSet>
-                                <relocations>
-                                    <relocation>
-                                        <pattern>io.papermc.lib.</pattern>
-                                        <shadedPattern>com.ghostchu.quickshop.shade.io.papermc.lib.</shadedPattern>
-                                    </relocation>
-                                    <relocation>
-                                        <pattern>de.tr7zw.changeme.nbtapi</pattern>
-                                        <shadedPattern>com.ghostchu.quickshop.shade.de.tr7zw.changeme.nbtapi</shadedPattern>
-                                    </relocation>
-                                    <relocation>
-                                        <pattern>org.bstats</pattern>
-                                        <shadedPattern>com.ghostchu.quickshop.shade.org.bstats</shadedPattern>
-                                    </relocation>
-                                    <relocation>
-                                        <pattern>de.themoep.minedown.</pattern>
-                                        <shadedPattern>com.ghostchu.quickshop.shade.de.themoep.minedown</shadedPattern>
-                                    </relocation>
-                                </relocations>
-                                <transformers>
-                                    <transformer
-                                            implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                        <mainClass>com.ghostchu.quickshop.bootstrap.Bootstrap</mainClass>
-                                    </transformer>
-                                </transformers>
-                                <filters>
-                                    <filter>
-                                        <excludes>
-                                            <exclude>META-INF/*.SF</exclude>
-                                            <exclude>META-INF/*.DSA</exclude>
-                                            <exclude>META-INF/*.RSA</exclude>
-                                            <exclude>META-INF/*.kotlin_module</exclude>
-                                            <exclude>META-INF/*.txt</exclude>
-                                            <exclude>META-INF/proguard/*</exclude>
-                                            <exclude>META-INF/services/*</exclude>
-                                            <exclude>META-INF/versions/9/*</exclude>
-                                            <exclude>*License*</exclude>
-                                            <exclude>*LICENSE*</exclude>
-                                        </excludes>
-                                    </filter>
-                                </filters>
-                            </configuration>
-                        </execution>
-                    </executions>
                 </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
@@ -166,37 +100,18 @@
                         <excludePackageNames>com.ghostchu.quickshop.nonquickshopstuff.*</excludePackageNames>
                         <release>${java.version}</release>
                     </configuration>
-                    <executions>
-                        <execution>
-                            <id>attach-javadocs</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                            <configuration>
-                                <failOnError>false</failOnError>
-                                <additionalJOption>-Xdoclint:none</additionalJOption>
-                                <!-- <detectOfflineLinks>false</detectOfflineLinks> -->
-                            </configuration>
-                        </execution>
-                    </executions>
                 </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
+                    <!-- No version specified, will use a default -->
                 </plugin>
+
                 <plugin>
                     <groupId>io.github.git-commit-id</groupId>
                     <artifactId>git-commit-id-maven-plugin</artifactId>
                     <version>5.0.0</version>
-                    <executions>
-                        <execution>
-                            <id>get-the-git-infos</id>
-                            <phase>initialize</phase>
-                            <goals>
-                                <goal>revision</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                     <configuration>
                         <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
                         <verbose>false</verbose>
@@ -212,11 +127,123 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+
         <plugins>
+            <!-- Execution of maven-shade-plugin with relocations and transformers -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <!-- Version inherited from pluginManagement -->
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>${name}-${version}</finalName>
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
+                            <minimizeJar>false</minimizeJar>
+                            <createSourcesJar>false</createSourcesJar>
+                            <createTestSourcesJar>false</createTestSourcesJar>
+                            <shadeSourcesContent>true</shadeSourcesContent>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <artifactSet>
+                                <includes>
+                                    <include>com.ghostchu:quickshop*:*</include>
+                                    <include>com.ghostchu.quickshop.compatibility:*:*</include>
+                                    <include>com.ghostchu.quickshop.addon:*:*</include>
+                                    <include>de.tr7zw:item-nbt-api:*</include>
+                                    <include>io.papermc:paperlib:*</include>
+                                    <include>org.bstats:*</include>
+                                </includes>
+                            </artifactSet>
+                            <relocations>
+                                <relocation>
+                                    <pattern>io.papermc.lib.</pattern>
+                                    <shadedPattern>com.ghostchu.quickshop.shade.io.papermc.lib.</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>de.tr7zw.changeme.nbtapi</pattern>
+                                    <shadedPattern>com.ghostchu.quickshop.shade.de.tr7zw.changeme.nbtapi</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.bstats</pattern>
+                                    <shadedPattern>com.ghostchu.quickshop.shade.org.bstats</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>de.themoep.minedown.</pattern>
+                                    <shadedPattern>com.ghostchu.quickshop.shade.de.themoep.minedown</shadedPattern>
+                                </relocation>
+                            </relocations>
+                            <transformers>
+                                <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.ghostchu.quickshop.bootstrap.Bootstrap</mainClass>
+                                </transformer>
+                            </transformers>
+                            <filters>
+                                <filter>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>META-INF/*.kotlin_module</exclude>
+                                        <exclude>META-INF/*.txt</exclude>
+                                        <exclude>META-INF/proguard/*</exclude>
+                                        <exclude>META-INF/services/*</exclude>
+                                        <exclude>META-INF/versions/9/*</exclude>
+                                        <exclude>*License*</exclude>
+                                        <exclude>*LICENSE*</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Javadoc plugin actual execution to attach javadocs -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <failOnError>false</failOnError>
+                            <additionalJOption>-Xdoclint:none</additionalJOption>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Git commit id plugin to record git info -->
             <plugin>
                 <groupId>io.github.git-commit-id</groupId>
                 <artifactId>git-commit-id-maven-plugin</artifactId>
+                <!-- Version and config inherited from pluginManagement -->
+                <executions>
+                    <execution>
+                        <id>get-the-git-infos</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
+
+            <!-- Compiler plugin (no special executions needed here) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+
+            <!-- Versions plugin for dependency updates -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
@@ -225,18 +252,8 @@
                     <generateBackupPoms>true</generateBackupPoms>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-            </plugin>
+
+            <!-- Resources plugin for copying resources -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -272,7 +289,6 @@
         </repository>
     </repositories>
 
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -301,7 +317,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <!-- GLOBAL DEPENDENCY -->
+
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -332,7 +348,7 @@
         <module>compatibility/bungeecord</module>
         <module>compatibility/velocity</module>
         <module>compatibility/clearlag</module>
-        <!--        <module>compatibility/nocheatplus</module>-->
+        <!-- <module>compatibility/nocheatplus</module> -->
         <module>compatibility/worldguard</module>
         <module>compatibility/worldedit</module>
         <module>compatibility/openinv</module>
@@ -361,3 +377,4 @@
     </modules>
 
 </project>
+

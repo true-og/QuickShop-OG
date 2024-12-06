@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -13,10 +14,12 @@
 
     <artifactId>quickshop-bukkit</artifactId>
     <packaging>jar</packaging>
-
-    <name>QuickShop-Hikari</name>
+    <name>QuickShop-OG</name>
 
     <build>
+        <!-- Ensure the final artifact name matches what you're copying -->
+        <finalName>QuickShop-OG-${project.version}</finalName>
+
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -29,15 +32,36 @@
                 <directory>../crowdin</directory>
                 <filtering>true</filtering>
             </resource>
-            <!--            <resource>-->
-            <!--                <directory>src/main/resources/3rd-party-licenses</directory>-->
-            <!--                <targetPath>3rd-party-licenses</targetPath>-->
-            <!--                <filtering>false</filtering>-->
-            <!--            </resource>-->
         </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <copy
+									file="target/QuickShop-OG-${project.version}.jar"
+									todir="../target"
+                                    overwrite="true"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
-	<repositories>
-		<repository>
+
+    <repositories>
+        <repository>
             <id>dmulloy2-repo</id>
             <url>https://repo.dmulloy2.net/repository/public/</url>
         </repository>
@@ -62,6 +86,7 @@
             <url>https://www.jitpack.io</url>
         </repository>
     </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -133,7 +158,6 @@
             <version>5.0.0</version>
             <scope>provided</scope>
         </dependency>
-        <!--JsonConfiguration Dependency End-->
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
@@ -146,7 +170,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.clerezza.ext/org.json.simple -->
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
@@ -187,7 +210,6 @@
         <dependency>
             <groupId>io.papermc</groupId>
             <artifactId>paperlib</artifactId>
-            <!--suppress MavenPackageUpdate -->
             <version>LATEST</version>
             <scope>compile</scope>
         </dependency>
@@ -203,7 +225,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -222,14 +243,12 @@
             <version>0.1.1</version>
             <scope>provided</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/net.sourceforge.csvjdbc/csvjdbc -->
         <dependency>
             <groupId>net.sourceforge.csvjdbc</groupId>
             <artifactId>csvjdbc</artifactId>
             <version>1.0.41</version>
             <scope>provided</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.dom4j/dom4j -->
         <dependency>
             <groupId>org.dom4j</groupId>
             <artifactId>dom4j</artifactId>
@@ -274,8 +293,8 @@
         </dependency>
         <dependency>
             <groupId>com.rollbar</groupId>
-            <version>1.10.0</version>
             <artifactId>rollbar-java</artifactId>
+            <version>1.10.0</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -286,3 +305,4 @@
         </dependency>
     </dependencies>
 </project>
+

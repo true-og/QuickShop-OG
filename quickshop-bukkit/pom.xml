@@ -49,7 +49,7 @@
                         <configuration>
                             <target>
                                 <copy
-									file="target/QuickShop-OG-${project.version}.jar"
+									file="target/quickshop-bukkit-5.2.0.7-shaded.jar"
 									todir="../target"
                                     overwrite="true"/>
                             </target>

@@ -53,8 +53,8 @@
 
     <distributionManagement>
         <repository>
-            <id>codemc-releases</id>
-            <url>https://repo.codemc.io/repository/maven-releases/</url>
+            <id>md_5-releases</id>
+            <url>https://repo.md-5.net/content/repositories/releases/</url>
         </repository>
         <snapshotRepository>
             <id>codemc-snapshots</id>
@@ -141,13 +141,13 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <finalName>${name}-${version}</finalName>
+			    <finalName>QuickShop-OG-${project.version}</finalName>
                             <createDependencyReducedPom>true</createDependencyReducedPom>
                             <minimizeJar>false</minimizeJar>
                             <createSourcesJar>false</createSourcesJar>
                             <createTestSourcesJar>false</createTestSourcesJar>
                             <shadeSourcesContent>true</shadeSourcesContent>
-                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
                             <artifactSet>
                                 <includes>
                                     <include>com.ghostchu:quickshop*:*</include>
@@ -348,7 +348,7 @@
         <module>compatibility/bungeecord</module>
         <module>compatibility/velocity</module>
         <module>compatibility/clearlag</module>
-        <!-- <module>compatibility/nocheatplus</module> -->
+        <module>compatibility/nocheatplus</module>
         <module>compatibility/worldguard</module>
         <module>compatibility/worldedit</module>
         <module>compatibility/openinv</module>

@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -17,7 +17,6 @@
     <name>QuickShop-OG</name>
 
     <build>
-        <!-- Ensure the final artifact name matches what you're copying -->
         <finalName>QuickShop-OG-${project.version}</finalName>
 
         <resources>
@@ -49,9 +48,9 @@
                         <configuration>
                             <target>
                                 <copy
-									file="target/quickshop-bukkit-5.2.0.7-shaded.jar"
-									todir="../target"
-                                    overwrite="true"/>
+				file="target/QuickShop-OG-5.2.0.7.jar"
+				todir="../target"
+                                overwrite="true"/>
                             </target>
                         </configuration>
                     </execution>
@@ -80,6 +79,14 @@
         <repository>
             <id>CodeMC</id>
             <url>https://repo.codemc.io/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>codemc-releases</id>
+            <url>https://repo.codemc.io/repository/maven-releases/</url>
+        </repository>
+        <repository>
+            <id>md_5-snapshots</id>
+            <url>https://repo.md-5.net/content/repositories/snapshots/</url>
         </repository>
         <repository>
             <id>jitpack.io</id>

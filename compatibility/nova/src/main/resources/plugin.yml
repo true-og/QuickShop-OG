@@ -1,5 +1,0 @@
-name: qscompat-${artifactId}
-version: '${project.version}'
-main: com.ghostchu.quickshop.compatibility.${artifactId}.Main
-api-version: 1.18
-depend: [ Nova, QuickShop-Hikari ]

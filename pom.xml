@@ -334,36 +334,17 @@
         <module>quickshop-api</module>
         <module>platform/quickshop-platform-interface</module>
         <module>platform/quickshop-platform-spigot-abstract</module>
-        <module>platform/quickshop-platform-spigot-v1_18_R1</module>
-        <module>platform/quickshop-platform-spigot-v1_18_R2</module>
         <module>platform/quickshop-platform-spigot-v1_19_R1</module>
         <module>platform/quickshop-platform-spigot-v1_19_R2</module>
         <module>platform/quickshop-platform-spigot-v1_19_R3</module>
-        <module>platform/quickshop-platform-spigot-v1_20_R1</module>
-        <module>platform/quickshop-platform-spigot-v1_20_R2</module>
-        <module>platform/quickshop-platform-spigot-v1_20_R3</module>
         <module>platform/quickshop-platform-paper</module>
         <module>quickshop-bukkit</module>
         <module>compatibility/common</module>
-        <module>compatibility/bungeecord</module>
-        <module>compatibility/velocity</module>
         <module>compatibility/clearlag</module>
         <module>compatibility/nocheatplus</module>
         <module>compatibility/worldguard</module>
         <module>compatibility/worldedit</module>
         <module>compatibility/openinv</module>
-        <module>compatibility/advancedregionmarket</module>
-        <module>compatibility/bentobox</module>
-        <module>compatibility/superiorskyblock</module>
-        <module>compatibility/griefprevention</module>
-        <module>compatibility/towny</module>
-        <module>compatibility/lands</module>
-        <module>compatibility/residence</module>
-        <module>compatibility/elitemobs</module>
-        <module>compatibility/bungeecord-geyser</module>
-        <module>compatibility/ecoenchants</module>
-        <module>compatibility/reforges</module>
-        <module>addon/discordsrv</module>
         <module>addon/plan</module>
         <module>addon/discount</module>
         <module>addon/list</module>

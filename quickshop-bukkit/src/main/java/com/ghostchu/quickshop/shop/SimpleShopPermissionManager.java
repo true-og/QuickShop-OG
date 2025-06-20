@@ -10,16 +10,15 @@ import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.Reloadable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.MapMaker;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 public class SimpleShopPermissionManager implements ShopPermissionManager, Reloadable {
     private final Map<String, Set<String>> permissionMapping = new MapMaker().makeMap();
@@ -109,7 +108,11 @@ public class SimpleShopPermissionManager implements ShopPermissionManager, Reloa
         YamlConfiguration yamlConfiguration = new YamlConfiguration();
         yamlConfiguration.set("version", 1);
         for (BuiltInShopPermissionGroup group : BuiltInShopPermissionGroup.values()) {
-            yamlConfiguration.set(group.getNamespacedNode(), group.getPermissions().stream().map(BuiltInShopPermission::getNamespacedNode).toList());
+            yamlConfiguration.set(
+                    group.getNamespacedNode(),
+                    group.getPermissions().stream()
+                            .map(BuiltInShopPermission::getNamespacedNode)
+                            .toList());
         }
         try {
             //noinspection ResultOfMethodCallIgnored
@@ -135,7 +138,11 @@ public class SimpleShopPermissionManager implements ShopPermissionManager, Reloa
                 || !yamlConfiguration.isSet(namespace + ".blocked")) {
             plugin.logger().warn("Corrupted group configuration file, creating new one...");
             try {
-                Files.move(file.toPath(), file.toPath().resolveSibling(file.getName() + ".corrupted." + UUID.randomUUID().toString().replace("-", "")));
+                Files.move(
+                        file.toPath(),
+                        file.toPath()
+                                .resolveSibling(file.getName() + ".corrupted."
+                                        + UUID.randomUUID().toString().replace("-", "")));
                 loadConfiguration();
             } catch (IOException e) {
                 plugin.logger().error("Failed to move corrupted group configuration file", e);

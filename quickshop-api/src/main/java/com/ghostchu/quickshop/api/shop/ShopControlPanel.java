@@ -1,11 +1,10 @@
 package com.ghostchu.quickshop.api.shop;
 
+import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * The shop control panel impl.
@@ -18,7 +17,8 @@ public interface ShopControlPanel {
      * @param shop   The shop
      * @return The components, or empty list if nothing to show. Every component will be shown in a new line.
      */
-    @NotNull List<Component> generate(@NotNull Player player, @NotNull Shop shop);
+    @NotNull
+    List<Component> generate(@NotNull Player player, @NotNull Shop shop);
 
     /**
      * Usually you don't need touch this :)
@@ -44,5 +44,6 @@ public interface ShopControlPanel {
      *
      * @return Your plugin instance;
      */
-    @NotNull Plugin getPlugin();
+    @NotNull
+    Plugin getPlugin();
 }

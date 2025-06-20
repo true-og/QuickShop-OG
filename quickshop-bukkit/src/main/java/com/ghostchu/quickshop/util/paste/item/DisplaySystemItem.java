@@ -26,5 +26,4 @@ public class DisplaySystemItem implements SubPasteItem {
     public @NotNull String getTitle() {
         return "Display Item Manager";
     }
-
 }

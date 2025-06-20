@@ -8,6 +8,7 @@ import de.bluecolored.bluemap.api.BlueMapMap;
 import de.bluecolored.bluemap.api.BlueMapWorld;
 import de.bluecolored.bluemap.api.markers.MarkerSet;
 import de.bluecolored.bluemap.api.markers.POIMarker;
+import java.util.Optional;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
@@ -17,8 +18,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
 
 public final class Main extends JavaPlugin implements Listener {
     static Main instance;
@@ -43,7 +42,9 @@ public final class Main extends JavaPlugin implements Listener {
         BlueMapAPI.onEnable(blueMapAPI -> {
             getLogger().info("Found BlueMap loaded! Hooking!");
             createMarkerSet();
-            Bukkit.getScheduler().runTaskTimerAsynchronously(this, this::updateAllMarkers, 1, getConfig().getInt("refresh-per-seconds") * 20L);
+            Bukkit.getScheduler()
+                    .runTaskTimerAsynchronously(
+                            this, this::updateAllMarkers, 1, getConfig().getInt("refresh-per-seconds") * 20L);
         });
 
         BlueMapAPI.onDisable(api -> Bukkit.getScheduler().cancelTasks(this));
@@ -69,7 +70,8 @@ public final class Main extends JavaPlugin implements Listener {
     }
 
     private void updateAllMarkers() {
-        blueMapAPI.getWorlds().forEach(bWorld -> bWorld.getMaps().forEach(bMap -> bMap.getMarkerSets().remove("quickshop-hikari-shops")));
+        blueMapAPI.getWorlds().forEach(bWorld -> bWorld.getMaps()
+                .forEach(bMap -> bMap.getMarkerSets().remove("quickshop-hikari-shops")));
         plugin.getShopManager().getAllShops().forEach(this::updateShopMarker);
     }
 
@@ -79,12 +81,14 @@ public final class Main extends JavaPlugin implements Listener {
             return;
         }
         for (BlueMapMap map : bWorld.get().getMaps()) {
-            MarkerSet markerSet = map.getMarkerSets().computeIfAbsent("quickshop-hikari-shops", (key) -> createMarkerSet());
+            MarkerSet markerSet =
+                    map.getMarkerSets().computeIfAbsent("quickshop-hikari-shops", (key) -> createMarkerSet());
             String markerName = fillPlaceholders(getConfig().getString("marker-label"), shop);
             String desc = fillPlaceholders(getConfig().getString("marker-detail"), shop);
             POIMarker marker = POIMarker.builder()
                     .label(markerName)
-                    .position(shop.getLocation().getX(),
+                    .position(
+                            shop.getLocation().getX(),
                             shop.getLocation().getY(),
                             shop.getLocation().getZ())
                     .maxDistance(getConfig().getDouble("max-distance"))

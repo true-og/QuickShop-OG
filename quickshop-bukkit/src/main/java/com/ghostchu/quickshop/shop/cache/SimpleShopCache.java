@@ -10,29 +10,37 @@ import com.ghostchu.quickshop.util.paste.item.SubPasteItem;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheStats;
-import org.apache.commons.lang3.tuple.Pair;
-import org.bukkit.Location;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import org.apache.commons.lang3.tuple.Pair;
+import org.bukkit.Location;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SimpleShopCache implements SubPasteItem, ShopCache {
     private final QuickShop plugin;
     private final Map<ShopCacheNamespacedKey, Cache<Location, BoxedShop>> CACHES = new HashMap<>();
     private final Map<ShopCacheNamespacedKey, Function<Location, Shop>> CACHE_VALUE_PROVIDER = new HashMap<>();
 
-    public SimpleShopCache(@NotNull QuickShop plugin, @NotNull Map<@NotNull ShopCacheNamespacedKey, @NotNull Pair<@NotNull Function<Location, Shop>, @Nullable Cache<Location, BoxedShop>>> initArgs) {
+    public SimpleShopCache(
+            @NotNull QuickShop plugin,
+            @NotNull
+                    Map<
+                                    @NotNull ShopCacheNamespacedKey,
+                                    @NotNull Pair<
+                                            @NotNull Function<Location, Shop>, @Nullable Cache<Location, BoxedShop>>>
+                            initArgs) {
         this.plugin = plugin;
         this.plugin.getPasteManager().register(plugin.getJavaPlugin(), this);
-        for (Map.Entry<ShopCacheNamespacedKey, Pair<Function<Location, Shop>, Cache<Location, BoxedShop>>> entry : initArgs.entrySet()) {
+        for (Map.Entry<ShopCacheNamespacedKey, Pair<Function<Location, Shop>, Cache<Location, BoxedShop>>> entry :
+                initArgs.entrySet()) {
             ShopCacheNamespacedKey namespacedKey = entry.getKey();
             if (CACHES.containsKey(namespacedKey) || CACHE_VALUE_PROVIDER.containsKey(namespacedKey)) {
-                throw new IllegalArgumentException("The namespaced key " + namespacedKey.name() + " already registered.");
+                throw new IllegalArgumentException(
+                        "The namespaced key " + namespacedKey.name() + " already registered.");
             }
             Pair<Function<Location, Shop>, Cache<Location, BoxedShop>> pair = entry.getValue();
             Function<Location, Shop> valueProvider = pair.getLeft();
@@ -41,7 +49,10 @@ public class SimpleShopCache implements SubPasteItem, ShopCache {
             }
             Cache<Location, BoxedShop> cacheContainer = pair.getRight();
             if (cacheContainer == null) {
-                cacheContainer = CacheBuilder.newBuilder().expireAfterAccess(3, TimeUnit.MINUTES).recordStats().build();
+                cacheContainer = CacheBuilder.newBuilder()
+                        .expireAfterAccess(3, TimeUnit.MINUTES)
+                        .recordStats()
+                        .build();
             }
             CACHES.put(namespacedKey, cacheContainer);
             CACHE_VALUE_PROVIDER.put(namespacedKey, valueProvider);
@@ -72,7 +83,9 @@ public class SimpleShopCache implements SubPasteItem, ShopCache {
             throw new IllegalArgumentException("Shop cache provider " + namespacedKey.name() + " not exists");
         }
         try {
-            return targetCacheContainer.get(location, () -> new BoxedShop(provider.apply(location))).getShop();
+            return targetCacheContainer
+                    .get(location, () -> new BoxedShop(provider.apply(location)))
+                    .getShop();
         } catch (ExecutionException e) {
             plugin.logger().warn("Loading shops into cache failure, fallback to direct access", e);
             return provider.apply(location);
@@ -91,7 +104,6 @@ public class SimpleShopCache implements SubPasteItem, ShopCache {
             targetCacheContainer.invalidateAll();
         }
     }
-
 
     @Override
     public void invalidate(@Nullable ShopCacheNamespacedKey namespacedKey, @NotNull Location location) {

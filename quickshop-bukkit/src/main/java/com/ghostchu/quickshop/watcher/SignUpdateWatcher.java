@@ -2,12 +2,11 @@ package com.ghostchu.quickshop.watcher;
 
 import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.api.shop.Shop;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
-
 import java.time.Instant;
 import java.util.LinkedList;
 import java.util.Queue;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 public class SignUpdateWatcher extends BukkitRunnable {
     private final Queue<Shop> signUpdateQueue = new LinkedList<>();
@@ -29,5 +28,4 @@ public class SignUpdateWatcher extends BukkitRunnable {
         }
         signUpdateQueue.add(shop);
     }
-
 }

@@ -30,7 +30,14 @@ public final class Main extends CompatibilityModule implements Listener {
     @Override
     public void onEnable() {
         super.onEnable();
-        getApi().getCommandManager().registerCmd(CommandContainer.builder().prefix("echest").permission("quickshop.echest").description((locale) -> LegacyComponentSerializer.legacySection().deserialize(getConfig().getString("messages.description"))).executor(new OpenInvCommand(this)).build());
+        getApi().getCommandManager()
+                .registerCmd(CommandContainer.builder()
+                        .prefix("echest")
+                        .permission("quickshop.echest")
+                        .description((locale) -> LegacyComponentSerializer.legacySection()
+                                .deserialize(getConfig().getString("messages.description")))
+                        .executor(new OpenInvCommand(this))
+                        .build());
     }
 
     @Override

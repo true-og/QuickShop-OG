@@ -2,12 +2,11 @@ package com.ghostchu.quickshop.api.shop;
 
 import com.ghostchu.quickshop.api.inventory.InventoryWrapper;
 import com.ghostchu.quickshop.api.operation.Operation;
+import java.util.Deque;
+import java.util.List;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Deque;
-import java.util.List;
 
 public interface InventoryTransaction {
     /**
@@ -67,7 +66,8 @@ public interface InventoryTransaction {
      * @return A list contains all steps executed. If "continueWhenFailed" is false, it only contains all success steps before hit the error. Else all.
      */
     @SuppressWarnings("UnusedReturnValue")
-    @NotNull List<Operation> rollback(boolean continueWhenFailed);
+    @NotNull
+    List<Operation> rollback(boolean continueWhenFailed);
 
     interface TransactionCallback {
         /**
@@ -87,17 +87,13 @@ public interface InventoryTransaction {
          *
          * @param transaction Transaction
          */
-        default void onFailed(@NotNull InventoryTransaction transaction) {
-        }
+        default void onFailed(@NotNull InventoryTransaction transaction) {}
 
         /**
          * Calling while Transaction commit successfully
          *
          * @param transaction Transaction
          */
-        default void onSuccess(@NotNull InventoryTransaction transaction) {
-        }
-
-
+        default void onSuccess(@NotNull InventoryTransaction transaction) {}
     }
 }

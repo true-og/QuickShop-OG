@@ -41,7 +41,10 @@ public class PermissionManager {
             }
             return result;
         } catch (Exception th) {
-            plugin.logger().warn("Failed to processing permission response, This might or not a bug, we not sure, but you can report to both permission provider plugin author or QuickShop devs about this error", th);
+            plugin.logger()
+                    .warn(
+                            "Failed to processing permission response, This might or not a bug, we not sure, but you can report to both permission provider plugin author or QuickShop devs about this error",
+                            th);
             return false;
         }
     }
@@ -61,10 +64,11 @@ public class PermissionManager {
             }
             return result;
         } catch (Exception th) {
-            plugin.logger().warn("Failed to processing permission response, This might or not a bug, we not sure, but you can report to both permission provider plugin author or QuickShop devs about this error", th);
+            plugin.logger()
+                    .warn(
+                            "Failed to processing permission response, This might or not a bug, we not sure, but you can report to both permission provider plugin author or QuickShop devs about this error",
+                            th);
             return false;
         }
     }
-
-
 }

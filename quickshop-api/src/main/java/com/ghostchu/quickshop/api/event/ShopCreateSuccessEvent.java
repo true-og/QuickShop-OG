@@ -15,7 +15,6 @@ public class ShopCreateSuccessEvent extends AbstractQSEvent {
     @NotNull
     private final Shop shop;
 
-
     /**
      * Call when have a new shop was created.
      *
@@ -27,7 +26,6 @@ public class ShopCreateSuccessEvent extends AbstractQSEvent {
         this.creator = creator;
     }
 
-
     /**
      * Gets the creator of this shop
      *
@@ -36,7 +34,6 @@ public class ShopCreateSuccessEvent extends AbstractQSEvent {
     public @NotNull QUser getCreator() {
         return this.creator;
     }
-
 
     /**
      * Gets the shop created

@@ -3,12 +3,11 @@ package com.ghostchu.quickshop.util.paste.item;
 import com.ghostchu.quickshop.common.util.CommonUtil;
 import com.ghostchu.quickshop.util.PackageUtil;
 import com.ghostchu.quickshop.util.paste.util.HTMLTable;
-import org.apache.commons.text.StringEscapeUtils;
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.stream.Collectors;
+import org.apache.commons.text.StringEscapeUtils;
+import org.jetbrains.annotations.NotNull;
 
 public class SystemInfoItem implements SubPasteItem {
     private final String os;
@@ -30,7 +29,8 @@ public class SystemInfoItem implements SubPasteItem {
         this.javaImplName = runtimeMxBean.getVmName();
         this.inputArgs = CommonUtil.list2String(runtimeMxBean.getInputArguments());
         this.systemProperties = runtimeMxBean.getSystemProperties().keySet().stream()
-                .map(key -> StringEscapeUtils.escapeHtml4(key + "=" + runtimeMxBean.getSystemProperties().get(key)))
+                .map(key -> StringEscapeUtils.escapeHtml4(
+                        key + "=" + runtimeMxBean.getSystemProperties().get(key)))
                 .collect(Collectors.joining("<br/>"));
     }
 
@@ -54,7 +54,8 @@ public class SystemInfoItem implements SubPasteItem {
         table.insert("Java Version", javaVersion);
         table.insert("JVM Name", javaImplName);
         table.insert("Input Arguments", inputArgs);
-        String propertiesContent = """
+        String propertiesContent =
+                """
                 <details>
                   <summary>System Properties (Click to open/close)</summary>
                   {properties}

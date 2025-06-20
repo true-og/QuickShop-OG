@@ -32,8 +32,10 @@ public abstract class AbstractDisplayItem implements Reloadable {
     protected static final QuickShop PLUGIN = QuickShop.getInstance();
     protected final ItemStack originalItemStack;
     protected final Shop shop;
+
     @Nullable
     protected ItemStack guardedIstack;
+
     private boolean pendingRemoval;
     private static boolean virtualDisplayDoesntWork = false;
 
@@ -115,7 +117,7 @@ public abstract class AbstractDisplayItem implements Reloadable {
 
     protected void init() {
         if (PLUGIN.getConfig().getBoolean("shop.display-allow-stacks")) {
-            //Prevent stack over the normal size
+            // Prevent stack over the normal size
             originalItemStack.setAmount(Math.min(originalItemStack.getAmount(), originalItemStack.getMaxStackSize()));
         } else {
             this.originalItemStack.setAmount(1);
@@ -182,7 +184,8 @@ public abstract class AbstractDisplayItem implements Reloadable {
             iMeta = Bukkit.getItemFactory().getItemMeta(itemStack.getType());
         }
         if (iMeta == null) {
-            Log.debug("ItemStack " + itemStack + " cannot getting or creating ItemMeta, failed to create guarded ItemStack.");
+            Log.debug("ItemStack " + itemStack
+                    + " cannot getting or creating ItemMeta, failed to create guarded ItemStack.");
             return itemStack;
         }
         if (!PLUGIN.getConfig().getBoolean("shop.display-item-use-name")) {
@@ -203,8 +206,7 @@ public abstract class AbstractDisplayItem implements Reloadable {
      * @return ShopProtectionFlag obj
      */
     @NotNull
-    public static ShopProtectionFlag createShopProtectionFlag(
-            @NotNull ItemStack itemStack, @NotNull Shop shop) {
+    public static ShopProtectionFlag createShopProtectionFlag(@NotNull ItemStack itemStack, @NotNull Shop shop) {
         return new ShopProtectionFlag(shop.getLocation().toString(), Util.serialize(itemStack));
     }
 

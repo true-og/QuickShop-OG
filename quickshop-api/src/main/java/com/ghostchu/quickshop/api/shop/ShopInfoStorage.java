@@ -2,10 +2,9 @@ package com.ghostchu.quickshop.api.shop;
 
 import com.ghostchu.quickshop.api.obj.QUser;
 import com.ghostchu.quickshop.api.serialize.BlockPos;
-import lombok.Data;
-
 import java.util.Map;
 import java.util.UUID;
+import lombok.Data;
 
 /**
  * Minimal information about a shop.
@@ -27,7 +26,21 @@ public class ShopInfoStorage {
     private final String symbolLink;
     private final Map<UUID, String> permission;
 
-    public ShopInfoStorage(String world, BlockPos position, QUser owner, double price, String item, int unlimited, int shopType, String extra, String currency, boolean disableDisplay, QUser taxAccount, String inventoryWrapperName, String symbolLink, Map<UUID, String> permission) {
+    public ShopInfoStorage(
+            String world,
+            BlockPos position,
+            QUser owner,
+            double price,
+            String item,
+            int unlimited,
+            int shopType,
+            String extra,
+            String currency,
+            boolean disableDisplay,
+            QUser taxAccount,
+            String inventoryWrapperName,
+            String symbolLink,
+            Map<UUID, String> permission) {
         this.world = world;
         this.position = position;
         this.owner = owner.serialize();

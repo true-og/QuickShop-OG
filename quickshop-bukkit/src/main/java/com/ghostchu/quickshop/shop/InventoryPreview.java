@@ -6,6 +6,9 @@ import com.ghostchu.quickshop.shop.datatype.PreviewGuiPersistentDataType;
 import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.holder.QuickShopPreviewGUIHolder;
 import com.ghostchu.quickshop.util.logger.Log;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -22,10 +25,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.UUID;
-
 /**
  * A class to create a GUI item preview quickly
  */
@@ -33,10 +32,12 @@ import java.util.UUID;
 @ToString
 public class InventoryPreview implements Listener {
 
-    private static final NamespacedKey NAMESPACED_KEY = new NamespacedKey(QuickShop.getInstance().getJavaPlugin(), "preview-item");
+    private static final NamespacedKey NAMESPACED_KEY =
+            new NamespacedKey(QuickShop.getInstance().getJavaPlugin(), "preview-item");
     private final ItemStack itemStack;
     private final QuickShop plugin = QuickShop.getInstance();
     private String previewStr;
+
     @Nullable
     private Inventory inventory;
 
@@ -55,7 +56,8 @@ public class InventoryPreview implements Listener {
         } else {
             itemMeta = Bukkit.getItemFactory().getItemMeta(itemStack.getType());
         }
-        previewStr = LegacyComponentSerializer.legacySection().serialize(plugin.text().of("quickshop-gui-preview").forLocale(locale));
+        previewStr = LegacyComponentSerializer.legacySection()
+                .serialize(plugin.text().of("quickshop-gui-preview").forLocale(locale));
         if (StringUtils.isEmpty(previewStr)) {
             previewStr = ChatColor.RED + "FIXME: Do not set quickshop-gui-preview to null or empty string.";
         }
@@ -66,7 +68,8 @@ public class InventoryPreview implements Listener {
                 itemMeta.setLore(Collections.singletonList(previewStr));
             }
 
-            itemMeta.getPersistentDataContainer().set(NAMESPACED_KEY, PreviewGuiPersistentDataType.INSTANCE, UUID.randomUUID());
+            itemMeta.getPersistentDataContainer()
+                    .set(NAMESPACED_KEY, PreviewGuiPersistentDataType.INSTANCE, UUID.randomUUID());
             this.itemStack.setItemMeta(itemMeta);
         }
     }
@@ -99,12 +102,15 @@ public class InventoryPreview implements Listener {
         }
         if (inventory == null) {
             final int size = 9;
-            inventory = Bukkit.createInventory(new QuickShopPreviewGUIHolder(), size, LegacyComponentSerializer.legacySection().serialize(plugin.text().of(player, "menu.preview").forLocale()));
+            inventory = Bukkit.createInventory(
+                    new QuickShopPreviewGUIHolder(),
+                    size,
+                    LegacyComponentSerializer.legacySection()
+                            .serialize(plugin.text().of(player, "menu.preview").forLocale()));
             for (int i = 0; i < size; i++) {
                 inventory.setItem(i, itemStack);
             }
         }
         player.openInventory(inventory);
     }
-
 }

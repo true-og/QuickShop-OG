@@ -5,13 +5,12 @@ import com.ghostchu.quickshop.api.command.CommandHandler;
 import com.ghostchu.quickshop.api.command.CommandParser;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.util.logger.Log;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class SubCommand_SilentBase implements CommandHandler<Player> {
     protected final QuickShop plugin;
@@ -30,7 +29,7 @@ public abstract class SubCommand_SilentBase implements CommandHandler<Player> {
         try {
             uuid = UUID.fromString(parser.getArgs().get(0));
         } catch (IllegalArgumentException e) {
-            //Not valid, return for doing nothing
+            // Not valid, return for doing nothing
             return;
         }
 
@@ -45,7 +44,8 @@ public abstract class SubCommand_SilentBase implements CommandHandler<Player> {
     protected abstract void doSilentCommand(Player sender, @NotNull Shop shop, @NotNull CommandParser parser);
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+    public @Nullable List<String> onTabComplete(
+            @NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
         return Collections.emptyList();
     }
 }

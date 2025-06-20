@@ -8,8 +8,7 @@ import org.bukkit.ChatColor;
  */
 public class BuiltInSolution {
 
-    private BuiltInSolution() {
-    }
+    private BuiltInSolution() {}
 
     /**
      * Call îf database failed to load. This checks the failure reason.
@@ -17,7 +16,8 @@ public class BuiltInSolution {
      * @return The error reason.
      */
     public static BootError databaseError() {
-        return new BootError(QuickShop.getInstance().logger(),
+        return new BootError(
+                QuickShop.getInstance().logger(),
                 "Error connecting to the database!",
                 "Please make sure your database service is running.",
                 "and check the configuration in your config.yml");
@@ -32,23 +32,25 @@ public class BuiltInSolution {
         // Check if Vault is installed
         if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
             // Vault is not installed
-            return new BootError(QuickShop.getInstance().logger(),
+            return new BootError(
+                    QuickShop.getInstance().logger(),
                     "Vault is not installed or loaded!",
                     "Please make sure Vault is installed.");
         }
         // Vault is installed
         if (Bukkit.getPluginManager().getPlugin("CMI") != null) {
             // Found possible incompatible plugin
-            return new BootError(QuickShop.getInstance().logger(),
+            return new BootError(
+                    QuickShop.getInstance().logger(),
                     "No Economy plugin detected! Please make sure that you have a compatible economy",
                     "plugin installed that is hooked into Vault and loads before QuickShop.",
                     ChatColor.YELLOW + "Incompatibility detected: CMI Installed",
                     "The use of the CMI Edition of Vault might fix this.");
         }
 
-        return new BootError(QuickShop.getInstance().logger(),
+        return new BootError(
+                QuickShop.getInstance().logger(),
                 "No Economy plugin detected! Please make sure that you have a",
                 "compatible economy plugin installed to get Vault working.");
     }
-
 }

@@ -1,17 +1,17 @@
 package com.ghostchu.quickshop.util.paste;
 
 import com.ghostchu.quickshop.util.paste.item.SubPasteItem;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.ref.WeakReference;
 import java.util.*;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 public class PasteManager {
     private final Map<Plugin, List<WeakReference<SubPasteItem>>> registry = new LinkedHashMap<>();
 
     public void register(@NotNull Plugin plugin, @NotNull List<SubPasteItem> collectors) {
-        List<WeakReference<SubPasteItem>> collectorsWeakCopy = collectors.stream().map(WeakReference::new).toList();
+        List<WeakReference<SubPasteItem>> collectorsWeakCopy =
+                collectors.stream().map(WeakReference::new).toList();
         List<WeakReference<SubPasteItem>> registered = registry.getOrDefault(plugin, new ArrayList<>());
         registered.addAll(collectorsWeakCopy);
         registry.put(plugin, registered);

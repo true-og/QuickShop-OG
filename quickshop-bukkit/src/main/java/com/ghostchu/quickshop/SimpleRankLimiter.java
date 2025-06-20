@@ -6,15 +6,14 @@ import com.ghostchu.quickshop.util.paste.item.SubPasteItem;
 import com.ghostchu.quickshop.util.paste.util.HTMLTable;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.Reloadable;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 public class SimpleRankLimiter implements Reloadable, RankLimiter, SubPasteItem {
     private final QuickShop plugin;
@@ -23,6 +22,7 @@ public class SimpleRankLimiter implements Reloadable, RankLimiter, SubPasteItem 
      * Whether or not to limit players shop amounts
      */
     private boolean limit = false;
+
     private int def = 0;
 
     public SimpleRankLimiter(QuickShop plugin) {
@@ -33,7 +33,8 @@ public class SimpleRankLimiter implements Reloadable, RankLimiter, SubPasteItem 
     }
 
     private void load() {
-        YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(new File(this.plugin.getDataFolder(), "config.yml"));
+        YamlConfiguration yamlConfiguration =
+                YamlConfiguration.loadConfiguration(new File(this.plugin.getDataFolder(), "config.yml"));
         ConfigurationSection limitCfg = yamlConfiguration.getConfigurationSection("limits");
         if (limitCfg != null) {
             this.limit = limitCfg.getBoolean("use", false);

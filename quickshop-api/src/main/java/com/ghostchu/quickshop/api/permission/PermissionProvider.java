@@ -34,5 +34,4 @@ public interface PermissionProvider {
      * @return hasPermission
      */
     boolean hasPermission(@NotNull QUser sender, @NotNull String permission);
-
 }

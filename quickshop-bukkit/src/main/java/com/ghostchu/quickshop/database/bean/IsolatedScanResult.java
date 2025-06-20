@@ -1,8 +1,7 @@
 package com.ghostchu.quickshop.database.bean;
 
-import lombok.Data;
-
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class IsolatedScanResult<T> {

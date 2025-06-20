@@ -1,4 +1,4 @@
-///*
+/// *
 // *  This file is a part of project QuickShop, the name is UbuntuPaster.java
 // *  Copyright (C) Ghost_chu and contributors
 // *
@@ -17,21 +17,21 @@
 // *
 // */
 //
-//package com.ghostchu.quickshop.util.paste;
+// package com.ghostchu.quickshop.util.paste;
 //
-//import org.jetbrains.annotations.NotNull;
-//import com.ghostchu.quickshop.util.Util;
+// import org.jetbrains.annotations.NotNull;
+// import com.ghostchu.quickshop.util.Util;
 //
-//import java.io.BufferedReader;
-//import java.io.IOException;
-//import java.io.InputStreamReader;
-//import java.io.PrintWriter;
-//import java.net.URL;
-//import java.net.URLConnection;
-//import java.net.URLEncoder;
-//import java.nio.charset.StandardCharsets;
+// import java.io.BufferedReader;
+// import java.io.IOException;
+// import java.io.InputStreamReader;
+// import java.io.PrintWriter;
+// import java.net.URL;
+// import java.net.URLConnection;
+// import java.net.URLEncoder;
+// import java.nio.charset.StandardCharsets;
 //
-//public class UbuntuPaster implements PasteInterface {
+// public class UbuntuPaster implements PasteInterface {
 //    /**
 //     * Paste a text to paste.ubuntu.com
 //     *
@@ -48,7 +48,8 @@
 //        conn.setRequestProperty("connection", "Keep-Alive");
 //        conn.setRequestProperty(
 //                "user-agent",
-//                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36");
+//                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103
+// Safari/537.36");
 //        conn.setDoOutput(true);
 //        conn.setDoInput(true);
 //        conn.setConnectTimeout(50000);
@@ -74,4 +75,4 @@
 //        return link;
 //    }
 //
-//}
+// }

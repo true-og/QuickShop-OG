@@ -16,12 +16,10 @@ public class Result {
         }
 
         @Override
-        public void setMessage(String message) {
-        }
+        public void setMessage(String message) {}
 
         @Override
-        public void setResult(boolean result) {
-        }
+        public void setResult(boolean result) {}
 
         @Override
         public String getListener() {
@@ -33,18 +31,19 @@ public class Result {
             return true;
         }
     };
+
     @Setter
     private boolean result = false;
+
     @Setter
     @Getter
     private String message;
+
     @Getter
     @Setter
     private String listener;
 
-
-    public Result() {
-    }
+    public Result() {}
 
     public Result(String message) {
         result = false;

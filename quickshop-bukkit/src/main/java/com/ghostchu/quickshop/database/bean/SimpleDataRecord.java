@@ -5,15 +5,14 @@ import com.ghostchu.quickshop.api.obj.QUser;
 import com.ghostchu.quickshop.api.shop.PlayerFinder;
 import com.ghostchu.quickshop.common.util.QuickExecutor;
 import com.ghostchu.quickshop.obj.QUserImpl;
-import lombok.Data;
-import org.jetbrains.annotations.NotNull;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import lombok.Data;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 public class SimpleDataRecord implements DataRecord {
@@ -34,7 +33,22 @@ public class SimpleDataRecord implements DataRecord {
 
     private final String benefit;
 
-    public SimpleDataRecord(QUser owner, String item, String name, int type, String currency, double price, boolean unlimited, boolean hologram, QUser taxAccount, String permissions, String extra, String inventoryWrapper, String inventorySymbolLink, Date createTime, String benefit) {
+    public SimpleDataRecord(
+            QUser owner,
+            String item,
+            String name,
+            int type,
+            String currency,
+            double price,
+            boolean unlimited,
+            boolean hologram,
+            QUser taxAccount,
+            String permissions,
+            String extra,
+            String inventoryWrapper,
+            String inventorySymbolLink,
+            Date createTime,
+            String benefit) {
         this.owner = owner;
         this.item = item;
         this.name = name;
@@ -53,7 +67,8 @@ public class SimpleDataRecord implements DataRecord {
     }
 
     public SimpleDataRecord(PlayerFinder finder, ResultSet set) throws SQLException {
-        this.owner = QUserImpl.deserialize(finder, set.getString("owner"), QuickExecutor.getSecondaryProfileIoExecutor());
+        this.owner =
+                QUserImpl.deserialize(finder, set.getString("owner"), QuickExecutor.getSecondaryProfileIoExecutor());
         this.item = set.getString("item");
         this.name = set.getString("name");
         this.type = set.getInt("type");
@@ -62,7 +77,9 @@ public class SimpleDataRecord implements DataRecord {
         this.unlimited = set.getBoolean("unlimited");
         this.hologram = set.getBoolean("hologram");
         String taxAccountString = set.getString("tax_account");
-        this.taxAccount = taxAccountString == null ? null : QUserImpl.deserialize(finder, taxAccountString, QuickExecutor.getSecondaryProfileIoExecutor());
+        this.taxAccount = taxAccountString == null
+                ? null
+                : QUserImpl.deserialize(finder, taxAccountString, QuickExecutor.getSecondaryProfileIoExecutor());
         this.permissions = set.getString("permissions");
         this.extra = set.getString("extra");
         this.inventorySymbolLink = set.getString("inv_symbol_link");

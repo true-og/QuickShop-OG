@@ -8,6 +8,10 @@ import com.ghostchu.quickshop.api.localization.text.ProxiedLocale;
 import com.ghostchu.quickshop.api.obj.QUser;
 import com.ghostchu.quickshop.api.shop.permission.BuiltInShopPermission;
 import com.ghostchu.quickshop.api.shop.permission.BuiltInShopPermissionGroup;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -20,11 +24,6 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * A shop
@@ -49,7 +48,8 @@ public interface Shop {
      * @param paramInt       How many buyed?
      * @throws Exception Possible exception thrown if anything wrong.
      */
-    void buy(@NotNull QUser buyer, @NotNull InventoryWrapper buyerInventory, @NotNull Location loc2Drop, int paramInt) throws Exception;
+    void buy(@NotNull QUser buyer, @NotNull InventoryWrapper buyerInventory, @NotNull Location loc2Drop, int paramInt)
+            throws Exception;
 
     /**
      * Check the display location, and teleport, respawn if needs.
@@ -99,7 +99,8 @@ public interface Shop {
      *
      * @return Inventory
      */
-    @Nullable InventoryWrapper getInventory();
+    @Nullable
+    InventoryWrapper getInventory();
 
     /**
      * Gets the InventoryWrapper provider name (the plugin name who register it), usually is QuickShop
@@ -131,7 +132,6 @@ public interface Shop {
      */
     @NotNull
     Location getLocation();
-
 
     /**
      * Get shop's owner QUser
@@ -199,7 +199,8 @@ public interface Shop {
      *
      * @return Random UUID
      */
-    @NotNull UUID getRuntimeRandomUniqueId();
+    @NotNull
+    UUID getRuntimeRandomUniqueId();
 
     /**
      * Gets the Shop ID to identify the shop.
@@ -260,7 +261,7 @@ public interface Shop {
      * Line 3: Price
      */
     default List<Component> getSignText(@NotNull ProxiedLocale locale) {
-        //backward support
+        // backward support
         throw new UnsupportedOperationException();
     }
 
@@ -292,7 +293,6 @@ public interface Shop {
      *
      * @return Shop Tax Account, null if use general tax account
      */
-
     @Nullable
     QUser getTaxAccountActual();
 
@@ -417,7 +417,6 @@ public interface Shop {
      */
     void onClick(@NotNull Player clicker);
 
-
     @Deprecated()
     @ApiStatus.Internal
     void handleLoading();
@@ -508,8 +507,7 @@ public interface Shop {
      * Refresh shop sign and display item
      */
     @Deprecated(forRemoval = true)
-    default void refresh() {
-    }
+    default void refresh() {}
 
     /**
      * Remove x ItemStack from the shop inventory
@@ -551,7 +549,9 @@ public interface Shop {
      * @param paramInt        How many sold?
      * @throws Exception Possible exception thrown if anything wrong.
      */
-    void sell(@NotNull QUser seller, @NotNull InventoryWrapper sellerInventory, @NotNull Location loc2Drop, int paramInt) throws Exception;
+    void sell(
+            @NotNull QUser seller, @NotNull InventoryWrapper sellerInventory, @NotNull Location loc2Drop, int paramInt)
+            throws Exception;
 
     /**
      * Sets shop is dirty
@@ -614,5 +614,4 @@ public interface Shop {
      * Sets the benefit in this shop
      */
     void setShopBenefit(@NotNull Benefit benefit);
-
 }

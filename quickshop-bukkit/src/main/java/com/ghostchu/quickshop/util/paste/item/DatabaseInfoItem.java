@@ -3,14 +3,13 @@ package com.ghostchu.quickshop.util.paste.item;
 import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.util.PackageUtil;
 import com.ghostchu.quickshop.util.paste.util.HTMLTable;
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 public class DatabaseInfoItem implements SubPasteItem {
     private static final String VERBOSE_PREFIX = "[verbose] ";
@@ -53,8 +52,7 @@ public class DatabaseInfoItem implements SubPasteItem {
                 Float.class,
                 Double.class,
                 Byte.class,
-                Character.class
-        );
+                Character.class);
         for (Method method : meta.getClass().getDeclaredMethods()) {
             if (method.canAccess(meta)) {
                 if (allowedClasses.contains(method.getReturnType())) {
@@ -66,12 +64,11 @@ public class DatabaseInfoItem implements SubPasteItem {
                             table.insert(VERBOSE_PREFIX + method.getName(), "null");
                         }
                     } catch (Exception exception) {
-                        //ignore
+                        // ignore
                         table.insert(VERBOSE_PREFIX + method.getName(), exception.getMessage());
                     }
                 }
             }
         }
-
     }
 }

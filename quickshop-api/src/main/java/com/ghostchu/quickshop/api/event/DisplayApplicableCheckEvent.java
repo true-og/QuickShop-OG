@@ -1,7 +1,6 @@
 package com.ghostchu.quickshop.api.event;
 
 import com.ghostchu.quickshop.api.shop.Shop;
-
 import java.util.UUID;
 
 public class DisplayApplicableCheckEvent extends AbstractQSEvent {

@@ -1,15 +1,15 @@
 package com.ghostchu.quickshop.util.paste.util;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
 public class HTMLTable {
-    private static final String TEMPLATE = """           
+    private static final String TEMPLATE =
+            """
             <table style="table-layout: fixed;">
               {col}
               {thead}
@@ -75,8 +75,7 @@ public class HTMLTable {
     public String render() {
         String thead = renderHead();
         String tbody = renderBody();
-        return TEMPLATE
-                .replace("{col}", renderColAttributes())
+        return TEMPLATE.replace("{col}", renderColAttributes())
                 .replace("{thead}", thead)
                 .replace("{tbody}", tbody);
     }
@@ -96,7 +95,8 @@ public class HTMLTable {
                  {th}
                 </tr>
                 </thead>
-                """.replace("{th}", tdBuilder.toString());
+                """
+                .replace("{th}", tdBuilder.toString());
     }
 
     private String renderBody() {
@@ -112,7 +112,7 @@ public class HTMLTable {
     }
 
     private String renderColAttributes() {
-//        String base ="<col style=\"width: {length}%;\">\n";
+        //        String base ="<col style=\"width: {length}%;\">\n";
         String base = "<col>\n";
         return base.replace("{length}", String.valueOf(100 / columns)).repeat(columns);
     }

@@ -5,8 +5,7 @@ import com.ghostchu.quickshop.util.logger.Log;
 import org.bukkit.configuration.ConfigurationSection;
 
 public class HikariUtil {
-    private HikariUtil() {
-    }
+    private HikariUtil() {}
 
     public static cc.carm.lib.easysql.hikari.HikariConfig createHikariConfig() {
         cc.carm.lib.easysql.hikari.HikariConfig config = new cc.carm.lib.easysql.hikari.HikariConfig();

@@ -41,23 +41,28 @@ public class BukkitInventoryWrapperManager implements InventoryWrapperManager {
         if (world == null) {
             throw new IllegalArgumentException("Invalid symbol link: Invalid world name.");
         }
-        BlockState block = world.getBlockAt(blockPos.getX(), blockPos.getY(), blockPos.getZ()).getState();
-        if (PackageUtil.parsePackageProperly("forceLoadAnotherSideWhenInventoryLocate").asBoolean(false)) {
+        BlockState block = world.getBlockAt(blockPos.getX(), blockPos.getY(), blockPos.getZ())
+                .getState();
+        if (PackageUtil.parsePackageProperly("forceLoadAnotherSideWhenInventoryLocate")
+                .asBoolean(false)) {
             BlockData blockData = block.getBlockData();
             if (blockData instanceof Chest chest) {
                 if (chest.getType() != Chest.Type.SINGLE) {
                     // try load another side
                     Block anotherBlock = Util.getSecondHalf(block.getBlock());
                     anotherBlock.getChunk().load();
-                    if (PackageUtil.parsePackageProperly("forceUpdateAnotherSideAfterForceLoadAnotherSide").asBoolean(false)) {
+                    if (PackageUtil.parsePackageProperly("forceUpdateAnotherSideAfterForceLoadAnotherSide")
+                            .asBoolean(false)) {
                         block.update();
-                        block = world.getBlockAt(blockPos.getX(), blockPos.getY(), blockPos.getZ()).getState();
+                        block = world.getBlockAt(blockPos.getX(), blockPos.getY(), blockPos.getZ())
+                                .getState();
                     }
                 }
             }
         }
         if (!(block instanceof InventoryHolder holder)) {
-            throw new IllegalArgumentException("Invalid symbol link: Target block not a InventoryHolder (map changed/resetted?)");
+            throw new IllegalArgumentException(
+                    "Invalid symbol link: Target block not a InventoryHolder (map changed/resetted?)");
         }
         return new BukkitInventoryWrapper(holder.getInventory());
     }
@@ -73,23 +78,28 @@ public class BukkitInventoryWrapperManager implements InventoryWrapperManager {
                 if (world == null) {
                     throw new IllegalArgumentException("Invalid symbol link: Invalid world name.");
                 }
-                BlockState block = world.getBlockAt(blockHolder.getX(), blockHolder.getY(), blockHolder.getZ()).getState();
-                if (PackageUtil.parsePackageProperly("forceLoadAnotherSideWhenInventoryLocate").asBoolean(false)) {
+                BlockState block = world.getBlockAt(blockHolder.getX(), blockHolder.getY(), blockHolder.getZ())
+                        .getState();
+                if (PackageUtil.parsePackageProperly("forceLoadAnotherSideWhenInventoryLocate")
+                        .asBoolean(false)) {
                     BlockData blockData = block.getBlockData();
                     if (blockData instanceof Chest chest) {
                         if (chest.getType() != Chest.Type.SINGLE) {
                             // try load another side
                             Block anotherBlock = Util.getSecondHalf(block.getBlock());
                             anotherBlock.getChunk().load();
-                            if (PackageUtil.parsePackageProperly("forceUpdateAnotherSideAfterForceLoadAnotherSide").asBoolean(false)) {
+                            if (PackageUtil.parsePackageProperly("forceUpdateAnotherSideAfterForceLoadAnotherSide")
+                                    .asBoolean(false)) {
                                 block.update();
-                                block = world.getBlockAt(blockHolder.getX(), blockHolder.getY(), blockHolder.getZ()).getState();
+                                block = world.getBlockAt(blockHolder.getX(), blockHolder.getY(), blockHolder.getZ())
+                                        .getState();
                             }
                         }
                     }
                 }
                 if (!(block instanceof InventoryHolder holder)) {
-                    throw new IllegalArgumentException("Invalid symbol link: Target block not a Container (map changed/resetted?)");
+                    throw new IllegalArgumentException(
+                            "Invalid symbol link: Target block not a Container (map changed/resetted?)");
                 }
                 return new BukkitInventoryWrapper(holder.getInventory());
             }
@@ -110,7 +120,8 @@ public class BukkitInventoryWrapperManager implements InventoryWrapperManager {
 
     @Deprecated
     public enum HolderType {
-        BLOCK("block"), UNKNOWN("unknown");
+        BLOCK("block"),
+        UNKNOWN("unknown");
         private final String typeString;
 
         HolderType(String typeString) {

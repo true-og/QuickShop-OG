@@ -37,7 +37,11 @@ public class SubCommand_Item implements CommandHandler<Player> {
                 plugin.text().of(sender, "command.no-trade-item").send();
                 return;
             }
-            if (plugin.getShopItemBlackList().isBlacklisted(itemStack) && !plugin.perm().hasPermission(sender, "quickshop.bypass." + itemStack.getType().name())) {
+            if (plugin.getShopItemBlackList().isBlacklisted(itemStack)
+                    && !plugin.perm()
+                            .hasPermission(
+                                    sender,
+                                    "quickshop.bypass." + itemStack.getType().name())) {
                 plugin.text().of(sender, "blacklisted-item").send();
                 return;
             }
@@ -47,16 +51,26 @@ public class SubCommand_Item implements CommandHandler<Player> {
             PriceLimiter limiter = plugin.getShopManager().getPriceLimiter();
             PriceLimiterCheckResult checkResult = limiter.check(sender, itemStack, shop.getCurrency(), shop.getPrice());
             if (checkResult.getStatus() != PriceLimiterStatus.PASS) {
-                plugin.text().of(sender, "restricted-prices", Util.getItemStackName(shop.getItem()),
-                        Component.text(checkResult.getMin()),
-                        Component.text(checkResult.getMax())).send();
+                plugin.text()
+                        .of(
+                                sender,
+                                "restricted-prices",
+                                Util.getItemStackName(shop.getItem()),
+                                Component.text(checkResult.getMin()),
+                                Component.text(checkResult.getMax()))
+                        .send();
                 return;
             }
             shop.setItem(itemStack);
-            plugin.text().of(sender, "command.trade-item-now", shop.getItem().getAmount(), Util.getItemStackName(shop.getItem())).send();
+            plugin.text()
+                    .of(
+                            sender,
+                            "command.trade-item-now",
+                            shop.getItem().getAmount(),
+                            Util.getItemStackName(shop.getItem()))
+                    .send();
             return;
         }
         plugin.text().of(sender, "not-looking-at-shop").send();
     }
-
 }

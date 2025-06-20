@@ -10,19 +10,16 @@ public class DatabaseStatusHolder {
     private IsolatedScanResult<Long> shopIds;
     private long reportGeneratedAt;
 
-    public DatabaseStatusHolder(Status status, IsolatedScanResult<Long> dataIds, IsolatedScanResult<Long> shopIds, long reportGeneratedAt) {
+    public DatabaseStatusHolder(
+            Status status, IsolatedScanResult<Long> dataIds, IsolatedScanResult<Long> shopIds, long reportGeneratedAt) {
         this.status = status;
         this.dataIds = dataIds;
         this.shopIds = shopIds;
         this.reportGeneratedAt = reportGeneratedAt;
     }
 
-
     public enum Status {
         GOOD,
         MAINTENANCE_REQUIRED,
     }
 }
-
-
-

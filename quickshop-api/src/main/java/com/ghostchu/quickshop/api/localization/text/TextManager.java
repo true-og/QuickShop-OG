@@ -1,27 +1,31 @@
 package com.ghostchu.quickshop.api.localization.text;
 
 import com.ghostchu.quickshop.api.obj.QUser;
+import java.util.List;
+import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.UUID;
-
 /**
  * The TextManager that allow create user's locale specified message.
  */
 public interface TextManager {
-    @NotNull Component[] convert(@Nullable Object... args);
+    @NotNull
+    Component[] convert(@Nullable Object... args);
 
-    @NotNull ProxiedLocale findRelativeLanguages(@Nullable String langCode);
+    @NotNull
+    ProxiedLocale findRelativeLanguages(@Nullable String langCode);
 
-    @NotNull ProxiedLocale findRelativeLanguages(@Nullable CommandSender sender);
+    @NotNull
+    ProxiedLocale findRelativeLanguages(@Nullable CommandSender sender);
 
-    @NotNull ProxiedLocale findRelativeLanguages(@Nullable UUID sender, boolean allowDbLoad);
+    @NotNull
+    ProxiedLocale findRelativeLanguages(@Nullable UUID sender, boolean allowDbLoad);
 
-    @NotNull ProxiedLocale findRelativeLanguages(@Nullable QUser qUser, boolean allowDbLoad);
+    @NotNull
+    ProxiedLocale findRelativeLanguages(@Nullable QUser qUser, boolean allowDbLoad);
 
     /**
      * Return the set of available Languages
@@ -79,7 +83,6 @@ public interface TextManager {
      */
     @NotNull
     Text of(@Nullable UUID sender, @NotNull String path, @Nullable Object... args);
-
 
     /**
      * Getting the translation with path with player's locale (if available)

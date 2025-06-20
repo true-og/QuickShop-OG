@@ -10,13 +10,12 @@ import com.ghostchu.quickshop.util.MsgUtil;
 import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.WarningSender;
 import com.ghostchu.quickshop.util.logger.Log;
+import java.util.Objects;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 /**
  * Check the shops after server booted up, make sure shop can correct self-deleted when container
@@ -47,13 +46,16 @@ public class OngoingFeeWatcher extends BukkitRunnable {
                 QUser shopOwner = shop.getOwner();
                 Location location = shop.getLocation();
                 if (!location.isWorldLoaded()) {
-                    //ignore unloaded world
+                    // ignore unloaded world
                     continue;
                 }
                 double cost = gobalCost;
                 World world = location.getWorld();
-                //We must check balance manually to avoid shop missing hell when tax account broken
-                if (allowLoan || plugin.getEconomy().getBalance(shopOwner, Objects.requireNonNull(world), plugin.getCurrency()) >= cost) {
+                // We must check balance manually to avoid shop missing hell when tax account broken
+                if (allowLoan
+                        || plugin.getEconomy()
+                                        .getBalance(shopOwner, Objects.requireNonNull(world), plugin.getCurrency())
+                                >= cost) {
                     QUser taxAccount = null;
                     if (shop.getTaxAccount() != null) {
                         taxAccount = shop.getTaxAccount();
@@ -81,11 +83,13 @@ public class OngoingFeeWatcher extends BukkitRunnable {
                                 .world(world)
                                 .amount(finalCost)
                                 .to(finalTaxAccount)
-                                .from(shopOwner).build();
+                                .from(shopOwner)
+                                .build();
 
                         boolean success = transaction.failSafeCommit();
                         if (!success) {
-                            warningSender.sendWarn("Unable to deposit ongoing fee to tax account, the last error is " + transaction.getLastError());
+                            warningSender.sendWarn("Unable to deposit ongoing fee to tax account, the last error is "
+                                    + transaction.getLastError());
                         }
                     });
                 } else {
@@ -102,14 +106,23 @@ public class OngoingFeeWatcher extends BukkitRunnable {
      */
     public void removeShop(@NotNull Shop shop) {
         Util.mainThreadRun(() -> plugin.getShopManager().deleteShop(shop));
-        MsgUtil.send(shop, shop.getOwner(), plugin.text().of("shop-removed-cause-ongoing-fee", LegacyComponentSerializer.legacySection().deserialize("World:"
-                + Objects.requireNonNull(shop.getLocation().getWorld()).getName()
-                + " X:"
-                + shop.getLocation().getBlockX()
-                + " Y:"
-                + shop.getLocation().getBlockY()
-                + " Z:"
-                + shop.getLocation().getBlockZ())).forLocale());
+        MsgUtil.send(
+                shop,
+                shop.getOwner(),
+                plugin.text()
+                        .of(
+                                "shop-removed-cause-ongoing-fee",
+                                LegacyComponentSerializer.legacySection()
+                                        .deserialize("World:"
+                                                + Objects.requireNonNull(shop.getLocation()
+                                                                .getWorld())
+                                                        .getName()
+                                                + " X:"
+                                                + shop.getLocation().getBlockX()
+                                                + " Y:"
+                                                + shop.getLocation().getBlockY()
+                                                + " Z:"
+                                                + shop.getLocation().getBlockZ()))
+                        .forLocale());
     }
-
 }

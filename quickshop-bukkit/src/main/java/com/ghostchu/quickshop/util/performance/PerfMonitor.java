@@ -1,20 +1,21 @@
 package com.ghostchu.quickshop.util.performance;
 
 import com.ghostchu.quickshop.util.logger.Log;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.time.Duration;
 import java.time.Instant;
-import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PerfMonitor implements AutoCloseable {
     private final String name;
     private final Instant startTime;
+
     @Nullable
     private final Duration exceptedDuration;
+
     private final Log.Caller caller;
+
     @Nullable
     private String context;
 
@@ -51,7 +52,6 @@ public class PerfMonitor implements AutoCloseable {
         this.context = context;
     }
 
-
     @Override
     public void close() {
         Duration passedDuration = getTimePassed();
@@ -64,7 +64,10 @@ public class PerfMonitor implements AutoCloseable {
         messageBuilder.append("has finished in ").append(passed).append(".");
         Level level = Level.INFO;
         if (isReachedLimit()) {
-            messageBuilder.append(" OVER LIMIT! The excepted time cost should less than ").append(exceptedDuration.toMillis()).append("ms.");
+            messageBuilder
+                    .append(" OVER LIMIT! The excepted time cost should less than ")
+                    .append(exceptedDuration.toMillis())
+                    .append("ms.");
             level = Level.WARNING;
         }
         Log.performance(level, messageBuilder.toString(), caller);

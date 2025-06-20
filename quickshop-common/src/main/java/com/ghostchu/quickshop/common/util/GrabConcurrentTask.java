@@ -1,8 +1,5 @@
 package com.ghostchu.quickshop.common.util;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +9,8 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GrabConcurrentTask<T> {
     private final LinkedBlockingDeque<Optional<T>> deque = new LinkedBlockingDeque<>();
@@ -29,7 +28,8 @@ public class GrabConcurrentTask<T> {
     }
 
     @Nullable
-    public T invokeAll(String executeName, long timeout, @NotNull TimeUnit unit, @Nullable Predicate<T> condition) throws InterruptedException {
+    public T invokeAll(String executeName, long timeout, @NotNull TimeUnit unit, @Nullable Predicate<T> condition)
+            throws InterruptedException {
         // Submit all tasks into executor
         for (Supplier<T> supplier : suppliers) {
             service.submit(new GrabConcurrentExecutor<>(executeName, deque, supplier));
@@ -63,7 +63,10 @@ public class GrabConcurrentTask<T> {
         private final Supplier<T> supplier;
         private final String executeName;
 
-        public GrabConcurrentExecutor(@NotNull String executeName, @NotNull LinkedBlockingDeque<Optional<T>> targetDeque, @NotNull Supplier<T> supplier) {
+        public GrabConcurrentExecutor(
+                @NotNull String executeName,
+                @NotNull LinkedBlockingDeque<Optional<T>> targetDeque,
+                @NotNull Supplier<T> supplier) {
             this.executeName = executeName;
             this.targetDeque = targetDeque;
             this.supplier = supplier;
@@ -83,11 +86,10 @@ public class GrabConcurrentTask<T> {
 
         @Override
         public String toString() {
-            return "GrabConcurrentExecutor{" +
-                    "targetDeque=" + targetDeque +
-                    ", supplier=" + supplier +
-                    ", executeName='" + executeName + '\'' +
-                    '}';
+            return "GrabConcurrentExecutor{" + "targetDeque="
+                    + targetDeque + ", supplier="
+                    + supplier + ", executeName='"
+                    + executeName + '\'' + '}';
         }
     }
 }

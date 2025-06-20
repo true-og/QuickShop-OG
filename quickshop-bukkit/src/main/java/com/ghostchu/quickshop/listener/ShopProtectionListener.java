@@ -27,7 +27,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class ShopProtectionListener extends AbstractProtectionListener {
 
-    private final NamespacedKey hopperKey = new NamespacedKey(QuickShop.getInstance().getJavaPlugin(), "hopper-persistent-data");
+    private final NamespacedKey hopperKey =
+            new NamespacedKey(QuickShop.getInstance().getJavaPlugin(), "hopper-persistent-data");
     private boolean hopperProtect;
     private boolean hopperOwnerExclude;
 
@@ -53,7 +54,10 @@ public class ShopProtectionListener extends AbstractProtectionListener {
                 if (plugin.getConfig().getBoolean("protect.explode")) {
                     e.setCancelled(true);
                 } else {
-                    plugin.logEvent(new ShopRemoveLog(QUserImpl.createFullFilled(CommonUtil.getNilUniqueId(), "Exploding", false), "BlockBreak(explode)", shop.saveToInfoStorage()));
+                    plugin.logEvent(new ShopRemoveLog(
+                            QUserImpl.createFullFilled(CommonUtil.getNilUniqueId(), "Exploding", false),
+                            "BlockBreak(explode)",
+                            shop.saveToInfoStorage()));
                     plugin.getShopManager().deleteShop(shop);
                 }
             }
@@ -105,7 +109,10 @@ public class ShopProtectionListener extends AbstractProtectionListener {
             if (plugin.getConfig().getBoolean("protect.explode")) {
                 e.setCancelled(true);
             } else {
-                plugin.logEvent(new ShopRemoveLog(QUserImpl.createFullFilled(CommonUtil.getNilUniqueId(), "EntityExploding", false), "BlockBreak(explode)", shop.saveToInfoStorage()));
+                plugin.logEvent(new ShopRemoveLog(
+                        QUserImpl.createFullFilled(CommonUtil.getNilUniqueId(), "EntityExploding", false),
+                        "BlockBreak(explode)",
+                        shop.saveToInfoStorage()));
                 plugin.getShopManager().deleteShop(shop);
             }
         }
@@ -128,9 +135,11 @@ public class ShopProtectionListener extends AbstractProtectionListener {
         }
         if (this.hopperOwnerExclude) {
             if (event.getDestination().getHolder() instanceof Hopper hopper) {
-                HopperPersistentData hopperPersistentData = hopper.getPersistentDataContainer().get(hopperKey, HopperPersistentDataType.INSTANCE);
+                HopperPersistentData hopperPersistentData =
+                        hopper.getPersistentDataContainer().get(hopperKey, HopperPersistentDataType.INSTANCE);
                 if (hopperPersistentData != null) {
-                    if (shop.playerAuthorize(hopperPersistentData.getPlayer(), BuiltInShopPermission.ACCESS_INVENTORY)) {
+                    if (shop.playerAuthorize(
+                            hopperPersistentData.getPlayer(), BuiltInShopPermission.ACCESS_INVENTORY)) {
                         return;
                     }
                 }
@@ -142,7 +151,11 @@ public class ShopProtectionListener extends AbstractProtectionListener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onPlaceHopper(BlockPlaceEvent e) {
         if (e.getBlockPlaced().getState() instanceof Hopper hopper) {
-            hopper.getPersistentDataContainer().set(hopperKey, HopperPersistentDataType.INSTANCE, new HopperPersistentData(e.getPlayer().getUniqueId()));
+            hopper.getPersistentDataContainer()
+                    .set(
+                            hopperKey,
+                            HopperPersistentDataType.INSTANCE,
+                            new HopperPersistentData(e.getPlayer().getUniqueId()));
             hopper.update();
         }
     }

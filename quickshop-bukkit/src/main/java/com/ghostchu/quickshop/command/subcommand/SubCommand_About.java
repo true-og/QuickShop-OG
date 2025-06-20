@@ -10,6 +10,9 @@ import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.logger.Log;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import lombok.Data;
@@ -21,10 +24,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 public class SubCommand_About implements CommandHandler<CommandSender> {
     private final QuickShop plugin;
@@ -38,54 +37,72 @@ public class SubCommand_About implements CommandHandler<CommandSender> {
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
-        MsgUtil.sendDirectMessage(sender, serializer.deserialize(ChatColor.AQUA + "QuickShop " + ChatColor.YELLOW + QuickShop.getInstance().getFork()));
-        MsgUtil.sendDirectMessage(sender, serializer.deserialize(ChatColor.AQUA
-                + "Version "
-                + ChatColor.YELLOW
-                + ">> "
-                + ChatColor.GREEN
-                + QuickShop.getInstance().getVersion()));
+        MsgUtil.sendDirectMessage(
+                sender,
+                serializer.deserialize(ChatColor.AQUA + "QuickShop " + ChatColor.YELLOW
+                        + QuickShop.getInstance().getFork()));
+        MsgUtil.sendDirectMessage(
+                sender,
+                serializer.deserialize(ChatColor.AQUA
+                        + "Version "
+                        + ChatColor.YELLOW
+                        + ">> "
+                        + ChatColor.GREEN
+                        + QuickShop.getInstance().getVersion()));
         if (plugin.getBuildInfo().getGitInfo().getBranch().toUpperCase().contains("ORIGIN/LTS")) {
-            MsgUtil.sendDirectMessage(sender, serializer.deserialize(
-                    ChatColor.AQUA
+            MsgUtil.sendDirectMessage(
+                    sender,
+                    serializer.deserialize(ChatColor.AQUA
                             + "Release "
                             + ChatColor.YELLOW
                             + ">> "
                             + ChatColor.GREEN
-                            + serializer.serialize(plugin.text().of(sender, "updatenotify.label.lts").forLocale())));
+                            + serializer.serialize(plugin.text()
+                                    .of(sender, "updatenotify.label.lts")
+                                    .forLocale())));
         } else if (plugin.getBuildInfo().getGitInfo().getBranch().toUpperCase().contains("ORIGIN/RELEASE")) {
-            MsgUtil.sendDirectMessage(sender,
+            MsgUtil.sendDirectMessage(
+                    sender,
                     serializer.deserialize(ChatColor.AQUA
                             + "Release "
                             + ChatColor.YELLOW
                             + ">> "
                             + ChatColor.GREEN
-                            + serializer.serialize(plugin.text().of(sender, "updatenotify.label.stable").forLocale())));
+                            + serializer.serialize(plugin.text()
+                                    .of(sender, "updatenotify.label.stable")
+                                    .forLocale())));
         } else {
-            MsgUtil.sendDirectMessage(sender,
+            MsgUtil.sendDirectMessage(
+                    sender,
                     serializer.deserialize(ChatColor.AQUA
                             + "Release "
                             + ChatColor.YELLOW
                             + ">> "
                             + ChatColor.GREEN
-                            + serializer.serialize(plugin.text().of(sender, "updatenotify.label.unstable").forLocale())));
+                            + serializer.serialize(plugin.text()
+                                    .of(sender, "updatenotify.label.unstable")
+                                    .forLocale())));
         }
-        MsgUtil.sendDirectMessage(sender,
+        MsgUtil.sendDirectMessage(
+                sender,
                 serializer.deserialize(ChatColor.AQUA
                         + "Developers "
                         + ChatColor.YELLOW
                         + ">> "
                         + ChatColor.GREEN
-                        + CommonUtil.list2String(plugin.getJavaPlugin().getDescription().getAuthors())));
+                        + CommonUtil.list2String(
+                                plugin.getJavaPlugin().getDescription().getAuthors())));
         MsgUtil.sendDirectMessage(sender, serializer.deserialize(ChatColor.GOLD + "Powered by Community"));
         MsgUtil.sendDirectMessage(sender, serializer.deserialize(ChatColor.RED + "Made with ❤"));
         Util.asyncThreadRun(() -> {
             try {
                 String json = fetchKofi();
                 if (json != null) {
-                    MsgUtil.sendDirectMessage(sender, serializer.deserialize(ChatColor.LIGHT_PURPLE + "Special thanks to those who support to QuickShop-Hikari on Ko-fi :)"));
-                    List<KoFiDTO> dto = JsonUtil.getGson().fromJson(json, new TypeToken<List<KoFiDTO>>() {
-                    }.getType());
+                    MsgUtil.sendDirectMessage(
+                            sender,
+                            serializer.deserialize(ChatColor.LIGHT_PURPLE
+                                    + "Special thanks to those who support to QuickShop-Hikari on Ko-fi :)"));
+                    List<KoFiDTO> dto = JsonUtil.getGson().fromJson(json, new TypeToken<List<KoFiDTO>>() {}.getType());
                     Component message = Component.empty();
                     boolean first = true;
                     for (KoFiDTO record : dto) {
@@ -108,7 +125,8 @@ public class SubCommand_About implements CommandHandler<CommandSender> {
         if (this.fetchCache != null && Instant.now().isBefore(this.fetchCache.getInstant())) {
             return this.fetchCache.getJson();
         }
-        HttpResponse<String> resp = Unirest.get("https://quickshop-kofi-proxy.ghostchu.workers.dev/").asString();
+        HttpResponse<String> resp = Unirest.get("https://quickshop-kofi-proxy.ghostchu.workers.dev/")
+                .asString();
         if (resp.isSuccess()) {
             this.fetchCache = new KofiFetchCache(Instant.now().plus(12, ChronoUnit.HOURS), resp.getBody());
             return this.fetchCache.getJson();
@@ -141,10 +159,13 @@ public class SubCommand_About implements CommandHandler<CommandSender> {
     static class KoFiDTO {
         @SerializedName("id")
         private Integer id;
+
         @SerializedName("time")
         private String time;
+
         @SerializedName("type")
         private String type;
+
         @SerializedName("name")
         private String name;
     }

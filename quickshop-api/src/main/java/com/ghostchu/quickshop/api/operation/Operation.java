@@ -30,6 +30,5 @@ public interface Operation {
      *
      * @return true if successes
      */
-
     boolean rollback();
 }

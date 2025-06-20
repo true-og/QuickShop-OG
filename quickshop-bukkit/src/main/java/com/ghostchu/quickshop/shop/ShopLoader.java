@@ -17,6 +17,17 @@ import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.logger.Log;
 import com.ghostchu.quickshop.util.paste.item.SubPasteItem;
 import com.google.common.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
@@ -29,18 +40,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
-
-import java.lang.reflect.Type;
-import java.sql.ResultSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A class allow plugin load shops fast and simply.
@@ -58,8 +57,7 @@ public class ShopLoader implements SubPasteItem {
      */
     public ShopLoader(@NotNull QuickShop plugin) {
         this.plugin = plugin;
-        this.executorService = Executors.newWorkStealingPool(PackageUtil
-                .parsePackageProperly("parallelism")
+        this.executorService = Executors.newWorkStealingPool(PackageUtil.parsePackageProperly("parallelism")
                 .asInteger(CommonUtil.multiProcessorThreadRecommended()));
     }
 
@@ -83,19 +81,24 @@ public class ShopLoader implements SubPasteItem {
         plugin.logger().info("Loading shops from database...");
         Timer dbFetchTimer = new Timer(true);
         List<ShopRecord> records = plugin.getDatabaseHelper().listShops(deleteCorruptShops);
-        plugin.logger().info("Used {}ms to fetch {} shops from database.", dbFetchTimer.stopAndGetTimePassed(), records.size());
+        plugin.logger()
+                .info(
+                        "Used {}ms to fetch {} shops from database.",
+                        dbFetchTimer.stopAndGetTimePassed(),
+                        records.size());
         plugin.logger().info("Loading shops into memory...");
         Timer shopTotalTimer = new Timer(true);
         AtomicInteger successCounter = new AtomicInteger(0);
         AtomicInteger chunkNotLoaded = new AtomicInteger(0);
         List<Shop> shopsLoadInNextTick = new CopyOnWriteArrayList<>();
         for (ShopRecord record : records) {
-            loadShopFromShopRecord(worldName, record, deleteCorruptShops,
-                    shopsLoadInNextTick, successCounter, chunkNotLoaded)
+            loadShopFromShopRecord(
+                            worldName, record, deleteCorruptShops, shopsLoadInNextTick, successCounter, chunkNotLoaded)
                     .exceptionally(e -> {
                         plugin.logger().warn("Failed to load shop {}", record, e);
                         return null;
-                    }).join();
+                    })
+                    .join();
         }
         Util.mainThreadRun(() -> shopsLoadInNextTick.forEach(shop -> {
             try {
@@ -104,35 +107,57 @@ public class ShopLoader implements SubPasteItem {
                 plugin.logger().error("Failed to load shop {}.", shop.getShopId(), e);
             }
         }));
-        plugin.logger().info("Used {}ms to load {} shops into memory ({} shops will be loaded after chunks/world loaded).", shopTotalTimer.stopAndGetTimePassed(), successCounter.get(), chunkNotLoaded.get());
+        plugin.logger()
+                .info(
+                        "Used {}ms to load {} shops into memory ({} shops will be loaded after chunks/world loaded).",
+                        shopTotalTimer.stopAndGetTimePassed(),
+                        successCounter.get(),
+                        chunkNotLoaded.get());
     }
 
-    private CompletableFuture<Void> loadShopFromShopRecord(String worldName, ShopRecord shopRecord, boolean deleteCorruptShops, List<Shop> shopsLoadInNextTick, AtomicInteger successCounter, AtomicInteger chunkNotLoaded) {
-        return CompletableFuture.supplyAsync(() -> {
-            InfoRecord infoRecord = shopRecord.getInfoRecord();
-            DataRecord dataRecord = shopRecord.getDataRecord();
-            Timer singleShopLoadingTimer = new Timer(true);
-            ShopLoadResult result = loadSingleShop(infoRecord, dataRecord, worldName, shopsLoadInNextTick);
-            switch (result) {
-                case LOADED -> successCounter.incrementAndGet();
-                case LOAD_AFTER_CHUNK_LOADED -> chunkNotLoaded.incrementAndGet();
-                case WORLD_NOT_MATCH_SKIPPED -> {
-                    // Do nothing
-                }
-                case FAILED -> {
-                    if (deleteCorruptShops) {
-                        plugin.getDatabaseHelper().removeShopMap(infoRecord.getWorld(), infoRecord.getX(), infoRecord.getY(), infoRecord.getZ());
-                        plugin.logger().warn("Shop {} is corrupted, removed from database.", infoRecord.getShopId());
+    private CompletableFuture<Void> loadShopFromShopRecord(
+            String worldName,
+            ShopRecord shopRecord,
+            boolean deleteCorruptShops,
+            List<Shop> shopsLoadInNextTick,
+            AtomicInteger successCounter,
+            AtomicInteger chunkNotLoaded) {
+        return CompletableFuture.supplyAsync(
+                () -> {
+                    InfoRecord infoRecord = shopRecord.getInfoRecord();
+                    DataRecord dataRecord = shopRecord.getDataRecord();
+                    Timer singleShopLoadingTimer = new Timer(true);
+                    ShopLoadResult result = loadSingleShop(infoRecord, dataRecord, worldName, shopsLoadInNextTick);
+                    switch (result) {
+                        case LOADED -> successCounter.incrementAndGet();
+                        case LOAD_AFTER_CHUNK_LOADED -> chunkNotLoaded.incrementAndGet();
+                        case WORLD_NOT_MATCH_SKIPPED -> {
+                            // Do nothing
+                        }
+                        case FAILED -> {
+                            if (deleteCorruptShops) {
+                                plugin.getDatabaseHelper()
+                                        .removeShopMap(
+                                                infoRecord.getWorld(),
+                                                infoRecord.getX(),
+                                                infoRecord.getY(),
+                                                infoRecord.getZ());
+                                plugin.logger()
+                                        .warn("Shop {} is corrupted, removed from database.", infoRecord.getShopId());
+                            }
+                        }
                     }
-                }
-            }
-            Log.timing("Shop loading completed: " + result.name(), singleShopLoadingTimer);
-            return null;
-        }, this.executorService);
+                    Log.timing("Shop loading completed: " + result.name(), singleShopLoadingTimer);
+                    return null;
+                },
+                this.executorService);
     }
 
-
-    private ShopLoadResult loadSingleShop(InfoRecord infoRecord, DataRecord dataRecord, @Nullable String worldName, @NotNull List<Shop> shopsLoadInNextTick) {
+    private ShopLoadResult loadSingleShop(
+            InfoRecord infoRecord,
+            DataRecord dataRecord,
+            @Nullable String worldName,
+            @NotNull List<Shop> shopsLoadInNextTick) {
         // World check
         if (worldName != null) {
             if (!worldName.equals(infoRecord.getWorld())) {
@@ -160,7 +185,8 @@ public class ShopLoader implements SubPasteItem {
         DataRawDatabaseInfo rawInfo = new DataRawDatabaseInfo(dataRecord);
         Location location = new Location(Bukkit.getWorld(infoRecord.getWorld()), x, y, z);
         try {
-            shop = new ContainerShop(plugin,
+            shop = new ContainerShop(
+                    plugin,
                     infoRecord.getShopId(),
                     location,
                     rawInfo.getPrice(),
@@ -196,7 +222,7 @@ public class ShopLoader implements SubPasteItem {
         plugin.getShopManager().registerShop(shop, false); // persist=false to load to memory (it already persisted)
         if (Util.isLoaded(location)) {
             // Load to World
-            //plugin.getShopManager().loadShop(shop); // Patch the shops won't load around the spawn
+            // plugin.getShopManager().loadShop(shop); // Patch the shops won't load around the spawn
             shopsLoadInNextTick.add(shop);
         } else {
             return ShopLoadResult.LOAD_AFTER_CHUNK_LOADED;
@@ -298,7 +324,6 @@ public class ShopLoader implements SubPasteItem {
 
         private Benefit benefits;
 
-
         DataRawDatabaseInfo(@NotNull DataRecord dataRecord) {
             this.owner = dataRecord.getOwner();
             this.price = dataRecord.getPrice();
@@ -306,7 +331,7 @@ public class ShopLoader implements SubPasteItem {
             this.unlimited = dataRecord.isUnlimited();
             String extraStr = dataRecord.getExtra();
             this.name = dataRecord.getName();
-            //handle old shops
+            // handle old shops
             this.currency = dataRecord.getCurrency();
             this.hologram = dataRecord.isHologram();
             this.taxAccount = null;
@@ -318,8 +343,7 @@ public class ShopLoader implements SubPasteItem {
             this.benefits = SimpleBenefit.deserialize(dataRecord.getBenefit());
             String permissionJson = dataRecord.getPermissions();
             if (!StringUtils.isEmpty(permissionJson) && CommonUtil.isJson(permissionJson)) {
-                Type typeToken = new TypeToken<Map<UUID, String>>() {
-                }.getType();
+                Type typeToken = new TypeToken<Map<UUID, String>>() {}.getType();
                 this.permissions = new HashMap<>(JsonUtil.getGson().fromJson(permissionJson, typeToken));
             } else {
                 this.permissions = new HashMap<>();
@@ -332,7 +356,9 @@ public class ShopLoader implements SubPasteItem {
             try {
                 return Util.deserialize(itemConfig);
             } catch (InvalidConfigurationException e) {
-                QuickShop.getInstance().logger().warn("Failed load shop data, because target config can't deserialize the ItemStack", e);
+                QuickShop.getInstance()
+                        .logger()
+                        .warn("Failed load shop data, because target config can't deserialize the ItemStack", e);
                 Log.debug("Failed to load data to the ItemStack: " + itemConfig);
                 return null;
             }
@@ -348,7 +374,6 @@ public class ShopLoader implements SubPasteItem {
             }
             return yamlConfiguration;
         }
-
 
         @Override
         public String toString() {
@@ -393,5 +418,4 @@ public class ShopLoader implements SubPasteItem {
             }
         }
     }
-
 }

@@ -1,12 +1,11 @@
 package com.ghostchu.quickshop.api.economy;
 
 import com.ghostchu.quickshop.api.operation.Operation;
+import java.util.Deque;
+import java.util.List;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Deque;
-import java.util.List;
 
 public interface EconomyTransaction {
 
@@ -48,23 +47,28 @@ public interface EconomyTransaction {
 
     void setAmountAfterTax(double amountAfterTax);
 
-    @NotNull EconomyCore getCore();
+    @NotNull
+    EconomyCore getCore();
 
     void setCore(@NotNull EconomyCore core);
 
-    @Nullable String getCurrency();
+    @Nullable
+    String getCurrency();
 
     void setCurrency(@Nullable String currency);
 
-    @Nullable Object getFrom();
+    @Nullable
+    Object getFrom();
 
     void setFrom(@Nullable Object from);
 
-    @Nullable String getLastError();
+    @Nullable
+    String getLastError();
 
     void setLastError(@NotNull String lastError);
 
-    @NotNull Deque<Operation> getProcessingStack();
+    @NotNull
+    Deque<Operation> getProcessingStack();
 
     /**
      * Getting the tax in this transaction
@@ -75,15 +79,18 @@ public interface EconomyTransaction {
 
     void setTax(double tax);
 
-    @Nullable Object getTaxer();
+    @Nullable
+    Object getTaxer();
 
     void setTaxer(@Nullable Object taxer);
 
-    @Nullable Object getTo();
+    @Nullable
+    Object getTo();
 
     void setTo(@Nullable Object to);
 
-    @NotNull World getWorld();
+    @NotNull
+    World getWorld();
 
     void setWorld(@NotNull World world);
 
@@ -94,10 +101,10 @@ public interface EconomyTransaction {
      * @return A list contains all steps executed. If "continueWhenFailed" is false, it only contains all success steps before hit the error. Else all.
      */
     @SuppressWarnings("UnusedReturnValue")
-    @NotNull List<Operation> rollback(boolean continueWhenFailed);
+    @NotNull
+    List<Operation> rollback(boolean continueWhenFailed);
 
     void setAllowLoan(boolean allowLoan);
-
 
     interface TransactionCallback {
         /**
@@ -117,17 +124,14 @@ public interface EconomyTransaction {
          *
          * @param economyTransaction Transaction
          */
-        default void onFailed(@NotNull EconomyTransaction economyTransaction) {
-        }
+        default void onFailed(@NotNull EconomyTransaction economyTransaction) {}
 
         /**
          * Calling while Transaction commit successfully
          *
          * @param economyTransaction Transaction
          */
-        default void onSuccess(@NotNull EconomyTransaction economyTransaction) {
-
-        }
+        default void onSuccess(@NotNull EconomyTransaction economyTransaction) {}
 
         /**
          * Calling while Tax processing failed
@@ -136,9 +140,6 @@ public interface EconomyTransaction {
          *
          * @param economyTransaction Transaction
          */
-        default void onTaxFailed(@NotNull EconomyTransaction economyTransaction) {
-        }
-
+        default void onTaxFailed(@NotNull EconomyTransaction economyTransaction) {}
     }
-
 }

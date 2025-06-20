@@ -1,11 +1,10 @@
 package com.ghostchu.quickshop.addon.discount;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DiscountStatusManager {
     private final Map<UUID, String> PLAYER_STATUS = new HashMap<>();

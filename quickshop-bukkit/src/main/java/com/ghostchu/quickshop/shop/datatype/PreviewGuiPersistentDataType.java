@@ -1,13 +1,11 @@
 package com.ghostchu.quickshop.shop.datatype;
 
+import java.util.UUID;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
-public class PreviewGuiPersistentDataType
-        implements PersistentDataType<String, UUID> {
+public class PreviewGuiPersistentDataType implements PersistentDataType<String, UUID> {
     public static final PreviewGuiPersistentDataType INSTANCE = new PreviewGuiPersistentDataType();
 
     @Override
@@ -22,20 +20,17 @@ public class PreviewGuiPersistentDataType
 
     @NotNull
     @Override
-    public String toPrimitive(
-            @NotNull UUID complex, @NotNull PersistentDataAdapterContext context) {
+    public String toPrimitive(@NotNull UUID complex, @NotNull PersistentDataAdapterContext context) {
         return complex.toString();
     }
 
     @NotNull
     @Override
-    public UUID fromPrimitive(
-            @NotNull String primitive, @NotNull PersistentDataAdapterContext context) {
+    public UUID fromPrimitive(@NotNull String primitive, @NotNull PersistentDataAdapterContext context) {
         try {
             return UUID.fromString(primitive);
         } catch (Exception exception) {
             return new UUID(0L, 0L);
         }
     }
-
 }

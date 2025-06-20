@@ -5,14 +5,13 @@ import com.ghostchu.quickshop.api.inventory.InventoryWrapper;
 import com.ghostchu.quickshop.api.inventory.InventoryWrapperIterator;
 import com.ghostchu.quickshop.api.inventory.InventoryWrapperManager;
 import com.ghostchu.quickshop.api.inventory.InventoryWrapperType;
+import java.util.Map;
 import org.bukkit.Location;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 public class BukkitInventoryWrapper implements InventoryWrapper {
     private final Inventory inventory;
@@ -43,7 +42,6 @@ public class BukkitInventoryWrapper implements InventoryWrapper {
             } else {
                 snapshot[i] = null;
             }
-
         }
         return snapshot;
     }

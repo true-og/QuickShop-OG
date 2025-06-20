@@ -9,6 +9,7 @@ import com.ghostchu.quickshop.api.shop.permission.BuiltInShopPermission;
 import com.ghostchu.quickshop.util.MsgUtil;
 import com.ghostchu.quickshop.util.Util;
 import io.papermc.lib.PaperLib;
+import java.util.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
@@ -18,8 +19,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
 
 public class SubCommand_Find implements CommandHandler<Player> {
 
@@ -39,12 +38,11 @@ public class SubCommand_Find implements CommandHandler<Player> {
         final Location loc = sender.getLocation().clone();
         final Vector playerVector = loc.toVector();
 
-        //Combing command args
+        // Combing command args
         final StringBuilder sb = new StringBuilder(parser.getArgs().get(0));
         for (int i = 1; i < parser.getArgs().size(); i++) {
             sb.append("_").append(parser.getArgs().get(i));
         }
-
 
         final String lookFor = sb.toString().toLowerCase();
 
@@ -59,18 +57,18 @@ public class SubCommand_Find implements CommandHandler<Player> {
         final boolean allShops = plugin.getConfig().getBoolean("shop.finding.all");
         final boolean excludeOutOfStock = plugin.getConfig().getBoolean("shop.finding.exclude-out-of-stock");
 
-        //Rewrite by Ghost_chu - Use vector to replace old chunks finding.
+        // Rewrite by Ghost_chu - Use vector to replace old chunks finding.
 
         Map<Shop, Double> aroundShops = new HashMap<>();
 
-        //Choose finding source
+        // Choose finding source
         Collection<Shop> scanPool;
         if (allShops) {
             scanPool = plugin.getShopManager().getAllShops();
         } else {
             scanPool = plugin.getShopManager().getLoadedShops();
         }
-        //Calc distance between player and shop
+        // Calc distance between player and shop
         for (Shop shop : scanPool) {
             if (!Objects.equals(shop.getLocation().getWorld(), loc.getWorld())) {
                 continue;
@@ -84,10 +82,13 @@ public class SubCommand_Find implements CommandHandler<Player> {
             }
             Vector shopVector = shop.getLocation().toVector();
             double distance = shopVector.distance(playerVector);
-            //Check distance
+            // Check distance
             if (distance <= maxDistance) {
-                //Collect valid shop that trading items we want
-                if (!ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(Util.getItemStackName(shop.getItem()))).toLowerCase().contains(lookFor)) {
+                // Collect valid shop that trading items we want
+                if (!ChatColor.stripColor(LegacyComponentSerializer.legacySection()
+                                .serialize(Util.getItemStackName(shop.getItem())))
+                        .toLowerCase()
+                        .contains(lookFor)) {
                     if (!shop.getItem().getType().name().toLowerCase().contains(lookFor)) {
                         if (plugin.getItemMarker().get(originLookFor) == null) {
                             continue;
@@ -95,52 +96,66 @@ public class SubCommand_Find implements CommandHandler<Player> {
                     }
                 }
                 if (excludeOutOfStock) {
-                    if ((shop.isSelling() && shop.getRemainingStock() == 0) || (shop.isBuying() && shop.getRemainingSpace() == 0)) {
+                    if ((shop.isSelling() && shop.getRemainingStock() == 0)
+                            || (shop.isBuying() && shop.getRemainingSpace() == 0)) {
                         continue;
                     }
                 }
                 aroundShops.put(shop, distance);
             }
         }
-        //Check if no shops found
+        // Check if no shops found
         if (aroundShops.isEmpty()) {
             plugin.text().of(sender, "no-nearby-shop", lookFor).send();
             return;
         }
 
-        //Okay now all shops is our wanted shop in Map
+        // Okay now all shops is our wanted shop in Map
 
-        List<Map.Entry<Shop, Double>> sortedShops = aroundShops.entrySet().stream().sorted(Map.Entry.<Shop, Double>comparingByValue(Double::compare).reversed()).toList();
+        List<Map.Entry<Shop, Double>> sortedShops = aroundShops.entrySet().stream()
+                .sorted(Map.Entry.<Shop, Double>comparingByValue(Double::compare)
+                        .reversed())
+                .toList();
 
-        //Function
+        // Function
         if (usingOldLogic) {
             Map.Entry<Shop, Double> closest = sortedShops.get(0);
             Location lookAt = closest.getKey().getLocation().clone().add(0.5, 0.5, 0.5);
-            PaperLib.teleportAsync(sender, Util.lookAt(sender.getEyeLocation(), lookAt).add(0, -1.62, 0),
+            PaperLib.teleportAsync(
+                    sender,
+                    Util.lookAt(sender.getEyeLocation(), lookAt).add(0, -1.62, 0),
                     PlayerTeleportEvent.TeleportCause.UNKNOWN);
-            plugin.text().of(sender, "nearby-shop-this-way", closest.getValue().intValue()).send();
+            plugin.text()
+                    .of(sender, "nearby-shop-this-way", closest.getValue().intValue())
+                    .send();
         } else {
             plugin.text().of(sender, "nearby-shop-header", lookFor).send();
             for (Map.Entry<Shop, Double> shopDoubleEntry : sortedShops) {
                 Shop shop = shopDoubleEntry.getKey();
                 Location location = shop.getLocation();
                 ItemStack previewItemStack = shop.getItem().clone();
-                ItemPreviewComponentPrePopulateEvent previewComponentPrePopulateEvent = new ItemPreviewComponentPrePopulateEvent(previewItemStack, sender);
+                ItemPreviewComponentPrePopulateEvent previewComponentPrePopulateEvent =
+                        new ItemPreviewComponentPrePopulateEvent(previewItemStack, sender);
                 previewComponentPrePopulateEvent.callEvent();
                 previewItemStack = previewComponentPrePopulateEvent.getItemStack();
-                //  "nearby-shop-entry": "&a- Info:{0} &aPrice:&b{1} &ax:&b{2} &ay:&b{3} &az:&b{4} &adistance: &b{5} &ablock(s)"
-                Component entryComponent = plugin.text().of(sender, "nearby-shop-entry",
-                                shop.getSignText(plugin.text().findRelativeLanguages(sender)).get(1),
-                                shop.getSignText(plugin.text().findRelativeLanguages(sender)).get(3),
+                //  "nearby-shop-entry": "&a- Info:{0} &aPrice:&b{1} &ax:&b{2} &ay:&b{3} &az:&b{4} &adistance: &b{5}
+                // &ablock(s)"
+                Component entryComponent = plugin.text()
+                        .of(
+                                sender,
+                                "nearby-shop-entry",
+                                shop.getSignText(plugin.text().findRelativeLanguages(sender))
+                                        .get(1),
+                                shop.getSignText(plugin.text().findRelativeLanguages(sender))
+                                        .get(3),
                                 location.getBlockX(),
                                 location.getBlockY(),
                                 location.getBlockZ(),
-                                shopDoubleEntry.getValue().intValue()
-                        ).forLocale()
+                                shopDoubleEntry.getValue().intValue())
+                        .forLocale()
                         .hoverEvent(plugin.getPlatform().getItemStackHoverEvent(previewItemStack));
                 MsgUtil.sendDirectMessage(sender, entryComponent);
             }
-
         }
     }
 }

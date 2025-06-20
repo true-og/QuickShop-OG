@@ -1,4 +1,4 @@
-///*
+/// *
 // *  This file is a part of project QuickShop, the name is HelpChatPastebinPaster.java
 // *  Copyright (C) Ghost_chu and contributors
 // *
@@ -17,24 +17,24 @@
 // *
 // */
 //
-//package com.ghostchu.quickshop.util.paste;
+// package com.ghostchu.quickshop.util.paste;
 //
-//import com.ghostchu.quickshop.common.util.JsonUtil;
-//import kong.unirest.HttpResponse;
-//import kong.unirest.Unirest;
-//import lombok.AllArgsConstructor;
-//import lombok.Data;
-//import lombok.NoArgsConstructor;
-//import org.jetbrains.annotations.NotNull;
+// import com.ghostchu.quickshop.common.util.JsonUtil;
+// import kong.unirest.HttpResponse;
+// import kong.unirest.Unirest;
+// import lombok.AllArgsConstructor;
+// import lombok.Data;
+// import lombok.NoArgsConstructor;
+// import org.jetbrains.annotations.NotNull;
 //
-//import java.io.IOException;
+// import java.io.IOException;
 //
-///**
+/// **
 // * Paste the paste through <a href="https://paste.helpch.at/">https://paste.helpch.at/</a>
 // *
 // * @author Ghost_chu
 // */
-//public class HelpChatPastebinPaster implements PasteInterface {
+// public class HelpChatPastebinPaster implements PasteInterface {
 //    @Override
 //    @NotNull
 //    public String pasteTheText(@NotNull String text) throws IOException {
@@ -76,5 +76,5 @@
 //        private final String _paster = "QuickShop";
 //        private String data;
 //    }
-//}
+// }
 //

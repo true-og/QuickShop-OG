@@ -69,8 +69,6 @@ public class VaultPermissionProvider implements PermissionProvider {
             return new PermissionInformationContainer(sender, permission, null, "User is Console");
         }
         OfflinePlayer offlinePlayer = (OfflinePlayer) sender;
-        return new PermissionInformationContainer(
-                sender, permission, api.getPrimaryGroup(null, offlinePlayer), null);
+        return new PermissionInformationContainer(sender, permission, api.getPrimaryGroup(null, offlinePlayer), null);
     }
-
 }

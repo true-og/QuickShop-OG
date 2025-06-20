@@ -46,12 +46,11 @@ public class DisplayProtectionListener extends AbstractProtectionListener {
         @Nullable Location loc = event.getInventory().getLocation();
         @Nullable InventoryHolder holder = event.getInventory().getHolder();
         event.setCancelled(true);
-        sendAlert(
-                "[DisplayGuard] Something  "
-                        + holder
-                        + " at "
-                        + loc
-                        + " trying pickup the DisplayItem,  you should teleport to that location and to check detail..");
+        sendAlert("[DisplayGuard] Something  "
+                + holder
+                + " at "
+                + loc
+                + " trying pickup the DisplayItem,  you should teleport to that location and to check detail..");
         Util.inventoryCheck(new BukkitInventoryWrapper(event.getInventory()));
     }
 
@@ -94,10 +93,9 @@ public class DisplayProtectionListener extends AbstractProtectionListener {
         }
         event.getHook().remove();
         event.setCancelled(true);
-        sendAlert(
-                "[DisplayGuard] Player "
-                        + event.getPlayer().getName()
-                        + " trying hook item use Fishing Rod, QuickShop already removed it.");
+        sendAlert("[DisplayGuard] Player "
+                + event.getPlayer().getName()
+                + " trying hook item use Fishing Rod, QuickShop already removed it.");
         Util.inventoryCheck(new BukkitInventoryWrapper(event.getPlayer().getInventory()));
     }
 
@@ -111,10 +109,9 @@ public class DisplayProtectionListener extends AbstractProtectionListener {
         }
         event.setCancelled(true);
         Util.inventoryCheck(new BukkitInventoryWrapper(event.getPlayer().getInventory()));
-        sendAlert(
-                "[DisplayGuard] Player  "
-                        + event.getPlayer().getName()
-                        + " trying mainipulate armorstand contains displayItem.");
+        sendAlert("[DisplayGuard] Player  "
+                + event.getPlayer().getName()
+                + " trying mainipulate armorstand contains displayItem.");
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -128,10 +125,9 @@ public class DisplayProtectionListener extends AbstractProtectionListener {
         if (AbstractDisplayItem.checkIsGuardItemStack(itemEntity.getItemStack())) {
             event.setCancelled(true);
             event.getEntity().remove();
-            sendAlert(
-                    "[DisplayGuard] Somebody want dupe the display by Portal at "
-                            + event.getFrom()
-                            + " , QuickShop already cancel it.");
+            sendAlert("[DisplayGuard] Somebody want dupe the display by Portal at "
+                    + event.getFrom()
+                    + " , QuickShop already cancel it.");
         }
     }
 }

@@ -76,7 +76,8 @@ public class BungeeListener extends AbstractQSListener implements PluginMessageL
             return;
         }
         String chatMessage = in.readUTF();
-        Log.debug("Handling the plugin channel " + channel + " with sub channel " + subChannel + " on player " + player.getName() + " for message: " + chatMessage);
+        Log.debug("Handling the plugin channel " + channel + " with sub channel " + subChannel + " on player "
+                + player.getName() + " for message: " + chatMessage);
         plugin.getShopManager().handleChat(player, chatMessage);
     }
 }

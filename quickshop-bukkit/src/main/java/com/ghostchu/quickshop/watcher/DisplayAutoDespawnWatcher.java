@@ -8,14 +8,13 @@ import com.ghostchu.quickshop.util.paste.item.SubPasteItem;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.ReloadStatus;
 import com.ghostchu.simplereloadlib.Reloadable;
+import java.util.StringJoiner;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.StringJoiner;
 
 public class DisplayAutoDespawnWatcher extends BukkitRunnable implements Reloadable, SubPasteItem {
     private final QuickShop plugin;
@@ -46,12 +45,12 @@ public class DisplayAutoDespawnWatcher extends BukkitRunnable implements Reloada
     @Override
     public void run() {
         for (Shop shop : plugin.getShopManager().getLoadedShops()) {
-            //Shop may be deleted or unloaded when iterating
+            // Shop may be deleted or unloaded when iterating
             if (!shop.isLoaded()) {
                 continue;
             }
             Location location = shop.getLocation();
-            World world = shop.getLocation().getWorld(); //Cache this, because it will took some time.
+            World world = shop.getLocation().getWorld(); // Cache this, because it will took some time.
             AbstractDisplayItem displayItem = ((ContainerShop) shop).getDisplayItem();
             if (displayItem != null) {
                 // Check the range has player?
@@ -83,7 +82,8 @@ public class DisplayAutoDespawnWatcher extends BukkitRunnable implements Reloada
     @Override
     public @NotNull String genBody() {
         StringJoiner joiner = new StringJoiner("<br/>");
-        joiner.add("<b>Warning: DisplayAutoDespawnWatcher has been enabled, this may cause lag. This feature is not recommended</b>");
+        joiner.add(
+                "<b>Warning: DisplayAutoDespawnWatcher has been enabled, this may cause lag. This feature is not recommended</b>");
         joiner.add("<p>Range: " + range + "</p>");
         return joiner.toString();
     }

@@ -1,16 +1,15 @@
 package com.ghostchu.quickshop.api.inventory;
 
 import com.ghostchu.quickshop.api.QuickShopAPI;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Wrapper to handle inventory/fake inventory/custom inventory etc.
@@ -68,7 +67,12 @@ public interface InventoryWrapper extends Iterable<ItemStack> {
      */
     @NotNull
     default ItemStack[] createSnapshot() {
-        Logger.getLogger("QuickShop-Hikari").log(Level.WARNING, "InventoryWrapper provider " + getWrapperManager().getClass().getName() + " didn't override default InventoryWrapper#createSnapshot method, it may cause un-excepted behavior like item missing, mess order and heavy hit performance! Please report this issue to InventoryWrapper provider plugin author!");
+        Logger.getLogger("QuickShop-Hikari")
+                .log(
+                        Level.WARNING,
+                        "InventoryWrapper provider "
+                                + getWrapperManager().getClass().getName()
+                                + " didn't override default InventoryWrapper#createSnapshot method, it may cause un-excepted behavior like item missing, mess order and heavy hit performance! Please report this issue to InventoryWrapper provider plugin author!");
         List<ItemStack> contents = new ArrayList<>();
         for (ItemStack stack : this) {
             if (stack == null) {
@@ -84,21 +88,24 @@ public interface InventoryWrapper extends Iterable<ItemStack> {
      *
      * @return Wrapper Manager
      */
-    @NotNull InventoryWrapperManager getWrapperManager();
+    @NotNull
+    InventoryWrapperManager getWrapperManager();
 
     /**
      * Gets the block or entity belonging to the open inventory
      *
      * @return The holder of the inventory; null if it has no holder.
      */
-    @Nullable InventoryHolder getHolder();
+    @Nullable
+    InventoryHolder getHolder();
 
     /**
      * Gets the Inventory Type
      *
      * @return The Inventory Type
      */
-    @NotNull InventoryWrapperType getInventoryType();
+    @NotNull
+    InventoryWrapperType getInventoryType();
 
     /**
      * Get the location of the block or entity which corresponds to this inventory. May return null if this container
@@ -106,7 +113,8 @@ public interface InventoryWrapper extends Iterable<ItemStack> {
      *
      * @return location or null if not applicable.
      */
-    @Nullable Location getLocation();
+    @Nullable
+    Location getLocation();
 
     /**
      * Do valid check, check if this Inventory is valid.
@@ -136,7 +144,8 @@ public interface InventoryWrapper extends Iterable<ItemStack> {
             while (iterator.hasNext()) {
                 ItemStack itemStack = iterator.next();
                 // TODO: Need lots of verification, it cause mismatch between items under non-Bukkit item matcher
-                if (itemStack != null && QuickShopAPI.getInstance().getItemMatcher().matches(itemStackToRemove, itemStack)) {
+                if (itemStack != null
+                        && QuickShopAPI.getInstance().getItemMatcher().matches(itemStackToRemove, itemStack)) {
                     int couldRemove = itemStack.getAmount();
                     int actuallyRemove = Math.min(itemStackToRemove.getAmount(), couldRemove);
                     itemStack.setAmount(itemStack.getAmount() - actuallyRemove);
@@ -165,7 +174,12 @@ public interface InventoryWrapper extends Iterable<ItemStack> {
      * @return The result of rollback.
      */
     default boolean restoreSnapshot(@NotNull ItemStack[] snapshot) {
-        Logger.getLogger("QuickShop-Hikari").log(Level.WARNING, "InventoryWrapper provider " + getWrapperManager().getClass().getName() + " didn't override default InventoryWrapper#restoreSnapshot method, it may cause un-excepted behavior like item missing, mess order and heavy hit performance! Please report this issue to InventoryWrapper provider plugin author!");
+        Logger.getLogger("QuickShop-Hikari")
+                .log(
+                        Level.WARNING,
+                        "InventoryWrapper provider "
+                                + getWrapperManager().getClass().getName()
+                                + " didn't override default InventoryWrapper#restoreSnapshot method, it may cause un-excepted behavior like item missing, mess order and heavy hit performance! Please report this issue to InventoryWrapper provider plugin author!");
         InventoryWrapperIterator it = iterator();
         while (it.hasNext()) {
             it.remove();
@@ -198,7 +212,8 @@ public interface InventoryWrapper extends Iterable<ItemStack> {
                     continue AddProcess;
                 } else {
                     if (itemStack.isSimilar(itemStackToAdd)) {
-                        int couldAdd = itemStack.getMaxStackSize() - Math.min(itemStack.getMaxStackSize(), itemStack.getAmount());
+                        int couldAdd = itemStack.getMaxStackSize()
+                                - Math.min(itemStack.getMaxStackSize(), itemStack.getAmount());
                         int actuallyAdd = Math.min(itemStackToAdd.getAmount(), couldAdd);
                         itemStack.setAmount(itemStack.getAmount() + actuallyAdd);
                         int needsNow = itemStackToAdd.getAmount() - actuallyAdd;
@@ -237,5 +252,4 @@ public interface InventoryWrapper extends Iterable<ItemStack> {
          */
         boolean changeItem(int index, ItemStack itemStack);
     }
-
 }

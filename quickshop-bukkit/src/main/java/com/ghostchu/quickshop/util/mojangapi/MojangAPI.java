@@ -7,15 +7,14 @@ import com.google.common.cache.CacheBuilder;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 public class MojangAPI {
     private final MojangApiMirror mirror;
@@ -23,7 +22,6 @@ public class MojangAPI {
     public MojangAPI(MojangApiMirror mirror) {
         this.mirror = mirror;
     }
-
 
     @NotNull
     public AssetsAPI getAssetsAPI(@NotNull String serverVersion) {
@@ -44,7 +42,6 @@ public class MojangAPI {
         return new ResourcesAPI(mirror);
     }
 
-
     @Data
     public static class AssetsFileData {
         private String content;
@@ -60,9 +57,8 @@ public class MojangAPI {
 
     @Data
     public static class ResourcesAPI {
-        protected final Cache<String, String> requestCachePool = CacheBuilder.newBuilder()
-                .expireAfterWrite(7, TimeUnit.DAYS)
-                .build();
+        protected final Cache<String, String> requestCachePool =
+                CacheBuilder.newBuilder().expireAfterWrite(7, TimeUnit.DAYS).build();
         private final MojangApiMirror apiMirror;
 
         public ResourcesAPI(MojangApiMirror mirror) {
@@ -78,7 +74,6 @@ public class MojangAPI {
             return Optional.ofNullable(response.getBody());
         }
     }
-
 
     public static class AssetsAPI {
         private final MetaAPI metaAPI;
@@ -120,15 +115,12 @@ public class MojangAPI {
         public boolean isAvailable() {
             return this.metaAPI.get().isPresent();
         }
-
-
     }
 
     @Data
     public static class GameInfoAPI {
-        protected final Cache<String, String> requestCachePool = CacheBuilder.newBuilder()
-                .expireAfterWrite(7, TimeUnit.DAYS)
-                .build();
+        protected final Cache<String, String> requestCachePool =
+                CacheBuilder.newBuilder().expireAfterWrite(7, TimeUnit.DAYS).build();
         private final String json;
         private final Gson gson = JsonUtil.getGson();
 
@@ -145,6 +137,7 @@ public class MojangAPI {
         static class DataBean {
             @Nullable
             private AssetIndexBean assetIndex;
+
             @Nullable
             private String assets;
 
@@ -159,15 +152,14 @@ public class MojangAPI {
                  */
                 @Nullable
                 private String id;
+
                 @Nullable
                 private String sha1;
+
                 @Nullable
                 private String url;
             }
-
         }
-
-
     }
 
     public static class MetaAPI {
@@ -203,9 +195,11 @@ public class MojangAPI {
                 for (JsonElement gameVersionData : availableVersions.getAsJsonArray()) {
                     if (gameVersionData.isJsonObject()) {
                         JsonElement gameId = gameVersionData.getAsJsonObject().get("id");
-                        JsonElement gameIndexUrl = gameVersionData.getAsJsonObject().get("url");
+                        JsonElement gameIndexUrl =
+                                gameVersionData.getAsJsonObject().get("url");
                         if (Objects.equals(gameId.getAsString(), version)) {
-                            HttpResponse<String> response1 = Unirest.get(gameIndexUrl.getAsString()).asString();
+                            HttpResponse<String> response1 =
+                                    Unirest.get(gameIndexUrl.getAsString()).asString();
                             if (!response1.isSuccess()) {
                                 return Optional.empty();
                             }
@@ -219,6 +213,4 @@ public class MojangAPI {
             }
         }
     }
-
-
 }

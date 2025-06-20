@@ -1,11 +1,10 @@
 package com.ghostchu.quickshop.api.shop;
 
 import com.ghostchu.quickshop.api.shop.permission.BuiltInShopPermission;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.List;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Shop permission manager.
@@ -17,7 +16,8 @@ public interface ShopPermissionManager {
      *
      * @return Groups.
      */
-    @NotNull List<String> getGroups();
+    @NotNull
+    List<String> getGroups();
 
     /**
      * Gets the permission list of a group.

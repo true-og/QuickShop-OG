@@ -14,14 +14,16 @@ public interface ItemMatcher {
      *
      * @return Provider name
      */
-    @NotNull String getName();
+    @NotNull
+    String getName();
 
     /**
      * Gets the ItemMatcher provider plugin instance
      *
      * @return Provider Plugin instance
      */
-    @NotNull Plugin getPlugin();
+    @NotNull
+    Plugin getPlugin();
 
     /**
      * Tests ItemStacks is matches

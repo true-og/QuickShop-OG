@@ -4,13 +4,12 @@ import com.ghostchu.quickshop.api.shop.ShopModerator;
 import com.ghostchu.quickshop.common.util.JsonUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Contains shop's moderators infomations, owner, staffs etc.
@@ -169,5 +168,4 @@ public class SimpleShopModerator implements ShopModerator {
         SimpleShopModerator gsonWorkaround = (SimpleShopModerator) shopModerator;
         return gson.toJson(gsonWorkaround); // Use Gson serialize this class
     }
-
 }

@@ -35,5 +35,4 @@ public class SubCommand_SilentUnlimited extends SubCommand_SilentBase {
             plugin.text().of(sender, "unlimited-shop-owner-keeped").send();
         }
     }
-
 }

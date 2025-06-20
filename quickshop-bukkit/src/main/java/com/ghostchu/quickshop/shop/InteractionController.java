@@ -5,15 +5,14 @@ import com.ghostchu.quickshop.util.paste.item.SubPasteItem;
 import com.ghostchu.quickshop.util.paste.util.HTMLTable;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.Reloadable;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.EnumMap;
 import java.util.Map;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 public class InteractionController implements Reloadable, SubPasteItem {
 
@@ -41,8 +40,12 @@ public class InteractionController implements Reloadable, SubPasteItem {
         for (Interaction value : Interaction.values()) {
             try {
                 behaviorMap.put(value, InteractionBehavior.valueOf(config.getString(value.name())));
-                if (value.isRightLick() && value.isShopBlock() && InteractionBehavior.valueOf(config.getString(value.name())) != InteractionBehavior.NONE) {
-                    plugin.logger().warn("Define a action for right shopblock clicking may prevent player from opening the shop container!");
+                if (value.isRightLick()
+                        && value.isShopBlock()
+                        && InteractionBehavior.valueOf(config.getString(value.name())) != InteractionBehavior.NONE) {
+                    plugin.logger()
+                            .warn(
+                                    "Define a action for right shopblock clicking may prevent player from opening the shop container!");
                 }
             } catch (IllegalArgumentException e) {
                 plugin.logger().warn("Failed to load interaction behavior for {}! Using NONE behavior!", value.name());

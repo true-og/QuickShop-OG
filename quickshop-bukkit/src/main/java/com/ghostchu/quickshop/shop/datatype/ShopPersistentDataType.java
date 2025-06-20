@@ -10,7 +10,8 @@ import org.jetbrains.annotations.NotNull;
 public class ShopPersistentDataType implements PersistentDataType<String, ShopPersistentData> {
     static final ShopPersistentDataType INSTANCE = new ShopPersistentDataType();
 
-    private static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+    private static final Gson GSON =
+            new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
     @Override
     public @NotNull Class<String> getPrimitiveType() {
@@ -35,8 +36,7 @@ public class ShopPersistentDataType implements PersistentDataType<String, ShopPe
 
     @NotNull
     @Override
-    public ShopPersistentData fromPrimitive(
-            @NotNull String primitive, @NotNull PersistentDataAdapterContext context) {
+    public ShopPersistentData fromPrimitive(@NotNull String primitive, @NotNull PersistentDataAdapterContext context) {
         try {
             return GSON.fromJson(primitive, ShopPersistentData.class);
         } catch (Exception th) {

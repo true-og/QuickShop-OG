@@ -25,7 +25,6 @@ public enum ShopType {
         return null;
     }
 
-
     public static @NotNull ShopType fromID(int id) {
         for (ShopType type : ShopType.values()) {
             if (type.id == id) {

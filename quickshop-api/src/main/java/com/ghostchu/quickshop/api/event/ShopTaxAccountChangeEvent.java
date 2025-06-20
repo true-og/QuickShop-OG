@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 public class ShopTaxAccountChangeEvent extends AbstractQSEvent implements QSCancellable {
     @Nullable
     private final QUser newTaxAccount;
+
     @NotNull
     private final Shop shop;
 

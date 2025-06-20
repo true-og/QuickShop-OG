@@ -1,10 +1,9 @@
 package com.ghostchu.quickshop.api.shop.display;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
 public enum DisplayType {
     /*

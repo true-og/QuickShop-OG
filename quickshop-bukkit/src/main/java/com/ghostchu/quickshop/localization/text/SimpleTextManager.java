@@ -23,6 +23,17 @@ import com.ghostchu.simplereloadlib.ReloadStatus;
 import com.ghostchu.simplereloadlib.Reloadable;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import kong.unirest.Unirest;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
@@ -43,18 +54,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
 public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem {
     private static final String DEFAULT_LOCALE = "en_us";
     private static final String LOCALE_MAPPING_SYNTAX = "locale";
@@ -64,10 +63,13 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
     // <File <Locale, Section>>
     private final LanguageFilesManager languageFilesManager = new LanguageFilesManager();
     private final Set<String> availableLanguages = new LinkedHashSet<>();
-    private final Cache<String, String> languagesCache =
-            CacheBuilder.newBuilder().expireAfterAccess(30, TimeUnit.MINUTES).recordStats().build();
+    private final Cache<String, String> languagesCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(30, TimeUnit.MINUTES)
+            .recordStats()
+            .build();
     private final String crowdinHost;
     private TagResolver[] tagResolvers;
+
     @Nullable
     private CrowdinOTA crowdinOTA;
 
@@ -75,11 +77,13 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
         this.plugin = plugin;
         plugin.getReloadManager().register(this);
         plugin.getPasteManager().register(plugin.getJavaPlugin(), this);
-        this.crowdinHost = PackageUtil.parsePackageProperly("crowdinHost").asString("https://crowdinota.hikari.r2.quickshop-powered.top");
+        this.crowdinHost = PackageUtil.parsePackageProperly("crowdinHost")
+                .asString("https://crowdinota.hikari.r2.quickshop-powered.top");
         if (PackageUtil.parsePackageProperly("enableCrowdinOTA").asBoolean(true)) {
             try {
                 plugin.logger().info("Please wait us fetch the translation updates from Crowdin OTA service...");
-                this.crowdinOTA = new CrowdinOTA(crowdinHost, new File(Util.getCacheFolder(), "crowdin-ota"), Unirest.primaryInstance());
+                this.crowdinOTA = new CrowdinOTA(
+                        crowdinHost, new File(Util.getCacheFolder(), "crowdin-ota"), Unirest.primaryInstance());
             } catch (Exception e) {
                 plugin.logger().warn("Cannot initialize the CrowdinOTA instance!", e);
             }
@@ -94,7 +98,7 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
      */
     public void load() {
         plugin.logger().info("Loading up translations from Crowdin OTA, this may need a while...");
-        //TODO: This will break the message processing system in-game until loading finished, need to fix it.
+        // TODO: This will break the message processing system in-game until loading finished, need to fix it.
         this.reset();
         initTagResolvers();
         // first, we need load built-in fallback translation.
@@ -108,7 +112,10 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
                 if (fileInstance != null) {
                     for (String crowdinCode : fileInstance.getAvailableLocales()) {
                         String content = fileInstance.getLocaleContentByCrowdinCode(crowdinCode);
-                        String mcCode = crowdinOTA.mapLanguageCode(crowdinCode, LOCALE_MAPPING_SYNTAX).toLowerCase(Locale.ROOT).replace("-", "_");
+                        String mcCode = crowdinOTA
+                                .mapLanguageCode(crowdinCode, LOCALE_MAPPING_SYNTAX)
+                                .toLowerCase(Locale.ROOT)
+                                .replace("-", "_");
                         if (content == null) {
                             plugin.logger().warn("Failed to load translation for {}, the content is null.", mcCode);
                             continue;
@@ -131,7 +138,8 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
         // and don't forget fix missing
         languageFilesManager.fillMissing(loadBuiltInFallback());
         // finally, load override translations
-        Collection<String> pending = getOverrideLocales(languageFilesManager.getDistributions().keySet());
+        Collection<String> pending =
+                getOverrideLocales(languageFilesManager.getDistributions().keySet());
         Log.debug("Pending: " + Arrays.toString(pending.toArray()));
         pending.forEach(locale -> {
             File file = getOverrideLocaleFile(locale);
@@ -175,7 +183,6 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
             postProcessors.add(new ForceReplaceFillerProcessor());
         }
         postProcessors.add(new PlaceHolderApiProcessor());
-
     }
 
     private void initTagResolvers() {
@@ -272,7 +279,8 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
                 if (zipFile.canReadEntryData(entry)) {
                     try {
                         YamlConfiguration configuration = new YamlConfiguration();
-                        configuration.loadFromString(new String(zipFile.getInputStream(entry).readAllBytes(), StandardCharsets.UTF_8));
+                        configuration.loadFromString(
+                                new String(zipFile.getInputStream(entry).readAllBytes(), StandardCharsets.UTF_8));
                         availableLang.put(locale.toLowerCase(Locale.ROOT).replace("-", "_"), configuration);
                         Log.debug("Bundled language file: " + locale + " at " + entry.getName() + " loaded.");
                     } catch (IOException | InvalidConfigurationException e) {
@@ -285,7 +293,6 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
             plugin.logger().warn("Failed to load bundled translation, jar invalid", e);
             return new HashMap<>();
         }
-
     }
 
     /**
@@ -381,7 +388,7 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
     @Override
     @NotNull
     public ProxiedLocale findRelativeLanguages(@Nullable String langCode) {
-        //langCode may null when some plugins providing fake player
+        // langCode may null when some plugins providing fake player
         if (langCode == null || langCode.isEmpty()) {
             return new ProxiedLocale(langCode, DEFAULT_LOCALE);
         }
@@ -462,7 +469,8 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
         FileConfiguration configuration = languageFilesManager.getDistribution(locale);
         if (configuration == null) {
             configuration = new YamlConfiguration();
-            configuration.loadFromString(languageFilesManager.getDistribution(DEFAULT_LOCALE).saveToString());
+            configuration.loadFromString(
+                    languageFilesManager.getDistribution(DEFAULT_LOCALE).saveToString());
         }
         configuration.set(path, text);
         languageFilesManager.deploy(locale, configuration);
@@ -481,7 +489,8 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
             return findRelativeLanguages(MsgUtil.getDefaultGameLanguageCode());
         }
         try {
-            return findRelativeLanguages(plugin.getDatabaseHelper().getPlayerLocale(sender).get());
+            return findRelativeLanguages(
+                    plugin.getDatabaseHelper().getPlayerLocale(sender).get());
         } catch (InterruptedException | ExecutionException e) {
             Log.debug("Failed to get player locale from database, fallback to default locale: " + e.getMessage());
             return findRelativeLanguages(MsgUtil.getDefaultGameLanguageCode());
@@ -505,7 +514,8 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
      */
     @Override
     public @NotNull Text of(@NotNull String path, @Nullable Object... args) {
-        return new Text(this, (CommandSender) null, languageFilesManager.getDistributions(), path, tagResolvers, convert(args));
+        return new Text(
+                this, (CommandSender) null, languageFilesManager.getDistributions(), path, tagResolvers, convert(args));
     }
 
     /**
@@ -608,7 +618,8 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
                 }
                 if (String.class.equals(clazz)) {
                     if (obj instanceof String) {
-                        components[i] = LegacyComponentSerializer.legacySection().deserialize((String) obj);
+                        components[i] =
+                                LegacyComponentSerializer.legacySection().deserialize((String) obj);
                     }
                     continue;
                 }
@@ -638,7 +649,8 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
      */
     @Override
     public @NotNull TextList ofList(@NotNull String path, Object... args) {
-        return new TextList(this, (CommandSender) null, languageFilesManager.getDistributions(), path, tagResolvers, convert(args));
+        return new TextList(
+                this, (CommandSender) null, languageFilesManager.getDistributions(), path, tagResolvers, convert(args));
     }
 
     /**
@@ -665,7 +677,8 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
     }
 
     @Override
-    public com.ghostchu.quickshop.api.localization.text.@NotNull TextList ofList(@Nullable QUser sender, @NotNull String path, @Nullable Object... args) {
+    public com.ghostchu.quickshop.api.localization.text.@NotNull TextList ofList(
+            @Nullable QUser sender, @NotNull String path, @Nullable Object... args) {
         return new TextList(this, sender, languageFilesManager.getDistributions(), path, tagResolvers, convert(args));
     }
 
@@ -690,7 +703,13 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
         private final Component[] args;
         private final TagResolver[] tagResolvers;
 
-        private TextList(SimpleTextManager manager, CommandSender sender, Map<String, FileConfiguration> mapping, String path, TagResolver[] tagResolvers, Component... args) {
+        private TextList(
+                SimpleTextManager manager,
+                CommandSender sender,
+                Map<String, FileConfiguration> mapping,
+                String path,
+                TagResolver[] tagResolvers,
+                Component... args) {
             this.manager = manager;
             this.sender = sender;
             this.mapping = mapping;
@@ -699,7 +718,13 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
             this.args = args;
         }
 
-        private TextList(SimpleTextManager manager, UUID sender, Map<String, FileConfiguration> mapping, String path, TagResolver[] tagResolvers, Component... args) {
+        private TextList(
+                SimpleTextManager manager,
+                UUID sender,
+                Map<String, FileConfiguration> mapping,
+                String path,
+                TagResolver[] tagResolvers,
+                Component... args) {
             this.manager = manager;
             if (sender != null) {
                 this.sender = Bukkit.getPlayer(sender);
@@ -712,7 +737,13 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
             this.args = args;
         }
 
-        public TextList(SimpleTextManager manager, QUser sender, Map<String, FileConfiguration> mapping, String path, TagResolver[] tagResolvers, Component... args) {
+        public TextList(
+                SimpleTextManager manager,
+                QUser sender,
+                Map<String, FileConfiguration> mapping,
+                String path,
+                TagResolver[] tagResolvers,
+                Component... args) {
             this.manager = manager;
             if (sender != null) {
                 this.sender = sender.getBukkitPlayer().orElse(null);
@@ -734,13 +765,16 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
         @Override
         @NotNull
         public List<Component> forLocale(@NotNull String locale) {
-            FileConfiguration index = mapping.get(manager.findRelativeLanguages(locale).getLocale());
+            FileConfiguration index =
+                    mapping.get(manager.findRelativeLanguages(locale).getLocale());
             if (index == null) {
-                Log.debug("Fallback " + locale + " to default game-language locale caused by QuickShop doesn't support this locale");
+                Log.debug("Fallback " + locale
+                        + " to default game-language locale caused by QuickShop doesn't support this locale");
                 String languageCode = MsgUtil.getDefaultGameLanguageCode();
                 if (languageCode.equals(locale)) {
                     Log.debug("Fallback Missing Language Key: " + path + ", report to QuickShop!");
-                    return Collections.singletonList(LegacyComponentSerializer.legacySection().deserialize(path));
+                    return Collections.singletonList(
+                            LegacyComponentSerializer.legacySection().deserialize(path));
                 } else {
                     return forLocale(languageCode);
                 }
@@ -748,9 +782,12 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
                 List<String> str = index.getStringList(path);
                 if (str.isEmpty()) {
                     Log.debug("Fallback Missing Language Key: " + path + ", report to QuickShop!");
-                    return Collections.singletonList(LegacyComponentSerializer.legacySection().deserialize(path));
+                    return Collections.singletonList(
+                            LegacyComponentSerializer.legacySection().deserialize(path));
                 }
-                List<Component> components = str.stream().map(s -> manager.plugin.getPlatform().miniMessage().deserialize(s, tagResolvers)).toList();
+                List<Component> components = str.stream()
+                        .map(s -> manager.plugin.getPlatform().miniMessage().deserialize(s, tagResolvers))
+                        .toList();
                 return postProcess(components);
             }
         }
@@ -783,7 +820,8 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
             } else {
                 locale = MsgUtil.getDefaultGameLanguageCode();
             }
-            FileConfiguration index = mapping.get(manager.findRelativeLanguages(locale).getLocale());
+            FileConfiguration index =
+                    mapping.get(manager.findRelativeLanguages(locale).getLocale());
             return index != null;
         }
 
@@ -814,7 +852,8 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
                     try {
                         texts.add(postProcessor.process(s, sender, args));
                     } catch (Throwable th) {
-                        Log.debug("Failed to post processing text: " + s + " caused by " + th.getMessage() + " handler: " + postProcessor.getClass().getName());
+                        Log.debug("Failed to post processing text: " + s + " caused by " + th.getMessage()
+                                + " handler: " + postProcessor.getClass().getName());
                     }
                 }
             }
@@ -830,7 +869,13 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
         private final Component[] args;
         private final TagResolver[] tagResolvers;
 
-        private Text(SimpleTextManager manager, CommandSender sender, Map<String, FileConfiguration> mapping, String path, TagResolver[] tagResolvers, Component... args) {
+        private Text(
+                SimpleTextManager manager,
+                CommandSender sender,
+                Map<String, FileConfiguration> mapping,
+                String path,
+                TagResolver[] tagResolvers,
+                Component... args) {
             this.manager = manager;
             this.sender = sender;
             this.mapping = mapping;
@@ -839,7 +884,13 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
             this.args = args;
         }
 
-        private Text(SimpleTextManager manager, UUID sender, Map<String, FileConfiguration> mapping, String path, TagResolver[] tagResolvers, Component... args) {
+        private Text(
+                SimpleTextManager manager,
+                UUID sender,
+                Map<String, FileConfiguration> mapping,
+                String path,
+                TagResolver[] tagResolvers,
+                Component... args) {
             this.manager = manager;
             if (sender != null) {
                 this.sender = Bukkit.getPlayer(sender);
@@ -852,7 +903,13 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
             this.args = args;
         }
 
-        public Text(SimpleTextManager manager, QUser sender, Map<String, FileConfiguration> mapping, String path, TagResolver[] tagResolvers, Component... args) {
+        public Text(
+                SimpleTextManager manager,
+                QUser sender,
+                Map<String, FileConfiguration> mapping,
+                String path,
+                TagResolver[] tagResolvers,
+                Component... args) {
             this.manager = manager;
             if (sender != null) {
                 this.sender = sender.getBukkitPlayer().orElse(null);
@@ -874,10 +931,12 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
         @Override
         @NotNull
         public Component forLocale(@NotNull String locale) {
-            FileConfiguration index = mapping.get(manager.findRelativeLanguages(locale).getLocale());
+            FileConfiguration index =
+                    mapping.get(manager.findRelativeLanguages(locale).getLocale());
             if (index == null) {
                 Log.debug("Index for " + locale + " is null");
-                Log.debug("Fallback " + locale + " to default game-language locale caused by QuickShop doesn't support this locale");
+                Log.debug("Fallback " + locale
+                        + " to default game-language locale caused by QuickShop doesn't support this locale");
                 if (MsgUtil.getDefaultGameLanguageCode().equals(locale)) {
                     Log.debug("Fallback Missing Language Key: " + path + ", report to QuickShop!");
                     return LegacyComponentSerializer.legacySection().deserialize(path);
@@ -930,7 +989,8 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
             } else {
                 locale = MsgUtil.getDefaultGameLanguageCode();
             }
-            FileConfiguration index = mapping.get(manager.findRelativeLanguages(locale).getLocale());
+            FileConfiguration index =
+                    mapping.get(manager.findRelativeLanguages(locale).getLocale());
             return index != null;
         }
 
@@ -958,12 +1018,12 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
                 try {
                     text = postProcessor.process(text, sender, args);
                 } catch (Exception e) {
-                    Log.debug("Error occurred while processing text: " + PlainTextComponentSerializer.plainText().serialize(text) + " caused by" + e.getMessage() + ", handler: " + postProcessor.getClass().getName());
+                    Log.debug("Error occurred while processing text: "
+                            + PlainTextComponentSerializer.plainText().serialize(text) + " caused by" + e.getMessage()
+                            + ", handler: " + postProcessor.getClass().getName());
                 }
             }
             return text;
         }
     }
-
-
 }

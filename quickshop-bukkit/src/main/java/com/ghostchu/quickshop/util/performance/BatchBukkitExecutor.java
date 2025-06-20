@@ -1,9 +1,5 @@
 package com.ghostchu.quickshop.util.performance;
 
-import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
-
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,6 +7,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 public class BatchBukkitExecutor<T> {
     private final Queue<T> tasks = new LinkedList<>();
@@ -18,8 +17,7 @@ public class BatchBukkitExecutor<T> {
     private boolean started = false;
     private Instant startTime = Instant.MIN;
 
-    public BatchBukkitExecutor() {
-    }
+    public BatchBukkitExecutor() {}
 
     public BatchBukkitExecutor(int maxTickMsUsage) {
         this.maxTickMsUsage = maxTickMsUsage;
@@ -68,7 +66,8 @@ public class BatchBukkitExecutor<T> {
         public final int maxTickMsUsage;
         private final CompletableFuture<Void> callback;
 
-        public BatchBukkitTask(Queue<T> tasks, Consumer<T> consumer, int maxTickMsUsage, CompletableFuture<Void> callback) {
+        public BatchBukkitTask(
+                Queue<T> tasks, Consumer<T> consumer, int maxTickMsUsage, CompletableFuture<Void> callback) {
             this.tasks = tasks;
             this.consumer = consumer;
             this.maxTickMsUsage = maxTickMsUsage;
@@ -95,5 +94,4 @@ public class BatchBukkitExecutor<T> {
             callback.complete(null);
         }
     }
-
 }

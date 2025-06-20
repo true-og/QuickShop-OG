@@ -14,8 +14,10 @@ import org.jetbrains.annotations.NotNull;
 @ToString
 public class WarningSender {
     private final long cooldown;
+
     @ToString.Exclude
     private final QuickShop plugin;
+
     private long lastSend = 0;
 
     /**
@@ -43,5 +45,4 @@ public class WarningSender {
         }
         return false;
     }
-
 }

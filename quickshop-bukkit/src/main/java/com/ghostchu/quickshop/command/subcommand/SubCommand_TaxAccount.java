@@ -5,10 +5,9 @@ import com.ghostchu.quickshop.api.command.CommandHandler;
 import com.ghostchu.quickshop.api.command.CommandParser;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.obj.QUserImpl;
+import java.util.List;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class SubCommand_TaxAccount implements CommandHandler<Player> {
 
@@ -30,11 +29,19 @@ public class SubCommand_TaxAccount implements CommandHandler<Player> {
             QUserImpl.createAsync(plugin.getPlayerFinder(), parser.getArgs().get(0))
                     .thenAccept(qUser -> {
                         shop.setTaxAccount(qUser);
-                        plugin.text().of(sender, "taxaccount-set", parser.getArgs().get(0)).send();
+                        plugin.text()
+                                .of(sender, "taxaccount-set", parser.getArgs().get(0))
+                                .send();
                     })
                     .exceptionally(throwable -> {
-                        plugin.text().of(sender, "internal-error", throwable.getMessage()).send();
-                        plugin.logger().warn("Failed to get uuid of player " + parser.getArgs().get(0), throwable);
+                        plugin.text()
+                                .of(sender, "internal-error", throwable.getMessage())
+                                .send();
+                        plugin.logger()
+                                .warn(
+                                        "Failed to get uuid of player "
+                                                + parser.getArgs().get(0),
+                                        throwable);
                         return null;
                     });
         } else {
@@ -48,5 +55,4 @@ public class SubCommand_TaxAccount implements CommandHandler<Player> {
             @NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
         return null;
     }
-
 }

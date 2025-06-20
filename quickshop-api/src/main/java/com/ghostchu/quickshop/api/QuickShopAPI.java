@@ -6,13 +6,12 @@ import com.ghostchu.quickshop.api.inventory.InventoryWrapperRegistry;
 import com.ghostchu.quickshop.api.localization.text.TextManager;
 import com.ghostchu.quickshop.api.shop.*;
 import com.vdurmont.semver4j.Semver;
+import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 /**
  * The unique entry point to allow you to access most features of QuickShop
@@ -20,7 +19,8 @@ import java.util.Map;
 public interface QuickShopAPI {
 
     static QuickShopAPI getInstance() {
-        RegisteredServiceProvider<QuickShopProvider> provider = Bukkit.getServicesManager().getRegistration(QuickShopProvider.class);
+        RegisteredServiceProvider<QuickShopProvider> provider =
+                Bukkit.getServicesManager().getRegistration(QuickShopProvider.class);
         if (provider == null) {
             throw new IllegalStateException("QuickShop hadn't loaded at this moment.");
         }
@@ -28,7 +28,8 @@ public interface QuickShopAPI {
     }
 
     static Plugin getPluginInstance() {
-        RegisteredServiceProvider<QuickShopProvider> provider = Bukkit.getServicesManager().getRegistration(QuickShopProvider.class);
+        RegisteredServiceProvider<QuickShopProvider> provider =
+                Bukkit.getServicesManager().getRegistration(QuickShopProvider.class);
         if (provider == null) {
             throw new IllegalStateException("QuickShop hadn't loaded at this moment.");
         }
@@ -61,7 +62,8 @@ public interface QuickShopAPI {
      *
      * @return registry
      */
-    @NotNull InventoryWrapperRegistry getInventoryWrapperRegistry();
+    @NotNull
+    InventoryWrapperRegistry getInventoryWrapperRegistry();
 
     /**
      * Getting current using ItemMatcher impl

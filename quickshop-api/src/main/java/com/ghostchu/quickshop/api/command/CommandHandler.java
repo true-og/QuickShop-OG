@@ -2,6 +2,8 @@ package com.ghostchu.quickshop.api.command;
 
 import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.shop.Shop;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import org.apache.commons.lang3.NotImplementedException;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -9,9 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * The command handler that processing sub commands under QS main command
@@ -104,11 +103,13 @@ public interface CommandHandler<T extends CommandSender> {
      */
     @Deprecated(since = "4.2.0.0")
     default void onCommand(T sender, @NotNull String commandLabel, @NotNull String[] cmdArgs) {
-        throw new NotImplementedException("This method is deprecated, please use onCommand(T sender, @NotNull String commandLabel, @NotNull CommandParser parser) instead.");
+        throw new NotImplementedException(
+                "This method is deprecated, please use onCommand(T sender, @NotNull String commandLabel, @NotNull CommandParser parser) instead.");
     }
 
     @Nullable
-    default List<String> onTabComplete_Internal(@NotNull T sender, @NotNull String commandLabel, @NotNull String[] cmdArg) {
+    default List<String> onTabComplete_Internal(
+            @NotNull T sender, @NotNull String commandLabel, @NotNull String[] cmdArg) {
         StringJoiner joiner = new StringJoiner(" ");
         for (String s : cmdArg) {
             joiner.add(s);
@@ -149,6 +150,7 @@ public interface CommandHandler<T extends CommandSender> {
      */
     @Deprecated(since = "4.2.0.0")
     default List<String> onTabComplete(@NotNull T sender, @NotNull String commandLabel, @NotNull String[] cmdArgs) {
-        throw new NotImplementedException("This method is deprecated, please use onTabComplete(T sender, @NotNull String commandLabel, @NotNull CommandParser parser) instead.");
+        throw new NotImplementedException(
+                "This method is deprecated, please use onTabComplete(T sender, @NotNull String commandLabel, @NotNull CommandParser parser) instead.");
     }
 }

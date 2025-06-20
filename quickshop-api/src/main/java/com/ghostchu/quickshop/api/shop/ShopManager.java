@@ -3,6 +3,8 @@ package com.ghostchu.quickshop.api.shop;
 import com.ghostchu.quickshop.api.economy.AbstractEconomy;
 import com.ghostchu.quickshop.api.inventory.InventoryWrapper;
 import com.ghostchu.quickshop.api.obj.QUser;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -11,9 +13,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * The manager that managing shops
@@ -66,14 +65,14 @@ public interface ShopManager {
             @NotNull Shop shop,
             int amount);
 
-//    /**
-//     * Adds a shop to the world. Does NOT require the chunk or world to be loaded Call shop.onLoad
-//     * by yourself
-//     *
-//     * @param world The name of the world
-//     * @param shop  The shop to add
-//     */
-//    void addShop(@NotNull String world, @NotNull Shop shop);
+    //    /**
+    //     * Adds a shop to the world. Does NOT require the chunk or world to be loaded Call shop.onLoad
+    //     * by yourself
+    //     *
+    //     * @param world The name of the world
+    //     * @param shop  The shop to add
+    //     */
+    //    void addShop(@NotNull String world, @NotNull Shop shop);
 
     void bakeShopRuntimeRandomUniqueIdCache(@NotNull Shop shop);
 
@@ -91,7 +90,8 @@ public interface ShopManager {
      * @param bypassProtectCheck Should bypass protection check
      * @throws IllegalStateException If the shop owner offline
      */
-    void createShop(@NotNull Shop shop, @Nullable Block signBlock, boolean bypassProtectCheck) throws IllegalStateException;
+    void createShop(@NotNull Shop shop, @Nullable Block signBlock, boolean bypassProtectCheck)
+            throws IllegalStateException;
 
     /**
      * Format the price use formatter
@@ -101,7 +101,8 @@ public interface ShopManager {
      * @param world    shop world
      * @return formated price
      */
-    @NotNull String format(double d, @NotNull World world, @Nullable String currency);
+    @NotNull
+    String format(double d, @NotNull World world, @Nullable String currency);
 
     /**
      * Format the price use formatter
@@ -110,14 +111,16 @@ public interface ShopManager {
      * @param shop The shop
      * @return formated price
      */
-    @NotNull String format(double d, @NotNull Shop shop);
+    @NotNull
+    String format(double d, @NotNull Shop shop);
 
     /**
      * @return Returns the Map. Info contains what their last question etc was.
      * @deprecated Use getInteractiveManager() instead.
      */
     @Deprecated(forRemoval = true)
-    @NotNull Map<UUID, Info> getActions();
+    @NotNull
+    Map<UUID, Info> getActions();
 
     /**
      * Returns all shops in the whole database, include unloaded.
@@ -126,14 +129,16 @@ public interface ShopManager {
      *
      * @return All shop in the database
      */
-    @NotNull List<Shop> getAllShops();
+    @NotNull
+    List<Shop> getAllShops();
 
     /**
      * Get all loaded shops.
      *
      * @return All loaded shops.
      */
-    @NotNull Set<Shop> getLoadedShops();
+    @NotNull
+    Set<Shop> getLoadedShops();
 
     /**
      * Get a players all shops.
@@ -143,7 +148,8 @@ public interface ShopManager {
      * @param playerUUID The player's uuid.
      * @return The list have this player's all shops.
      */
-    @NotNull List<Shop> getAllShops(@NotNull QUser playerUUID);
+    @NotNull
+    List<Shop> getAllShops(@NotNull QUser playerUUID);
 
     /**
      * Get a players all shops.
@@ -153,7 +159,8 @@ public interface ShopManager {
      * @param playerUUID The player's uuid.
      * @return The list have this player's all shops.
      */
-    @NotNull List<Shop> getAllShops(@NotNull UUID playerUUID);
+    @NotNull
+    List<Shop> getAllShops(@NotNull UUID playerUUID);
 
     /**
      * Getting the Shop Price Limiter
@@ -168,7 +175,8 @@ public interface ShopManager {
      *
      * @return The shop object
      */
-    @Nullable Shop getShop(long shopId);
+    @Nullable
+    Shop getShop(long shopId);
 
     /**
      * Gets a shop in a specific location
@@ -177,7 +185,8 @@ public interface ShopManager {
      * @param loc The location to get the shop from
      * @return The shop at that location
      */
-    @Nullable Shop getShop(@NotNull Location loc);
+    @Nullable
+    Shop getShop(@NotNull Location loc);
 
     /**
      * Gets a shop in a specific location but via cache
@@ -186,7 +195,8 @@ public interface ShopManager {
      * @param loc The location to get the shop from
      * @return The shop at that location but via cache
      */
-    @Nullable Shop getShopViaCache(@NotNull Location loc);
+    @Nullable
+    Shop getShopViaCache(@NotNull Location loc);
 
     /**
      * Gets a shop in a specific location
@@ -196,12 +206,14 @@ public interface ShopManager {
      * @param skipShopableChecking whether to check is shopable
      * @return The shop at that location
      */
-    @Nullable Shop getShop(@NotNull Location loc, boolean skipShopableChecking);
+    @Nullable
+    Shop getShop(@NotNull Location loc, boolean skipShopableChecking);
 
+    @Nullable
+    Shop getShopFromRuntimeRandomUniqueId(@NotNull UUID runtimeRandomUniqueId);
 
-    @Nullable Shop getShopFromRuntimeRandomUniqueId(@NotNull UUID runtimeRandomUniqueId);
-
-    @Nullable Shop getShopFromRuntimeRandomUniqueId(@NotNull UUID runtimeRandomUniqueId, boolean includeInvalid);
+    @Nullable
+    Shop getShopFromRuntimeRandomUniqueId(@NotNull UUID runtimeRandomUniqueId, boolean includeInvalid);
 
     /**
      * Gets a shop in a specific location Include the attached shop, e.g DoubleChest shop.
@@ -209,7 +221,8 @@ public interface ShopManager {
      * @param loc The location to get the shop from
      * @return The shop at that location
      */
-    @Nullable Shop getShopIncludeAttached(@Nullable Location loc);
+    @Nullable
+    Shop getShopIncludeAttached(@Nullable Location loc);
 
     /**
      * Gets a shop in a specific location Include the attached shop, e.g DoubleChest shop. but via cache
@@ -217,8 +230,8 @@ public interface ShopManager {
      * @param loc The location to get the shop from
      * @return The shop at that location but via cache
      */
-    @Nullable Shop getShopIncludeAttachedViaCache(@Nullable Location loc);
-
+    @Nullable
+    Shop getShopIncludeAttachedViaCache(@Nullable Location loc);
 
     /**
      * Returns a new shop iterator object, allowing iteration over shops easily, instead of sorting
@@ -226,14 +239,16 @@ public interface ShopManager {
      *
      * @return a new shop iterator object.
      */
-    @NotNull Iterator<Shop> getShopIterator();
+    @NotNull
+    Iterator<Shop> getShopIterator();
 
     /**
      * Returns a map of World - Chunk - Shop
      *
      * @return a map of World - Chunk - Shop
      */
-    @NotNull Map<String, Map<ShopChunk, Map<Location, Shop>>> getShops();
+    @NotNull
+    Map<String, Map<ShopChunk, Map<Location, Shop>>> getShops();
 
     /**
      * Returns a map of Shops
@@ -242,7 +257,8 @@ public interface ShopManager {
      *          used.
      * @return Shops
      */
-    @Nullable Map<Location, Shop> getShops(@NotNull Chunk c);
+    @Nullable
+    Map<Location, Shop> getShops(@NotNull Chunk c);
 
     /**
      * Gets the shop at the world and specific chunk.
@@ -252,7 +268,8 @@ public interface ShopManager {
      * @param chunkZ The chunk z coordinate
      * @return The shop at the world and specific chunk.
      */
-    @Nullable Map<Location, Shop> getShops(@NotNull String world, int chunkX, int chunkZ);
+    @Nullable
+    Map<Location, Shop> getShops(@NotNull String world, int chunkX, int chunkZ);
 
     /**
      * Gets the shop at the world and specific chunk.
@@ -260,7 +277,8 @@ public interface ShopManager {
      * @param shopChunk The shop chunk
      * @return The shop at the world and specific chunk.
      */
-    @Nullable Map<Location, Shop> getShops(@NotNull ShopChunk shopChunk);
+    @Nullable
+    Map<Location, Shop> getShops(@NotNull ShopChunk shopChunk);
 
     /**
      * Returns a map of Chunk - Shop
@@ -268,7 +286,8 @@ public interface ShopManager {
      * @param world The name of the world (case sensitive) to get the list of shops from
      * @return a map of Chunk - Shop
      */
-    @Nullable Map<ShopChunk, Map<Location, Shop>> getShops(@NotNull String world);
+    @Nullable
+    Map<ShopChunk, Map<Location, Shop>> getShops(@NotNull String world);
 
     /**
      * Get the all shops in the world.
@@ -276,7 +295,8 @@ public interface ShopManager {
      * @param world The world you want get the shops.
      * @return The list have this world all shops
      */
-    @NotNull List<Shop> getShopsInWorld(@NotNull World world);
+    @NotNull
+    List<Shop> getShopsInWorld(@NotNull World world);
 
     /**
      * Get the all shops in the world.
@@ -284,8 +304,8 @@ public interface ShopManager {
      * @param worldName The world you want get the shops.
      * @return The list have this world all shops
      */
-    @NotNull List<Shop> getShopsInWorld(@NotNull String worldName);
-
+    @NotNull
+    List<Shop> getShopsInWorld(@NotNull String worldName);
 
     /**
      * Get the tax of the shop
@@ -393,7 +413,8 @@ public interface ShopManager {
     @NotNull
     ShopManager.InteractiveManager getInteractiveManager();
 
-    @NotNull CompletableFuture<@NotNull List<Shop>> queryTaggedShops(@NotNull UUID tagger, @NotNull String tag);
+    @NotNull
+    CompletableFuture<@NotNull List<Shop>> queryTaggedShops(@NotNull UUID tagger, @NotNull String tag);
 
     CompletableFuture<@Nullable Integer> clearShopTags(@NotNull UUID tagger, @NotNull Shop shop);
 
@@ -403,7 +424,8 @@ public interface ShopManager {
 
     CompletableFuture<@Nullable Integer> tagShop(@NotNull UUID tagger, @NotNull Shop shop, @NotNull String tag);
 
-    @NotNull List<String> listTags(@NotNull UUID tagger);
+    @NotNull
+    List<String> listTags(@NotNull UUID tagger);
 
     void deleteShop(@NotNull Shop shop);
 

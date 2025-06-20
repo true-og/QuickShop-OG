@@ -18,7 +18,12 @@ public class WithdrawEconomyOperation implements Operation {
     private boolean committed = false;
     private boolean rollback = false;
 
-    public WithdrawEconomyOperation(@NotNull Object account, double amount, @NotNull World world, @Nullable String currency, @NotNull EconomyCore economyCore) {
+    public WithdrawEconomyOperation(
+            @NotNull Object account,
+            double amount,
+            @NotNull World world,
+            @Nullable String currency,
+            @NotNull EconomyCore economyCore) {
         this.account = account;
         this.amount = amount;
         this.world = world;

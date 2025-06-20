@@ -4,6 +4,9 @@ import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.util.logger.Log;
 import com.ghostchu.quickshop.util.paste.item.SubPasteItem;
 import com.ghostchu.quickshop.util.paste.util.HTMLTable;
+import java.io.StringReader;
+import java.util.Optional;
+import java.util.logging.Level;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import kong.unirest.UnirestException;
@@ -18,12 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.xml.sax.SAXException;
 
-import java.io.StringReader;
-import java.util.Optional;
-import java.util.logging.Level;
-
 public class NexusManager implements SubPasteItem {
-    private static final String NEXUS_ROOT_METADATA_URL = "https://repo.codemc.io/repository/maven-releases/com/ghostchu/quickshop-hikari/maven-metadata.xml";
+    private static final String NEXUS_ROOT_METADATA_URL =
+            "https://repo.codemc.io/repository/maven-releases/com/ghostchu/quickshop-hikari/maven-metadata.xml";
     private final QuickShop plugin;
     private NexusMetadata cachedMetadata;
 
@@ -75,9 +75,11 @@ public class NexusManager implements SubPasteItem {
             if (!resp.isSuccess()) {
                 Optional<UnirestParsingException> exceptionOptional = resp.getParsingError();
                 if (exceptionOptional.isPresent()) {
-                    Log.debug("Failed to fetch metadata from Nexus: " + exceptionOptional.get().getMessage());
+                    Log.debug("Failed to fetch metadata from Nexus: "
+                            + exceptionOptional.get().getMessage());
                 } else {
-                    Log.debug("Failed to fetch metadata from CodeMC.io nexus:" + resp.getStatus() + "-" + resp.getStatusText());
+                    Log.debug("Failed to fetch metadata from CodeMC.io nexus:" + resp.getStatus() + "-"
+                            + resp.getStatusText());
                 }
                 return null;
             }
@@ -98,7 +100,8 @@ public class NexusManager implements SubPasteItem {
         }
         HTMLTable table = new HTMLTable(3);
         table.setTableTitle("Last Update", "Latest Version", "Release Version");
-        table.insert(cachedMetadata.getLastUpdate(), cachedMetadata.getLatestVersion(), cachedMetadata.getReleaseVersion());
+        table.insert(
+                cachedMetadata.getLastUpdate(), cachedMetadata.getLatestVersion(), cachedMetadata.getReleaseVersion());
         return table.render();
     }
 
@@ -120,7 +123,8 @@ public class NexusManager implements SubPasteItem {
         }
 
         @NotNull
-        public static NexusMetadata parse(@NotNull String xml) throws DocumentException, IllegalStateException, SAXException {
+        public static NexusMetadata parse(@NotNull String xml)
+                throws DocumentException, IllegalStateException, SAXException {
             SAXReader reader = new SAXReader();
             reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             Document document = reader.read(new StringReader(xml));
@@ -144,7 +148,8 @@ public class NexusManager implements SubPasteItem {
             if (lastUpdate == null) {
                 throw new IllegalStateException("No lastUpdated element found");
             }
-            NexusMetadata metadata = new NexusMetadata(Long.parseLong(lastUpdate.getText()), latest.getText(), release.getText());
+            NexusMetadata metadata =
+                    new NexusMetadata(Long.parseLong(lastUpdate.getText()), latest.getText(), release.getText());
             Log.debug("Parsed NexusMetadata: " + metadata);
             return metadata;
         }

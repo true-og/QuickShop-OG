@@ -9,11 +9,10 @@ import com.ghostchu.quickshop.obj.QUserImpl;
 import com.ghostchu.quickshop.util.MsgUtil;
 import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.logging.container.ShopRemoveLog;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 public class SubCommand_Clean implements CommandHandler<CommandSender> {
 
@@ -32,9 +31,7 @@ public class SubCommand_Clean implements CommandHandler<CommandSender> {
 
         for (Shop shop : plugin.getShopManager().getAllShops()) {
             try {
-                if (Util.isLoaded(shop.getLocation())
-                        && shop.isSelling()
-                        && shop.getRemainingStock() == 0) {
+                if (Util.isLoaded(shop.getLocation()) && shop.isSelling() && shop.getRemainingStock() == 0) {
                     pendingRemoval.add(
                             shop); // Is selling, but has no stock, and is a chest shop, but is not a double shop.
                     // Can be deleted safely.
@@ -46,13 +43,14 @@ public class SubCommand_Clean implements CommandHandler<CommandSender> {
         }
 
         for (Shop shop : pendingRemoval) {
-            plugin.logEvent(new ShopRemoveLog(QUserImpl.createFullFilled(CommonUtil.getNilUniqueId(), "SYSTEM", false), "/quickshop clean", shop.saveToInfoStorage()));
+            plugin.logEvent(new ShopRemoveLog(
+                    QUserImpl.createFullFilled(CommonUtil.getNilUniqueId(), "SYSTEM", false),
+                    "/quickshop clean",
+                    shop.saveToInfoStorage()));
             plugin.getShopManager().deleteShop(shop);
         }
 
         MsgUtil.clean();
         plugin.text().of(sender, "command.cleaned", i).send();
     }
-
-
 }

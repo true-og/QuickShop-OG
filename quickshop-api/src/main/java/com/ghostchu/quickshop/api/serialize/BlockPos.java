@@ -30,11 +30,9 @@ public final class BlockPos {
         return x;
     }
 
-
     public int getY() {
         return y;
     }
-
 
     public int getZ() {
         return z;
@@ -46,13 +44,12 @@ public final class BlockPos {
 
     @Override
     public String toString() {
-        return "BlockPos{" +
-                "version=" + version +
-                ", x=" + x +
-                ", y=" + y +
-                ", z=" + z +
-                ", world='" + world + '\'' +
-                '}';
+        return "BlockPos{" + "version="
+                + version + ", x="
+                + x + ", y="
+                + y + ", z="
+                + z + ", world='"
+                + world + '\'' + '}';
     }
 
     public static BlockPos deserialize(String string) {
@@ -61,7 +58,8 @@ public final class BlockPos {
             if (split.length < 5) {
                 throw new IllegalArgumentException("Invalid input string for deserialization");
             }
-            return new BlockPos(Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), split[4]);
+            return new BlockPos(
+                    Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), split[4]);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Failed to parse integer during deserialization", e);
         }

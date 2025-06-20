@@ -2,12 +2,11 @@ package com.ghostchu.quickshop.util.paste.item;
 
 import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.api.shop.Shop;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
 public class ShopsInfoItem implements SubPasteItem {
     private final String totalShops;
@@ -19,7 +18,8 @@ public class ShopsInfoItem implements SubPasteItem {
         plugin.getShopManager().getAllShops().stream()
                 .filter(shop -> shop.getLocation().getWorld() != null)
                 .forEach(shop -> {
-                    List<Shop> worldShops = shopsMapping.get(shop.getLocation().getWorld().getName());
+                    List<Shop> worldShops =
+                            shopsMapping.get(shop.getLocation().getWorld().getName());
                     if (worldShops == null) {
                         worldShops = new ArrayList<>();
                     }
@@ -45,7 +45,12 @@ public class ShopsInfoItem implements SubPasteItem {
         htmlBuilder.append("<p>Total Shops: ").append(totalShops).append("</p>");
         htmlBuilder.append("<h5>Shops in world</h5>");
         htmlBuilder.append("<ul>");
-        shopsMapping.keySet().forEach(worldName -> htmlBuilder.append("<li>").append(worldName).append(": ").append(shopsMapping.get(worldName).size()).append("</li>"));
+        shopsMapping.keySet().forEach(worldName -> htmlBuilder
+                .append("<li>")
+                .append(worldName)
+                .append(": ")
+                .append(shopsMapping.get(worldName).size())
+                .append("</li>"));
         htmlBuilder.append("</ul>");
         return htmlBuilder.toString();
     }

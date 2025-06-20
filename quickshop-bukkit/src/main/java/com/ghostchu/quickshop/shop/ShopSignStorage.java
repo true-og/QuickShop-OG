@@ -1,9 +1,8 @@
 package com.ghostchu.quickshop.shop;
 
+import java.util.Objects;
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.Objects;
 
 /**
  * TODO This class used for storage the shop sign

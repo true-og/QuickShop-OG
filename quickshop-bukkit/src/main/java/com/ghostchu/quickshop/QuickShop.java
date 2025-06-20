@@ -63,6 +63,10 @@ import com.ghostchu.simplereloadlib.ReloadManager;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.Reloadable;
 import com.vdurmont.semver4j.Semver;
+import java.io.File;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.CompletableFuture;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
@@ -81,11 +85,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
-import java.io.File;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.CompletableFuture;
-
 public class QuickShop implements QuickShopAPI, Reloadable {
     /**
      * If running environment test
@@ -102,21 +101,31 @@ public class QuickShop implements QuickShopAPI, Reloadable {
      * The manager to check permissions.
      */
     private static PermissionManager permissionManager;
+
     @Getter
     private final ReloadManager reloadManager = new ReloadManager();
+
     private final InventoryWrapperRegistry inventoryWrapperRegistry = new InventoryWrapperRegistry();
+
     @Getter
     private final InventoryWrapperManager inventoryWrapperManager = new BukkitInventoryWrapperManager();
+
     @Getter
     private final ShopControlPanelManager shopControlPanelManager = new SimpleShopControlPanelManager(this);
+
     private final Map<String, String> addonRegisteredMapping = new HashMap<>();
+
     @Getter
     private final QuickShopBukkit javaPlugin;
+
     private final Logger logger;
+
     @Getter
     private final Platform platform;
+
     @Getter
     private final EconomyLoader economyLoader = new EconomyLoader(this);
+
     @Getter
     private final PasteManager pasteManager = new PasteManager();
     /* Public QuickShop API End */
@@ -126,9 +135,12 @@ public class QuickShop implements QuickShopAPI, Reloadable {
     private ItemMatcher itemMatcher;
     private SimpleShopManager shopManager;
     private SimpleTextManager textManager;
+
     @Getter
     private SimpleShopPermissionManager shopPermissionManager;
+
     private boolean priceChangeRequiresFee = false;
+
     @Getter
     private DatabaseDriverType databaseDriverType = null;
     /**
@@ -147,6 +159,7 @@ public class QuickShop implements QuickShopAPI, Reloadable {
      * Whether we should use display items or not
      */
     private boolean display = true;
+
     @Getter
     private int displayItemCheckTicks;
     /**
@@ -154,6 +167,7 @@ public class QuickShop implements QuickShopAPI, Reloadable {
      */
     @Getter
     private AbstractEconomy economy;
+
     @Nullable
     @Getter
     private LogWatcher logWatcher;
@@ -179,63 +193,90 @@ public class QuickShop implements QuickShopAPI, Reloadable {
      */
     @Getter
     private UUID serverUniqueID;
+
     private boolean setupDBonEnableding = false;
     /**
      * Rewrited shoploader, more faster.
      */
     @Getter
     private ShopLoader shopLoader;
+
     @Getter
     private DisplayAutoDespawnWatcher displayAutoDespawnWatcher;
+
     @Getter
     private OngoingFeeWatcher ongoingFeeWatcher;
+
     @Getter
     private SignUpdateWatcher signUpdateWatcher;
+
     @Getter
     private boolean allowStack;
+
     @Getter
     private EnvironmentChecker environmentChecker;
+
     @Getter
     @Nullable
     private UpdateWatcher updateWatcher;
+
     @Getter
     private BuildInfo buildInfo;
+
     @Getter
     @Nullable
     private String currency = null;
+
     @Getter
     private CalendarWatcher calendarWatcher;
+
     @Getter
     private ShopPurger shopPurger;
+
     private int loggingLocation = 0;
+
     @Getter
     private InteractionController interactionController;
+
     @Getter
     private SQLManager sqlManager;
+
     @Getter
     @Nullable
     private QuickShopPAPI quickShopPAPI;
+
     @Getter
     private ItemMarker itemMarker;
+
     private Map<String, String> translationMapping;
+
     @Getter
     private PlayerFinder playerFinder;
+
     @Getter
     private ShopItemBlackList shopItemBlackList;
+
     @Getter
     private NexusManager nexusManager;
+
     @Getter
     private ShopDataSaveWatcher shopSaveWatcher;
+
     @Getter
     private SignHooker signHooker;
+
     @Getter
     private BungeeListener bungeeListener;
+
     private RankLimiter rankLimiter;
+
     @Nullable
     @Getter
     private VirtualDisplayItemManager virtualDisplayItemManager;
+
     @Getter
     private PrivacyController privacyController;
+
     @Getter
     private MetricManager metricManager;
 
@@ -268,7 +309,6 @@ public class QuickShop implements QuickShopAPI, Reloadable {
         return permissionManager;
     }
 
-
     /**
      * Early than onEnable, make sure instance was loaded in first time.
      */
@@ -280,7 +320,7 @@ public class QuickShop implements QuickShopAPI, Reloadable {
         Util.setPlugin(this);
         logger.info("QuickShop {} - Early boot step - Booting up", javaPlugin.getFork());
         getReloadManager().register(this);
-        //BEWARE THESE ONLY RUN ONCE
+        // BEWARE THESE ONLY RUN ONCE
         this.buildInfo = new BuildInfo(javaPlugin.getResource("BUILDINFO"));
         logger.info("Self testing...");
         if (!runtimeCheck(EnvCheckEntry.Stage.ON_LOAD)) {
@@ -305,17 +345,22 @@ public class QuickShop implements QuickShopAPI, Reloadable {
 
     private void registerService() {
         logger.info("Registering Bukkit Service: {}", QuickShopProvider.class.getName());
-        Bukkit.getServicesManager().register(QuickShopProvider.class, new QuickShopProvider() {
-            @Override
-            public @NotNull QuickShopAPI getApiInstance() {
-                return instance;
-            }
+        Bukkit.getServicesManager()
+                .register(
+                        QuickShopProvider.class,
+                        new QuickShopProvider() {
+                            @Override
+                            public @NotNull QuickShopAPI getApiInstance() {
+                                return instance;
+                            }
 
-            @Override
-            public @NotNull Plugin getInstance() {
-                return javaPlugin;
-            }
-        }, javaPlugin, ServicePriority.High);
+                            @Override
+                            public @NotNull Plugin getInstance() {
+                                return javaPlugin;
+                            }
+                        },
+                        javaPlugin,
+                        ServicePriority.High);
     }
 
     private boolean runtimeCheck(@NotNull EnvCheckEntry.Stage stage) {
@@ -323,9 +368,14 @@ public class QuickShop implements QuickShopAPI, Reloadable {
         ResultReport resultReport = environmentChecker.run(stage);
         StringJoiner joiner = new StringJoiner("\n", "", "");
         if (resultReport.getFinalResult().ordinal() > CheckResult.WARNING.ordinal()) {
-            for (Entry<EnvCheckEntry, ResultContainer> result : resultReport.getResults().entrySet()) {
+            for (Entry<EnvCheckEntry, ResultContainer> result :
+                    resultReport.getResults().entrySet()) {
                 if (result.getValue().getResult().ordinal() > CheckResult.WARNING.ordinal()) {
-                    joiner.add(String.format("- [%s/%s] %s", result.getValue().getResult().getDisplay(), result.getKey().name(), result.getValue().getResultMessage()));
+                    joiner.add(String.format(
+                            "- [%s/%s] %s",
+                            result.getValue().getResult().getDisplay(),
+                            result.getKey().name(),
+                            result.getValue().getResultMessage()));
                 }
             }
         }
@@ -340,11 +390,10 @@ public class QuickShop implements QuickShopAPI, Reloadable {
                 setupBootError(new BootError(logger, joiner.toString()), true);
                 PluginCommand command = javaPlugin.getCommand("quickshop");
                 if (command != null) {
-                    Util.mainThreadRun(() -> command.setTabCompleter(javaPlugin)); //Disable tab completer
+                    Util.mainThreadRun(() -> command.setTabCompleter(javaPlugin)); // Disable tab completer
                 }
             }
-            default -> {
-            }
+            default -> {}
         }
         return true;
     }
@@ -356,27 +405,29 @@ public class QuickShop implements QuickShopAPI, Reloadable {
         try {
             javaPlugin.saveDefaultConfig();
         } catch (IllegalArgumentException resourceNotFoundException) {
-            logger.error("Failed to save config.yml from jar, The binary file of QuickShop may be corrupted. Please re-download from our website.");
+            logger.error(
+                    "Failed to save config.yml from jar, The binary file of QuickShop may be corrupted. Please re-download from our website.");
         }
         javaPlugin.reloadConfig();
         if (getConfig().getInt("config-version", 0) == 0) {
             getConfig().set("config-version", 1);
         }
         /* It will generate a new UUID above updateConfig */
-        this.serverUniqueID = UUID.fromString(Objects.requireNonNull(getConfig().getString("server-uuid", String.valueOf(UUID.randomUUID()))));
+        this.serverUniqueID = UUID.fromString(
+                Objects.requireNonNull(getConfig().getString("server-uuid", String.valueOf(UUID.randomUUID()))));
         updateConfig();
     }
 
-    private void loadChatProcessor() {
-
-    }
+    private void loadChatProcessor() {}
 
     private void loadTextManager() {
         logger.info("Loading translations (This may take a while)...");
         try {
             this.textManager = new SimpleTextManager(this);
         } catch (NoSuchMethodError | NoClassDefFoundError e) {
-            logger.error("Failed to initialize text manager, the QuickShop doesn't compatible with your Server version. Did you up-to-date?", e);
+            logger.error(
+                    "Failed to initialize text manager, the QuickShop doesn't compatible with your Server version. Did you up-to-date?",
+                    e);
             Bukkit.getPluginManager().disablePlugin(javaPlugin);
             throw new IllegalStateException("Cannot initialize text manager");
         }
@@ -521,15 +572,14 @@ public class QuickShop implements QuickShopAPI, Reloadable {
         if (loggingLocation == 0) {
             this.getLogWatcher().log(JsonUtil.getGson().toJson(eventObject));
         } else {
-            getDatabaseHelper().insertHistoryRecord(eventObject)
-                    .thenAccept(result -> {
-                    })
+            getDatabaseHelper()
+                    .insertHistoryRecord(eventObject)
+                    .thenAccept(result -> {})
                     .exceptionally(throwable -> {
                         Log.debug("Failed to log event: " + throwable.getMessage());
                         return null;
                     });
         }
-
     }
 
     @Override
@@ -567,7 +617,9 @@ public class QuickShop implements QuickShopAPI, Reloadable {
         }
         logger.info("Reading the configuration...");
         initConfiguration();
-        logger.info("Developers: {}", CommonUtil.list2String(javaPlugin.getDescription().getAuthors()));
+        logger.info(
+                "Developers: {}",
+                CommonUtil.list2String(javaPlugin.getDescription().getAuthors()));
         logger.info("Original author: Netherfoam, Timtower, KaiNoMood, sandtechnology");
         logger.info("Let's start loading the plugin");
         loadErrorReporter();
@@ -580,7 +632,7 @@ public class QuickShop implements QuickShopAPI, Reloadable {
         } catch (Exception e) {
             logger.warn("Failed to process virtual display item system", e);
         }
-        //Load the database
+        // Load the database
         try (PerfMonitor ignored = new PerfMonitor("Initialize database")) {
             initDatabase();
         }
@@ -599,14 +651,16 @@ public class QuickShop implements QuickShopAPI, Reloadable {
         loadCommandHandler();
         this.shopManager = new SimpleShopManager(this);
         // Limit
-        //this.registerLimitRanks();
+        // this.registerLimitRanks();
         this.rankLimiter = new SimpleRankLimiter(this);
         // Limit end
-        if (getConfig().getInt("shop.finding.distance") > 100 && getConfig().getBoolean("shop.finding.exclude-out-of-stock")) {
-            logger.error("Shop find distance is too high with chunk loading feature turned on! It may cause lag! Pick a number below 100!");
+        if (getConfig().getInt("shop.finding.distance") > 100
+                && getConfig().getBoolean("shop.finding.exclude-out-of-stock")) {
+            logger.error(
+                    "Shop find distance is too high with chunk loading feature turned on! It may cause lag! Pick a number below 100!");
         }
         signUpdateWatcher = new SignUpdateWatcher();
-        //shopContainerWatcher = new ShopContainerWatcher();
+        // shopContainerWatcher = new ShopContainerWatcher();
         shopSaveWatcher = new ShopDataSaveWatcher(this);
         shopSaveWatcher.runTaskTimerAsynchronously(javaPlugin, 0, 20L * 60L * 5L);
         /* Load all shops. */
@@ -637,9 +691,7 @@ public class QuickShop implements QuickShopAPI, Reloadable {
             runtimeCheck(EnvCheckEntry.Stage.AFTER_ON_ENABLE);
         }
         logger.info("QuickShop Loaded! " + enableTimer.stopAndGetTimePassed() + " ms.");
-
     }
-
 
     private void loadErrorReporter() {
         try {
@@ -656,17 +708,19 @@ public class QuickShop implements QuickShopAPI, Reloadable {
     }
 
     private void loadItemMatcher() {
-        ItemMatcher defItemMatcher = switch (getConfig().getInt("matcher.work-type")) {
-            case 1 -> new BukkitItemMatcherImpl(this);
-            case 0 -> new QuickShopItemMatcherImpl(this);
-            default -> throw new IllegalStateException("Unexpected value: " + getConfig().getInt("matcher.work-type"));
-        };
+        ItemMatcher defItemMatcher =
+                switch (getConfig().getInt("matcher.work-type")) {
+                    case 1 -> new BukkitItemMatcherImpl(this);
+                    case 0 -> new QuickShopItemMatcherImpl(this);
+                    default -> throw new IllegalStateException(
+                            "Unexpected value: " + getConfig().getInt("matcher.work-type"));
+                };
         this.itemMatcher = ServiceInjector.getInjectedService(ItemMatcher.class, defItemMatcher);
     }
 
     private void loadVirtualDisplayItem() {
         if (this.display) {
-            //VirtualItem support
+            // VirtualItem support
             if (AbstractDisplayItem.getNowUsing() == DisplayType.VIRTUALITEM) {
                 logger.info("Using Virtual Item display, loading ProtocolLib support...");
                 Plugin protocolLibPlugin = Bukkit.getPluginManager().getPlugin("ProtocolLib");
@@ -680,7 +734,8 @@ public class QuickShop implements QuickShopAPI, Reloadable {
                         signHooker = null;
                     }
                 } else {
-                    logger.warn("Failed to load ProtocolLib support, fallback to real item display and per-player shop info sign will automatically disable.");
+                    logger.warn(
+                            "Failed to load ProtocolLib support, fallback to real item display and per-player shop info sign will automatically disable.");
                     signHooker = null;
                     getConfig().set("shop.display-type", 0);
                     javaPlugin.saveConfig();
@@ -702,9 +757,11 @@ public class QuickShop implements QuickShopAPI, Reloadable {
     private void registerDisplayAutoDespawn() {
         if (this.display && getConfig().getBoolean("shop.display-auto-despawn")) {
             this.displayAutoDespawnWatcher = new DisplayAutoDespawnWatcher(this);
-            //BUKKIT METHOD SHOULD ALWAYS EXECUTE ON THE SERVER MAIN THEAD
-            this.displayAutoDespawnWatcher.runTaskTimer(javaPlugin, 20, getConfig().getInt("shop.display-check-time")); // not worth async
-            logger.warn("Unrecommended use of display-auto-despawn. This feature may have a heavy impact on the server's performance!");
+            // BUKKIT METHOD SHOULD ALWAYS EXECUTE ON THE SERVER MAIN THEAD
+            this.displayAutoDespawnWatcher.runTaskTimer(
+                    javaPlugin, 20, getConfig().getInt("shop.display-check-time")); // not worth async
+            logger.warn(
+                    "Unrecommended use of display-auto-despawn. This feature may have a heavy impact on the server's performance!");
         } else {
             if (this.displayAutoDespawnWatcher != null) {
                 this.displayAutoDespawnWatcher.cancel();
@@ -716,12 +773,12 @@ public class QuickShop implements QuickShopAPI, Reloadable {
     private void loadCommandHandler() {
         /* PreInit for BootError feature */
         this.registerQuickShopCommands();
-
     }
 
     private void bakeShopsOwnerCache() {
         if (PackageUtil.parsePackageProperly("bakeuuids").asBoolean(false)) {
-            logger.info("Baking shops owner and moderators caches (This may take a while if you upgrade from old versions)...");
+            logger.info(
+                    "Baking shops owner and moderators caches (This may take a while if you upgrade from old versions)...");
             Set<UUID> waitingForBake = new HashSet<>();
             this.shopManager.getAllShops().forEach(shop -> {
                 UUID uuid = shop.getOwner().getUniqueIdIfRealPlayer().orElse(null);
@@ -769,22 +826,29 @@ public class QuickShop implements QuickShopAPI, Reloadable {
         if (this.display && AbstractDisplayItem.getNowUsing() != DisplayType.VIRTUALITEM) {
             if (getDisplayItemCheckTicks() > 0) {
                 if (getConfig().getInt("shop.display-items-check-ticks") < 3000) {
-                    logger.error("Shop.display-items-check-ticks is too low! It may cause HUGE lag! Pick a number > 3000");
+                    logger.error(
+                            "Shop.display-items-check-ticks is too low! It may cause HUGE lag! Pick a number > 3000");
                 }
                 logger.info("Registering DisplayCheck task....");
-                Bukkit.getScheduler().runTaskTimer(javaPlugin, () -> {
-                    for (Shop shop : getShopManager().getLoadedShops()) {
-                        //Shop may be deleted or unloaded when iterating
-                        if (!shop.isLoaded()) {
-                            continue;
-                        }
-                        shop.checkDisplay();
-                    }
-                }, 1L, getDisplayItemCheckTicks());
+                Bukkit.getScheduler()
+                        .runTaskTimer(
+                                javaPlugin,
+                                () -> {
+                                    for (Shop shop : getShopManager().getLoadedShops()) {
+                                        // Shop may be deleted or unloaded when iterating
+                                        if (!shop.isLoaded()) {
+                                            continue;
+                                        }
+                                        shop.checkDisplay();
+                                    }
+                                },
+                                1L,
+                                getDisplayItemCheckTicks());
             } else if (getDisplayItemCheckTicks() == 0) {
                 logger.info("shop.display-items-check-ticks was set to 0. Display Check has been disabled");
             } else {
-                logger.error("shop.display-items-check-ticks has been set to an invalid value. Please use a value above 3000.");
+                logger.error(
+                        "shop.display-items-check-ticks has been set to an invalid value. Please use a value above 3000.");
             }
             new DisplayProtectionListener(this).register();
         } else {
@@ -817,7 +881,7 @@ public class QuickShop implements QuickShopAPI, Reloadable {
         calendarWatcher = new CalendarWatcher(this);
         // shopVaildWatcher.runTaskTimer(this, 0, 20 * 60); // Nobody use it
         signUpdateWatcher.runTaskTimer(javaPlugin, 0, 10);
-        //shopContainerWatcher.runTaskTimer(this, 0, 5); // Nobody use it
+        // shopContainerWatcher.runTaskTimer(this, 0, 5); // Nobody use it
         if (logWatcher != null) {
             logWatcher.runTaskTimerAsynchronously(javaPlugin, 10, 10);
             logger.info("Log actions is enabled. Actions will be logged in the qs.log file!");
@@ -886,11 +950,14 @@ public class QuickShop implements QuickShopAPI, Reloadable {
                 String driverClassName = Driver.class.getName();
                 Log.debug("Setting up H2 driver class name to: " + driverClassName);
                 config.setDriverClassName(driverClassName);
-                config.setJdbcUrl("jdbc:h2:" + new File(javaPlugin.getDataFolder(), "shops").getCanonicalFile().getAbsolutePath() + ";MODE=MYSQL");
+                config.setJdbcUrl("jdbc:h2:"
+                        + new File(javaPlugin.getDataFolder(), "shops")
+                                .getCanonicalFile()
+                                .getAbsolutePath() + ";MODE=MYSQL");
                 this.sqlManager = new SQLManagerImpl(new HikariDataSource(config), "QuickShop-Hikari-SQLManager");
                 this.sqlManager.executeSQL("SET MODE=MYSQL"); // Switch to MySQL mode
             }
-            //this.sqlManager.setDebugMode(Util.isDevMode());
+            // this.sqlManager.setDebugMode(Util.isDevMode());
             this.sqlManager.setExecutorPool(QuickExecutor.getDatabaseExecutor());
             // Make the database up to date
             this.databaseHelper = new SimpleDatabaseHelperV2(this, this.sqlManager, this.getDbPrefix());
@@ -909,19 +976,22 @@ public class QuickShop implements QuickShopAPI, Reloadable {
     public void registerQuickShopCommands() {
         commandManager = new SimpleCommandManager(this);
         List<String> customCommands = getConfig().getStringList("custom-commands");
-        Command quickShopCommand = new QuickShopCommand("quickshop", commandManager, new ArrayList<>(new HashSet<>(customCommands)));
+        Command quickShopCommand =
+                new QuickShopCommand("quickshop", commandManager, new ArrayList<>(new HashSet<>(customCommands)));
         try {
             platform.registerCommand("quickshop-hikari", quickShopCommand);
         } catch (Exception e) {
             logger.warn("Failed to register command aliases", e);
         }
-        Log.debug("QuickShop command registered with those aliases: " + CommonUtil.list2String(quickShopCommand.getAliases()));
+        Log.debug("QuickShop command registered with those aliases: "
+                + CommonUtil.list2String(quickShopCommand.getAliases()));
     }
 
     private void registerOngoingFee() {
         if (getConfig().getBoolean("shop.ongoing-fee.enable")) {
             ongoingFeeWatcher = new OngoingFeeWatcher(this);
-            ongoingFeeWatcher.runTaskTimerAsynchronously(javaPlugin, 0, getConfig().getInt("shop.ongoing-fee.ticks"));
+            ongoingFeeWatcher.runTaskTimerAsynchronously(
+                    javaPlugin, 0, getConfig().getInt("shop.ongoing-fee.ticks"));
             logger.info("Ongoing fee feature is enabled.");
         } else {
             if (ongoingFeeWatcher != null) {
@@ -960,10 +1030,12 @@ public class QuickShop implements QuickShopAPI, Reloadable {
         }
         if (getShopManager() != null) {
             logger.info("Saving all in-memory changed shops...");
-            List<CompletableFuture<Void>> futures = getShopManager().getAllShops().stream().filter(Shop::isDirty).map(Shop::update).toList();
+            List<CompletableFuture<Void>> futures = getShopManager().getAllShops().stream()
+                    .filter(Shop::isDirty)
+                    .map(Shop::update)
+                    .toList();
             CompletableFuture<?>[] completableFutures = futures.toArray(new CompletableFuture<?>[0]);
-            CompletableFuture.allOf(completableFutures)
-                    .join();
+            CompletableFuture.allOf(completableFutures).join();
         }
         /* Remove all display items, and any dupes we can find */
         if (shopManager != null) {
@@ -1071,7 +1143,6 @@ public class QuickShop implements QuickShopAPI, Reloadable {
          * @return true if successful, false if the core is invalid or is not found, and vault cannot be
          * used.
          */
-
         public boolean load() {
             try (PerfMonitor ignored = new PerfMonitor("Loading Economy Bridge")) {
                 return setupEconomy();
@@ -1080,7 +1151,8 @@ public class QuickShop implements QuickShopAPI, Reloadable {
                     parent.sentryErrorReporter.ignoreThrow();
                 }
                 parent.logger().error("Something went wrong while trying to load the economy system!");
-                parent.logger().error("QuickShop was unable to hook into an economy system (Couldn't find Vault or Reserve)!");
+                parent.logger()
+                        .error("QuickShop was unable to hook into an economy system (Couldn't find Vault or Reserve)!");
                 parent.logger().error("QuickShop can NOT enable properly!");
                 parent.setupBootError(BuiltInSolution.econError(), false);
                 parent.logger().error("Plugin Listeners have been disabled. Please fix this economy issue.", e);
@@ -1089,12 +1161,13 @@ public class QuickShop implements QuickShopAPI, Reloadable {
         }
 
         private boolean setupEconomy() throws Exception {
-            AbstractEconomy abstractEconomy = switch (EconomyType.fromID(parent.getConfig().getInt("economy-type"))) {
-                case VAULT -> loadVault();
-                case GEMS_ECONOMY -> loadGemsEconomy();
-                case TNE -> loadTNE();
-                default -> null;
-            };
+            AbstractEconomy abstractEconomy =
+                    switch (EconomyType.fromID(parent.getConfig().getInt("economy-type"))) {
+                        case VAULT -> loadVault();
+                        case GEMS_ECONOMY -> loadGemsEconomy();
+                        case TNE -> loadTNE();
+                        default -> null;
+                    };
             abstractEconomy = ServiceInjector.getInjectedService(AbstractEconomy.class, abstractEconomy);
             if (abstractEconomy == null) {
                 Log.debug("No economy bridge found.");
@@ -1133,14 +1206,20 @@ public class QuickShop implements QuickShopAPI, Reloadable {
             }
             if (!Objects.requireNonNull(vault.getVault()).hasAccount(tax)) {
                 Log.debug("Tax account doesn't exists: " + tax);
-                parent.logger().warn("QuickShop detected that no tax account exists and will try to create one. If you see any errors, please change the tax-account name in the config.yml to that of the Server owner.");
+                parent.logger()
+                        .warn(
+                                "QuickShop detected that no tax account exists and will try to create one. If you see any errors, please change the tax-account name in the config.yml to that of the Server owner.");
                 if (vault.getVault().createPlayerAccount(tax)) {
                     parent.logger().info("Tax account created.");
                 } else {
-                    parent.logger().warn("Cannot create tax-account, please change the tax-account name in the config.yml to that of the server owner");
+                    parent.logger()
+                            .warn(
+                                    "Cannot create tax-account, please change the tax-account name in the config.yml to that of the server owner");
                 }
                 if (!vault.getVault().hasAccount(tax)) {
-                    parent.logger().warn("Player for the Tax-account has never played on this server before and we couldn't create an account. This may cause server lag or economy errors, therefore changing the name is recommended. You may ignore this warning if it doesn't cause any issues.");
+                    parent.logger()
+                            .warn(
+                                    "Player for the Tax-account has never played on this server before and we couldn't create an account. This may cause server lag or economy errors, therefore changing the name is recommended. You may ignore this warning if it doesn't cause any issues.");
                 }
             }
             return vault;

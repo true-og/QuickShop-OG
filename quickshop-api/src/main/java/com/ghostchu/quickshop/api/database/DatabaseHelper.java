@@ -5,15 +5,14 @@ import com.ghostchu.quickshop.api.database.bean.DataRecord;
 import com.ghostchu.quickshop.api.database.bean.ShopRecord;
 import com.ghostchu.quickshop.api.obj.QUser;
 import com.ghostchu.quickshop.api.shop.Shop;
-import org.apache.commons.lang3.tuple.Triple;
-import org.bukkit.Location;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import org.apache.commons.lang3.tuple.Triple;
+import org.bukkit.Location;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Processing and handle most things about database ;)
@@ -33,14 +32,16 @@ public interface DatabaseHelper {
      * @param player The player
      * @return
      */
-    @NotNull CompletableFuture<@NotNull Integer> cleanMessageForPlayer(@NotNull UUID player);
+    @NotNull
+    CompletableFuture<@NotNull Integer> cleanMessageForPlayer(@NotNull UUID player);
 
     /**
      * Create a shop data record sand save into database
      *
      * @param shop The shop object
      */
-    @NotNull CompletableFuture<@NotNull Long> createData(@NotNull Shop shop);
+    @NotNull
+    CompletableFuture<@NotNull Long> createData(@NotNull Shop shop);
 
     /**
      * Create a shop record in database
@@ -68,7 +69,8 @@ public interface DatabaseHelper {
      * @return The data record, null for not exists
      * @throws SQLException something going wrong
      */
-    @NotNull CompletableFuture<@Nullable DataRecord> getDataRecord(long dataId);
+    @NotNull
+    CompletableFuture<@Nullable DataRecord> getDataRecord(long dataId);
 
     /**
      * Async gets the player last use locale code from database
@@ -91,7 +93,6 @@ public interface DatabaseHelper {
      */
     CompletableFuture<@Nullable String> getPlayerName(@NotNull UUID uuid);
 
-
     /**
      * Async gets the player last use username from database
      *
@@ -105,17 +106,29 @@ public interface DatabaseHelper {
      * @param rec Record object that can be serialized by Gson.
      * @return
      */
-    @NotNull CompletableFuture<@NotNull Integer> insertHistoryRecord(@NotNull Object rec);
+    @NotNull
+    CompletableFuture<@NotNull Integer> insertHistoryRecord(@NotNull Object rec);
 
-    @NotNull CompletableFuture<@NotNull Integer> insertMetricRecord(@NotNull ShopMetricRecord recordEntry);
+    @NotNull
+    CompletableFuture<@NotNull Integer> insertMetricRecord(@NotNull ShopMetricRecord recordEntry);
 
-    void insertTransactionRecord(@Nullable UUID from, @Nullable UUID to, double amount, @Nullable String currency, double taxAmount, @Nullable UUID taxAccount, @Nullable String error);
+    void insertTransactionRecord(
+            @Nullable UUID from,
+            @Nullable UUID to,
+            double amount,
+            @Nullable String currency,
+            double taxAmount,
+            @Nullable UUID taxAccount,
+            @Nullable String error);
 
-    @NotNull List<ShopRecord> listShops(boolean deleteIfCorrupt);
+    @NotNull
+    List<ShopRecord> listShops(boolean deleteIfCorrupt);
 
-    @NotNull List<Long> listShopsTaggedBy(@NotNull UUID tagger, @NotNull String tag);
+    @NotNull
+    List<Long> listShopsTaggedBy(@NotNull UUID tagger, @NotNull String tag);
 
-    @NotNull List<String> listTags(@NotNull UUID tagger);
+    @NotNull
+    List<String> listTags(@NotNull UUID tagger);
 
     CompletableFuture<@Nullable Integer> removeShopTag(@NotNull UUID tagger, @NotNull Long shopId, @NotNull String tag);
 
@@ -131,7 +144,8 @@ public interface DatabaseHelper {
      * @param shopId The shop record id
      * @return The shop record
      */
-    @NotNull CompletableFuture<@Nullable Long> locateShopDataId(long shopId);
+    @NotNull
+    CompletableFuture<@Nullable Long> locateShopDataId(long shopId);
 
     /**
      * Locate a shop record from database by location
@@ -150,7 +164,8 @@ public interface DatabaseHelper {
      * @param dataId The data record id
      * @return
      */
-    @NotNull CompletableFuture<@NotNull Integer> removeData(long dataId);
+    @NotNull
+    CompletableFuture<@NotNull Integer> removeData(long dataId);
 
     /**
      * Remove a shop data record from database
@@ -158,8 +173,8 @@ public interface DatabaseHelper {
      * @param shopId The shop record id
      * @return
      */
-    @NotNull CompletableFuture<@NotNull Integer> removeShop(long shopId);
-
+    @NotNull
+    CompletableFuture<@NotNull Integer> removeShop(long shopId);
 
     /**
      * Remove a shop data mapping record from database
@@ -170,7 +185,8 @@ public interface DatabaseHelper {
      * @param z     Shop Z
      * @return
      */
-    @NotNull CompletableFuture<@NotNull Integer> removeShopMap(@NotNull String world, int x, int y, int z);
+    @NotNull
+    CompletableFuture<@NotNull Integer> removeShopMap(@NotNull String world, int x, int y, int z);
 
     /**
      * Create a transaction message record and save into database
@@ -180,7 +196,9 @@ public interface DatabaseHelper {
      * @param time    System time
      * @return
      */
-    @NotNull CompletableFuture<@NotNull Integer> saveOfflineTransactionMessage(@NotNull UUID player, @NotNull String message, long time);
+    @NotNull
+    CompletableFuture<@NotNull Integer> saveOfflineTransactionMessage(
+            @NotNull UUID player, @NotNull String message, long time);
 
     /**
      * Select all messages that saved in the database
@@ -208,7 +226,8 @@ public interface DatabaseHelper {
     @NotNull
     SQLQuery selectTable(@NotNull String table) throws SQLException;
 
-    CompletableFuture<Integer> updatePlayerProfile(@NotNull UUID uuid, @Nullable String locale, @NotNull String username);
+    CompletableFuture<Integer> updatePlayerProfile(
+            @NotNull UUID uuid, @Nullable String locale, @NotNull String username);
 
     /**
      * Update player profiles in batch
@@ -226,7 +245,8 @@ public interface DatabaseHelper {
      * @param stock  The inventory stock
      * @return
      */
-    @NotNull CompletableFuture<@NotNull Integer> updateExternalInventoryProfileCache(long shopId, int space, int stock);
+    @NotNull
+    CompletableFuture<@NotNull Integer> updateExternalInventoryProfileCache(long shopId, int space, int stock);
 
     /**
      * Update the shop profile to database
@@ -235,5 +255,4 @@ public interface DatabaseHelper {
      * @return
      */
     CompletableFuture<Void> updateShop(@NotNull Shop shop);
-
 }

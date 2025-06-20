@@ -9,9 +9,7 @@ import org.bukkit.event.Listener;
 
 public final class Main extends CompatibilityModule implements Listener {
     @Override
-    public void init() {
-
-    }
+    public void init() {}
 
     @EventHandler(ignoreCancelled = true)
     public void onFakeEventBegin(ShopProtectionCheckEvent event) {

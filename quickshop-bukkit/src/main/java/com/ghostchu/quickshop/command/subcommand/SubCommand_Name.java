@@ -9,13 +9,12 @@ import com.ghostchu.quickshop.api.shop.permission.BuiltInShopPermission;
 import com.ghostchu.quickshop.economy.SimpleEconomyTransaction;
 import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.logger.Log;
+import java.util.Collections;
+import java.util.List;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.List;
 
 public class SubCommand_Name implements CommandHandler<Player> {
 
@@ -70,7 +69,13 @@ public class SubCommand_Name implements CommandHandler<Player> {
                         .amount(fee)
                         .build();
                 if (!transaction.checkBalance()) {
-                    plugin.text().of(sender, "you-cant-afford-shop-naming", plugin.getShopManager().format(fee, shop.getLocation().getWorld(), plugin.getCurrency())).send();
+                    plugin.text()
+                            .of(
+                                    sender,
+                                    "you-cant-afford-shop-naming",
+                                    plugin.getShopManager()
+                                            .format(fee, shop.getLocation().getWorld(), plugin.getCurrency()))
+                            .send();
                     return;
                 }
             }
@@ -83,7 +88,9 @@ public class SubCommand_Name implements CommandHandler<Player> {
         shopName = namingEvent.getName();
 
         if (transaction != null && !transaction.failSafeCommit()) {
-            plugin.text().of(sender, "economy-transaction-failed", transaction.getLastError()).send();
+            plugin.text()
+                    .of(sender, "economy-transaction-failed", transaction.getLastError())
+                    .send();
             plugin.logger().error("EconomyTransaction Failed, last error: {}", transaction.getLastError());
             return;
         }
@@ -94,8 +101,11 @@ public class SubCommand_Name implements CommandHandler<Player> {
 
     @NotNull
     @Override
-    public List<String> onTabComplete(@NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
-        return parser.getArgs().size() == 1 ? Collections.singletonList(LegacyComponentSerializer.legacySection().serialize(plugin.text().of(sender, "tabcomplete.name").forLocale())) : Collections.emptyList();
+    public List<String> onTabComplete(
+            @NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+        return parser.getArgs().size() == 1
+                ? Collections.singletonList(LegacyComponentSerializer.legacySection()
+                        .serialize(plugin.text().of(sender, "tabcomplete.name").forLocale()))
+                : Collections.emptyList();
     }
-
 }

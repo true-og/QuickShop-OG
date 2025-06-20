@@ -9,11 +9,10 @@ import com.ghostchu.quickshop.obj.QUserImpl;
 import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.logging.container.ShopRemoveLog;
 import com.ghostchu.quickshop.util.performance.BatchBukkitExecutor;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class SubCommand_CleanGhost implements CommandHandler<CommandSender> {
 
@@ -39,42 +38,61 @@ public class SubCommand_CleanGhost implements CommandHandler<CommandSender> {
         AtomicInteger deletionCounter = new AtomicInteger(0);
         BatchBukkitExecutor<Shop> updateExecutor = new BatchBukkitExecutor<>();
         updateExecutor.addTasks(plugin.getShopManager().getAllShops());
-        updateExecutor.startHandle(plugin.getJavaPlugin(), (shop) -> {
-            if (shop == null) {
-                return; // WTF
-            }
-            if (shop.getOwner() == null) {
-                plugin.text().of(sender, "cleanghost-deleting", shop.getShopId(), "invalid owner data").send();
-                plugin.getShopManager().deleteShop(shop);
-                deletionCounter.incrementAndGet();
-                plugin.logEvent(new ShopRemoveLog(QUserImpl.createFullFilled(CommonUtil.getNilUniqueId(), "SYSTEM", false), "/quickshop cleanghost command", shop.saveToInfoStorage()));
-                return;
-            }
-            if (shop.getItem().getType() == Material.AIR) {
-                plugin.text().of(sender, "cleanghost-deleting", shop.getShopId(), "invalid item data").send();
-                plugin.getShopManager().deleteShop(shop);
-                deletionCounter.incrementAndGet();
-                plugin.logEvent(new ShopRemoveLog(QUserImpl.createFullFilled(CommonUtil.getNilUniqueId(), "SYSTEM", false), "/quickshop cleanghost command", shop.saveToInfoStorage()));
-                return;
-            }
-            if (!shop.getLocation().isWorldLoaded()) {
-                plugin.text().of(sender, "cleanghost-deleting", shop.getShopId(), "unloaded world").send();
-                plugin.getShopManager().deleteShop(shop);
-                deletionCounter.incrementAndGet();
-                plugin.logEvent(new ShopRemoveLog(QUserImpl.createFullFilled(CommonUtil.getNilUniqueId(), "SYSTEM", false), "/quickshop cleanghost command", shop.saveToInfoStorage()));
-                return;
-            }
-            if (!Util.canBeShop(shop.getLocation().getBlock())) {
-                plugin.text().of(sender, "cleanghost-deleting", shop.getShopId(), "invalid shop block").send();
-                plugin.getShopManager().deleteShop(shop);
-                deletionCounter.incrementAndGet();
-                plugin.logEvent(new ShopRemoveLog(QUserImpl.createFullFilled(CommonUtil.getNilUniqueId(), "SYSTEM", false), "/quickshop cleanghost command", shop.saveToInfoStorage()));
-            }
-        }).whenComplete((aVoid, throwable) ->
-                plugin.text().of(sender, "cleanghost-deleted", deletionCounter.get()
-                ).send());
-
+        updateExecutor
+                .startHandle(plugin.getJavaPlugin(), (shop) -> {
+                    if (shop == null) {
+                        return; // WTF
+                    }
+                    if (shop.getOwner() == null) {
+                        plugin.text()
+                                .of(sender, "cleanghost-deleting", shop.getShopId(), "invalid owner data")
+                                .send();
+                        plugin.getShopManager().deleteShop(shop);
+                        deletionCounter.incrementAndGet();
+                        plugin.logEvent(new ShopRemoveLog(
+                                QUserImpl.createFullFilled(CommonUtil.getNilUniqueId(), "SYSTEM", false),
+                                "/quickshop cleanghost command",
+                                shop.saveToInfoStorage()));
+                        return;
+                    }
+                    if (shop.getItem().getType() == Material.AIR) {
+                        plugin.text()
+                                .of(sender, "cleanghost-deleting", shop.getShopId(), "invalid item data")
+                                .send();
+                        plugin.getShopManager().deleteShop(shop);
+                        deletionCounter.incrementAndGet();
+                        plugin.logEvent(new ShopRemoveLog(
+                                QUserImpl.createFullFilled(CommonUtil.getNilUniqueId(), "SYSTEM", false),
+                                "/quickshop cleanghost command",
+                                shop.saveToInfoStorage()));
+                        return;
+                    }
+                    if (!shop.getLocation().isWorldLoaded()) {
+                        plugin.text()
+                                .of(sender, "cleanghost-deleting", shop.getShopId(), "unloaded world")
+                                .send();
+                        plugin.getShopManager().deleteShop(shop);
+                        deletionCounter.incrementAndGet();
+                        plugin.logEvent(new ShopRemoveLog(
+                                QUserImpl.createFullFilled(CommonUtil.getNilUniqueId(), "SYSTEM", false),
+                                "/quickshop cleanghost command",
+                                shop.saveToInfoStorage()));
+                        return;
+                    }
+                    if (!Util.canBeShop(shop.getLocation().getBlock())) {
+                        plugin.text()
+                                .of(sender, "cleanghost-deleting", shop.getShopId(), "invalid shop block")
+                                .send();
+                        plugin.getShopManager().deleteShop(shop);
+                        deletionCounter.incrementAndGet();
+                        plugin.logEvent(new ShopRemoveLog(
+                                QUserImpl.createFullFilled(CommonUtil.getNilUniqueId(), "SYSTEM", false),
+                                "/quickshop cleanghost command",
+                                shop.saveToInfoStorage()));
+                    }
+                })
+                .whenComplete((aVoid, throwable) -> plugin.text()
+                        .of(sender, "cleanghost-deleted", deletionCounter.get())
+                        .send());
     }
-
-
 }

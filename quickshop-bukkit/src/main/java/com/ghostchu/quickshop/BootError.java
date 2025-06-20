@@ -1,13 +1,12 @@
 package com.ghostchu.quickshop;
 
+import java.util.Arrays;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
-
-import java.util.Arrays;
 
 /**
  * BootError class contains print errors on /quickshop command when plugin failed launched.
@@ -38,7 +37,7 @@ public class BootError {
      *
      * @param sender The sender you want output the errors.
      */
-    public void printErrors(CommandSender sender) { //Do not use any method that not in CraftBukkit
+    public void printErrors(CommandSender sender) { // Do not use any method that not in CraftBukkit
         sender.sendMessage(ChatColor.RED + "#####################################################");
         sender.sendMessage(ChatColor.RED + " QuickShop is disabled, Please fix any errors and restart");
         for (String issue : errors) {
@@ -46,5 +45,4 @@ public class BootError {
         }
         sender.sendMessage(ChatColor.RED + "#####################################################");
     }
-
 }

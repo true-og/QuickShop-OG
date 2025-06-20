@@ -87,7 +87,6 @@ public class SimpleInfo implements Info {
         return this.item;
     }
 
-
     /**
      * @return Location loc, Get shop's location,
      */
@@ -119,5 +118,4 @@ public class SimpleInfo implements Info {
     public boolean isBypassed() {
         return bypass;
     }
-
 }

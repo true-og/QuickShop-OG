@@ -7,12 +7,11 @@ import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.api.shop.permission.BuiltInShopPermissionGroup;
 import com.ghostchu.quickshop.util.ChatSheetPrinter;
 import com.ghostchu.quickshop.util.Util;
+import java.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
 
 public class SubCommand_Permission implements CommandHandler<Player> {
     private final QuickShop plugin;
@@ -68,7 +67,9 @@ public class SubCommand_Permission implements CommandHandler<Player> {
         switch (type) {
             case "user" -> {
                 if (target == null) {
-                    plugin.text().of(sender, "bad-command-usage-detailed", "set,list,unset").send();
+                    plugin.text()
+                            .of(sender, "bad-command-usage-detailed", "set,list,unset")
+                            .send();
                     return;
                 }
                 plugin.getPlayerFinder().name2UuidFuture(targetFinal).whenComplete((uuid, throwable) -> {
@@ -83,19 +84,27 @@ public class SubCommand_Permission implements CommandHandler<Player> {
                     switch (operationFinal) {
                         case "set" -> {
                             if (groupFinal == null) {
-                                plugin.text().of(sender, "command-incorrect", "/quickshop permission user set <group>").send();
+                                plugin.text()
+                                        .of(sender, "command-incorrect", "/quickshop permission user set <group>")
+                                        .send();
                                 return;
                             }
                             if (!plugin.getShopPermissionManager().hasGroup(groupFinal)) {
-                                plugin.text().of(sender, "invalid-group", targetFinal).send();
+                                plugin.text()
+                                        .of(sender, "invalid-group", targetFinal)
+                                        .send();
                                 return;
                             }
                             shop.setPlayerGroup(uuid, groupFinal);
-                            plugin.text().of(sender, "successfully-set-player-group", targetFinal, groupFinal).send();
+                            plugin.text()
+                                    .of(sender, "successfully-set-player-group", targetFinal, groupFinal)
+                                    .send();
                         }
                         case "unset" -> {
                             shop.setPlayerGroup(uuid, BuiltInShopPermissionGroup.EVERYONE);
-                            plugin.text().of(sender, "successfully-unset-player-group", targetFinal).send();
+                            plugin.text()
+                                    .of(sender, "successfully-unset-player-group", targetFinal)
+                                    .send();
                         }
                     }
                 });
@@ -105,24 +114,28 @@ public class SubCommand_Permission implements CommandHandler<Player> {
                 switch (operation) {
                     case "list" -> {
                         sheet.printHeader();
-                        sheet.printLine(plugin.text().of(sender, "permission.header").forLocale());
+                        sheet.printLine(
+                                plugin.text().of(sender, "permission.header").forLocale());
                         Util.asyncThreadRun(() -> {
-                            for (Map.Entry<UUID, String> map : shop.getPermissionAudiences().entrySet()) {
+                            for (Map.Entry<UUID, String> map :
+                                    shop.getPermissionAudiences().entrySet()) {
                                 String name = plugin.getPlayerFinder().uuid2Name(map.getKey());
                                 if (name == null) {
                                     name = "unknown";
                                 }
-                                sheet.printLine(plugin.text().of(sender, "permission.table", name, map.getValue()).forLocale());
+                                sheet.printLine(plugin.text()
+                                        .of(sender, "permission.table", name, map.getValue())
+                                        .forLocale());
                             }
                             sheet.printFooter();
                         });
                     }
                 }
             }
-            default -> plugin.text().of(sender, "bad-command-usage-detailed", "list").send();
+            default -> plugin.text()
+                    .of(sender, "bad-command-usage-detailed", "list")
+                    .send();
         }
-
-
     }
 
     /**
@@ -134,7 +147,8 @@ public class SubCommand_Permission implements CommandHandler<Player> {
      * @return Candidate list
      */
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+    public @Nullable List<String> onTabComplete(
+            @NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
         if (parser.getArgs().size() == 1) {
             return List.of("user", "group");
         }

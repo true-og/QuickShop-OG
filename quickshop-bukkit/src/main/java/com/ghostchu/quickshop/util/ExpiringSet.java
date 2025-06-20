@@ -2,7 +2,6 @@ package com.ghostchu.quickshop.util;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-
 import java.util.concurrent.TimeUnit;
 
 public class ExpiringSet<T> {
@@ -10,9 +9,8 @@ public class ExpiringSet<T> {
     private final long lifetime;
 
     public ExpiringSet(long lifetime, TimeUnit timeUnit) {
-        this.cache = CacheBuilder
-                .newBuilder()
-                .expireAfterWrite(lifetime, timeUnit).build();
+        this.cache =
+                CacheBuilder.newBuilder().expireAfterWrite(lifetime, timeUnit).build();
         this.lifetime = timeUnit.toMillis(lifetime);
     }
 

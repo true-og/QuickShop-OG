@@ -5,11 +5,10 @@ import com.ghostchu.quickshop.api.command.CommandHandler;
 import com.ghostchu.quickshop.api.command.CommandParser;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.api.shop.permission.BuiltInShopPermission;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collections;
 import java.util.List;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class SubCommand_ToggleDisplay implements CommandHandler<Player> {
 
@@ -46,5 +45,4 @@ public class SubCommand_ToggleDisplay implements CommandHandler<Player> {
             @NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
         return Collections.emptyList();
     }
-
 }

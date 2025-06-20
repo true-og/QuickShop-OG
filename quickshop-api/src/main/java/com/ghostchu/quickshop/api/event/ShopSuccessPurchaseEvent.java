@@ -23,8 +23,7 @@ public class ShopSuccessPurchaseEvent extends AbstractQSEvent {
 
     private final double tax;
 
-    private final double
-            total; // Don't use getter, we have important notice need told dev in javadoc.
+    private final double total; // Don't use getter, we have important notice need told dev in javadoc.
 
     /**
      * Builds a new shop purchase event
@@ -38,7 +37,12 @@ public class ShopSuccessPurchaseEvent extends AbstractQSEvent {
      * @param total              The money in this purchase
      */
     public ShopSuccessPurchaseEvent(
-            @NotNull Shop shop, @NotNull QUser purchaser, @NotNull InventoryWrapper purchaserInventory, int amount, double total, double tax) {
+            @NotNull Shop shop,
+            @NotNull QUser purchaser,
+            @NotNull InventoryWrapper purchaserInventory,
+            int amount,
+            double total,
+            double tax) {
         this.shop = shop;
         this.purchaser = purchaser;
         this.purchaserInventory = purchaserInventory;
@@ -75,7 +79,6 @@ public class ShopSuccessPurchaseEvent extends AbstractQSEvent {
     public double getBalanceWithoutTax() {
         return this.total;
     }
-
 
     /**
      * Gets the purchaser, that maybe is a online/offline/virtual player.

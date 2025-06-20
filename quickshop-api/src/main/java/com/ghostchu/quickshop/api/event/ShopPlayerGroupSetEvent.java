@@ -1,9 +1,8 @@
 package com.ghostchu.quickshop.api.event;
 
 import com.ghostchu.quickshop.api.shop.Shop;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.UUID;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Fire when a player's group is set or changed.
@@ -22,7 +21,8 @@ public class ShopPlayerGroupSetEvent extends AbstractQSEvent {
      * @param oldGroup The old group.
      * @param newGroup The new group.
      */
-    public ShopPlayerGroupSetEvent(@NotNull Shop shop, @NotNull UUID player, @NotNull String oldGroup, @NotNull String newGroup) {
+    public ShopPlayerGroupSetEvent(
+            @NotNull Shop shop, @NotNull UUID player, @NotNull String oldGroup, @NotNull String newGroup) {
         this.shop = shop;
         this.player = player;
         this.oldGroup = oldGroup;

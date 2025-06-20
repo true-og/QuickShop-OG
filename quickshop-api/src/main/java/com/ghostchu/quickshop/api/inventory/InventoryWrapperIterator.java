@@ -1,17 +1,15 @@
 package com.ghostchu.quickshop.api.inventory;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /**
  * Iterator for InventoryWrapper
  */
 public interface InventoryWrapperIterator extends Iterator<ItemStack> {
-
 
     /**
      * Return the default implementation for bukkit inventory

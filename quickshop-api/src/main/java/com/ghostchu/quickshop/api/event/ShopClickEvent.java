@@ -13,6 +13,7 @@ public class ShopClickEvent extends AbstractQSEvent implements QSCancellable {
 
     @NotNull
     private final Shop shop;
+
     private final Player player;
 
     private boolean cancelled;
@@ -62,6 +63,4 @@ public class ShopClickEvent extends AbstractQSEvent implements QSCancellable {
     public boolean isCancelled() {
         return this.cancelled;
     }
-
-
 }

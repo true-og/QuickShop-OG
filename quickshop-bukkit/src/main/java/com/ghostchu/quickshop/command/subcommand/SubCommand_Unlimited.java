@@ -40,5 +40,4 @@ public class SubCommand_Unlimited implements CommandHandler<Player> {
             plugin.text().of(sender, "unlimited-shop-owner-keeped").send();
         }
     }
-
 }

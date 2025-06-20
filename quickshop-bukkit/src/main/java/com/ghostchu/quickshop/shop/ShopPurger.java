@@ -8,14 +8,12 @@ import com.ghostchu.quickshop.database.SimpleDatabaseHelperV2;
 import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.logger.Log;
 import com.ghostchu.quickshop.util.performance.BatchBukkitExecutor;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 
 public class ShopPurger {
     private final QuickShop plugin;
@@ -52,7 +50,10 @@ public class ShopPurger {
         boolean skipOp = plugin.getConfig().getBoolean("purge.skip-op");
         for (Shop shop : plugin.getShopManager().getAllShops()) {
             try {
-                OfflinePlayer player = shop.getOwner().getUniqueIdIfRealPlayer().map(Bukkit::getOfflinePlayer).orElse(null);
+                OfflinePlayer player = shop.getOwner()
+                        .getUniqueIdIfRealPlayer()
+                        .map(Bukkit::getOfflinePlayer)
+                        .orElse(null);
                 if (player == null) {
                     return;
                 }
@@ -71,7 +72,9 @@ public class ShopPurger {
                     continue;
                 }
                 boolean markDeletion = player.isBanned() && deleteBanned;
-                long noOfDaysBetween = ChronoUnit.DAYS.between(CommonUtil.getDateTimeFromTimestamp(lastPlayed), CommonUtil.getDateTimeFromTimestamp(System.currentTimeMillis()));
+                long noOfDaysBetween = ChronoUnit.DAYS.between(
+                        CommonUtil.getDateTimeFromTimestamp(lastPlayed),
+                        CommonUtil.getDateTimeFromTimestamp(System.currentTimeMillis()));
                 if (noOfDaysBetween > days) {
                     markDeletion = true;
                 }
@@ -86,12 +89,17 @@ public class ShopPurger {
 
         BatchBukkitExecutor<Shop> purgeExecutor = new BatchBukkitExecutor<>();
         purgeExecutor.addTasks(pendingRemovalShops);
-        purgeExecutor.startHandle(plugin.getJavaPlugin(), (shop) -> plugin.getShopManager().deleteShop(shop))
+        purgeExecutor
+                .startHandle(plugin.getJavaPlugin(), (shop) -> plugin.getShopManager()
+                        .deleteShop(shop))
                 .whenComplete((a, b) -> {
-                    long usedTime = purgeExecutor.getStartTime().until(Instant.now(), java.time.temporal.ChronoUnit.MILLIS);
-                    plugin.logger().info("[Shop Purger] Total shop {} has been purged, used {}ms",
-                            pendingRemovalShops.size(),
-                            usedTime);
+                    long usedTime =
+                            purgeExecutor.getStartTime().until(Instant.now(), java.time.temporal.ChronoUnit.MILLIS);
+                    plugin.logger()
+                            .info(
+                                    "[Shop Purger] Total shop {} has been purged, used {}ms",
+                                    pendingRemovalShops.size(),
+                                    usedTime);
                 });
     }
 }

@@ -3,11 +3,10 @@ package com.ghostchu.quickshop.util.paste.item;
 import com.ghostchu.quickshop.common.util.CommonUtil;
 import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.paste.util.HTMLTable;
-import org.bukkit.Material;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Map;
 import java.util.StringJoiner;
+import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
 
 public class MiscUtilItem implements SubPasteItem {
     @SuppressWarnings("deprecation")
@@ -35,7 +34,8 @@ public class MiscUtilItem implements SubPasteItem {
         HTMLTable customStackSize = new HTMLTable(2);
         customStackSize.setTableTitle("Bukkit Material", "Minecraft NamespacedKey", "Override StackSize");
         for (Map.Entry<Material, Integer> entry : Util.getCustomStacksize().entrySet()) {
-            customStackSize.insert(entry.getKey().name(), entry.getKey().getKey().toString(), entry.getValue());
+            customStackSize.insert(
+                    entry.getKey().name(), entry.getKey().getKey().toString(), entry.getValue());
         }
         joiner.add(customStackSize.render());
         return joiner.toString();

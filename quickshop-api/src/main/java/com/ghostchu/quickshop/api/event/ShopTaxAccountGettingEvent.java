@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ShopTaxAccountGettingEvent extends AbstractQSEvent {
     private final Shop shop;
+
     @Nullable
     private QUser taxAccount;
 

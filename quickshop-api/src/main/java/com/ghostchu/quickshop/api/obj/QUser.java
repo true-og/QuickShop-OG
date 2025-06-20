@@ -1,22 +1,26 @@
 package com.ghostchu.quickshop.api.obj;
 
+import java.util.Optional;
+import java.util.UUID;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
-import java.util.UUID;
-
 public interface QUser {
-    @Nullable String getUsername();
+    @Nullable
+    String getUsername();
 
-    @NotNull Optional<String> getUsernameOptional();
+    @NotNull
+    Optional<String> getUsernameOptional();
 
-    @NotNull String getDisplay();
+    @NotNull
+    String getDisplay();
 
-    @Nullable UUID getUniqueId();
+    @Nullable
+    UUID getUniqueId();
 
-    @NotNull Optional<UUID> getUniqueIdOptional();
+    @NotNull
+    Optional<UUID> getUniqueIdOptional();
 
     boolean isRealPlayer();
 

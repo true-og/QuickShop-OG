@@ -5,6 +5,7 @@ import com.ghostchu.quickshop.api.inventory.InventoryWrapperIterator;
 import com.ghostchu.quickshop.api.inventory.InventoryWrapperManager;
 import com.ghostchu.quickshop.api.inventory.InventoryWrapperType;
 import com.lishid.openinv.IOpenInv;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -13,8 +14,6 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.UUID;
 
 public class EnderChestWrapper implements InventoryWrapper {
     private final UUID uuid;
@@ -26,7 +25,6 @@ public class EnderChestWrapper implements InventoryWrapper {
         this.uuid = uuid;
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
         this.player = iOpenInv.loadPlayer(offlinePlayer);
-
     }
 
     public UUID getUuid() {

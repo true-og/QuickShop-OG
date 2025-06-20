@@ -27,6 +27,4 @@ public interface InventoryWrapperManager {
      */
     @NotNull
     String mklink(@NotNull InventoryWrapper wrapper) throws IllegalArgumentException;
-
-
 }

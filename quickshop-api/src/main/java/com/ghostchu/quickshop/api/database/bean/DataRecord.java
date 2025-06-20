@@ -1,10 +1,9 @@
 package com.ghostchu.quickshop.api.database.bean;
 
 import com.ghostchu.quickshop.api.obj.QUser;
+import java.util.Date;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Date;
 
 public interface DataRecord {
     @NotNull

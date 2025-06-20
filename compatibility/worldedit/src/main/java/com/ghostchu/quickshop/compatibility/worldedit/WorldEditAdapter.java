@@ -33,6 +33,4 @@ public class WorldEditAdapter implements Listener {
     public void unregister() {
         weBukkit.getWorldEdit().getEventBus().unregister(this);
     }
-
-
 }

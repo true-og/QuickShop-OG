@@ -1,6 +1,8 @@
 package com.ghostchu.quickshop.util;
 
 import com.ghostchu.quickshop.QuickShop;
+import java.util.Optional;
+import java.util.function.Function;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -9,13 +11,11 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
-import java.util.function.Function;
-
 public class ItemExpression {
     public static final String ITEM_REFERENCE_MARKER = "@";
     public static final String ENCHANTMENT_MARKER = "%";
     private final QuickShop plugin;
+
     @Nullable
     private final Function<ItemStack, Boolean> function;
 
@@ -29,7 +29,6 @@ public class ItemExpression {
             this.function = handleItemMaterial(item);
         }
     }
-
 
     private @NotNull Function<ItemStack, Boolean> handleItemReference(@NotNull String item) {
         String reference = item.substring(1);

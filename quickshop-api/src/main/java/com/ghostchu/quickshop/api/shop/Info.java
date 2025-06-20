@@ -13,24 +13,28 @@ public interface Info {
     /**
      * @return ShopAction action, Get shop action.
      */
-    @NotNull ShopAction getAction();
+    @NotNull
+    ShopAction getAction();
 
     void setAction(@NotNull ShopAction action);
 
     /**
      * @return ItemStack iStack, Get Shop's selling/buying item's ItemStack.
      */
-    @NotNull ItemStack getItem();
+    @NotNull
+    ItemStack getItem();
 
     /**
      * @return Location loc, Get shop's location,
      */
-    @NotNull Location getLocation();
+    @NotNull
+    Location getLocation();
 
     /**
      * @return Block signBlock, Get block of shop's sign, may return the null.
      */
-    @Nullable Block getSignBlock();
+    @Nullable
+    Block getSignBlock();
 
     /**
      * Get shop is or not has changed.
@@ -46,5 +50,4 @@ public interface Info {
      * @return Bypassed Protection Checks
      */
     boolean isBypassed();
-
 }

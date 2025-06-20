@@ -2,13 +2,12 @@ package com.ghostchu.quickshop.addon.discount;
 
 import com.ghostchu.quickshop.addon.discount.type.CodeType;
 import com.ghostchu.quickshop.addon.discount.type.RateType;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
@@ -24,5 +23,4 @@ public class DiscountCodeData {
     private int maxUsage;
     private Map<UUID, Integer> usages;
     private Set<Long> shopScope;
-
 }

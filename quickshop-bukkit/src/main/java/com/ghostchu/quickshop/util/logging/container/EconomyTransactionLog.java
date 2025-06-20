@@ -15,7 +15,15 @@ public class EconomyTransactionLog {
     private double amount;
     private String lastError;
 
-    public EconomyTransactionLog(boolean success, QUser from, QUser to, String currency, double tax, QUser taxAccount, double amount, String lastError) {
+    public EconomyTransactionLog(
+            boolean success,
+            QUser from,
+            QUser to,
+            String currency,
+            double tax,
+            QUser taxAccount,
+            double amount,
+            String lastError) {
         this.success = success;
         this.from = from.serialize();
         this.to = to.serialize();

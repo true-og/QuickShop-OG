@@ -3,9 +3,8 @@ package com.ghostchu.quickshop.util.privacy;
 import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.util.logger.Log;
 import com.ghostchu.quickshop.util.metric.MetricDataType;
-import org.bukkit.configuration.ConfigurationSection;
-
 import java.util.UUID;
+import org.bukkit.configuration.ConfigurationSection;
 
 public class PrivacyController {
     private final QuickShop plugin;
@@ -32,7 +31,8 @@ public class PrivacyController {
         }
         ConfigurationSection moduleSection = section.getConfigurationSection("module");
         if (moduleSection == null) {
-            Log.privacy("[CHECK] Transaction " + transaction + " was approved: `module` section not found but " + dataType.name() + " type was explicitly enabled.");
+            Log.privacy("[CHECK] Transaction " + transaction + " was approved: `module` section not found but "
+                    + dataType.name() + " type was explicitly enabled.");
             return true;
         }
         boolean r = moduleSection.getBoolean(moduleName, true);
@@ -44,9 +44,12 @@ public class PrivacyController {
         return r;
     }
 
-    public void privacyReview(MetricDataType dataType, String moduleName, String reason, Runnable accepted, Runnable declined) {
+    public void privacyReview(
+            MetricDataType dataType, String moduleName, String reason, Runnable accepted, Runnable declined) {
         UUID privacyTransaction = UUID.randomUUID();
-        Log.privacy("[REVIEW] The module [" + moduleName + "] requesting to processing your data off your local machine for usage [" + dataType.name() + "], the reason is: " + reason + ". Transaction Id: " + privacyTransaction);
+        Log.privacy("[REVIEW] The module [" + moduleName
+                + "] requesting to processing your data off your local machine for usage [" + dataType.name()
+                + "], the reason is: " + reason + ". Transaction Id: " + privacyTransaction);
         if (!isAllowed(dataType, moduleName, privacyTransaction)) {
             Log.privacy("[REVIEW] Declined transaction " + privacyTransaction);
             declined.run();

@@ -9,14 +9,13 @@ import com.ghostchu.quickshop.util.logger.Log;
 import com.ghostchu.quickshop.util.paste.GuavaCacheRender;
 import com.ghostchu.quickshop.util.paste.item.SubPasteItem;
 import com.ghostchu.quickshop.util.paste.util.HTMLTable;
-import org.bukkit.OfflinePlayer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.UUID;
+import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PAPIManager implements SubPasteItem {
     private final QuickShop plugin;
@@ -39,7 +38,8 @@ public class PAPIManager implements SubPasteItem {
     public void register(@NotNull PAPISubHandler handler) {
         for (PAPISubHandler registered : handlers) {
             if (registered.getPrefix().equals(handler.getPrefix())) {
-                throw new IllegalStateException("The prefix " + handler.getPrefix() + " is already registered by " + registered.getClass().getName() + "!");
+                throw new IllegalStateException("The prefix " + handler.getPrefix() + " is already registered by "
+                        + registered.getClass().getName() + "!");
             }
         }
         handlers.add(handler);
@@ -62,16 +62,17 @@ public class PAPIManager implements SubPasteItem {
     public String handle(@NotNull OfflinePlayer player, @NotNull String params) {
         UUID playerUniqueId = player.getUniqueId();
         return cache.getCached(playerUniqueId, params, (uuid, parms) -> {
-            for (PAPISubHandler handler : handlers) {
-                Log.debug("Comparing with " + handler.getPrefix() + " and " + params);
-                if (params.startsWith(handler.getPrefix())) {
-                    Log.debug("Match! Handling...");
-                    return handler.handle(player, params);
-                }
-            }
-            Log.debug("No PAPI handler hit");
-            return null;
-        }).orElse(null);
+                    for (PAPISubHandler handler : handlers) {
+                        Log.debug("Comparing with " + handler.getPrefix() + " and " + params);
+                        if (params.startsWith(handler.getPrefix())) {
+                            Log.debug("Match! Handling...");
+                            return handler.handle(player, params);
+                        }
+                    }
+                    Log.debug("No PAPI handler hit");
+                    return null;
+                })
+                .orElse(null);
     }
 
     @Override

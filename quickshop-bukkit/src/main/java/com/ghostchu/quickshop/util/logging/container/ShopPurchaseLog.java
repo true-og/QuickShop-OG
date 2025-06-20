@@ -17,7 +17,15 @@ public class ShopPurchaseLog {
     private double balance;
     private double tax;
 
-    public ShopPurchaseLog(ShopInfoStorage shop, ShopType type, QUser trader, String itemName, String itemStack, int amount, double balance, double tax) {
+    public ShopPurchaseLog(
+            ShopInfoStorage shop,
+            ShopType type,
+            QUser trader,
+            String itemName,
+            String itemStack,
+            int amount,
+            double balance,
+            double tax) {
         this.shop = shop;
         this.type = type;
         this.trader = trader.serialize();

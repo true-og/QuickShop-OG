@@ -13,13 +13,11 @@ public class MckFileConfiguration extends FileConfiguration {
     }
 
     @Override
-    public void loadFromString(@NotNull String s) {
-    }
+    public void loadFromString(@NotNull String s) {}
 
     @NotNull
     @Override
     protected String buildHeader() {
         return "";
     }
-
 }

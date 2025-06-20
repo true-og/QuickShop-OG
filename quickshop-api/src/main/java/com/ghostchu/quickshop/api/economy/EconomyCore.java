@@ -1,12 +1,11 @@
 package com.ghostchu.quickshop.api.economy;
 
+import java.util.UUID;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.UUID;
 
 /**
  * @author netherfoam Represents an economy.
@@ -119,14 +118,16 @@ public interface EconomyCore {
      *
      * @return Impl name
      */
-    @NotNull String getName();
+    @NotNull
+    String getName();
 
     /**
      * Getting Economy impl owned by
      *
      * @return Owned by
      */
-    @NotNull Plugin getPlugin();
+    @NotNull
+    Plugin getPlugin();
 
     /**
      * Gets the currency does exists
@@ -161,20 +162,8 @@ public interface EconomyCore {
      * @param world    The transaction world
      * @return true if success (Payer had enough cash, receiver was able to receive the funds)
      */
-    boolean transfer(@NotNull Object from, @NotNull Object to, double amount, @NotNull World world, @Nullable String currency);
-
-
-    /**
-     * Transfers the given amount of money from Player1 to Player2
-     *
-     * @param from     The player who is paying money
-     * @param to       The player who is receiving money
-     * @param amount   The amount to transfer
-     * @param currency The currency name
-     * @param world    The transaction world
-     * @return true if success (Payer had enough cash, receiver was able to receive the funds)
-     */
-    boolean transfer(@NotNull UUID from, @NotNull UUID to, double amount, @NotNull World world, @Nullable String currency);
+    boolean transfer(
+            @NotNull Object from, @NotNull Object to, double amount, @NotNull World world, @Nullable String currency);
 
     /**
      * Transfers the given amount of money from Player1 to Player2
@@ -186,8 +175,21 @@ public interface EconomyCore {
      * @param world    The transaction world
      * @return true if success (Payer had enough cash, receiver was able to receive the funds)
      */
-    boolean transfer(@NotNull String from, @NotNull String to, double amount, @NotNull World world, @Nullable String currency);
+    boolean transfer(
+            @NotNull UUID from, @NotNull UUID to, double amount, @NotNull World world, @Nullable String currency);
 
+    /**
+     * Transfers the given amount of money from Player1 to Player2
+     *
+     * @param from     The player who is paying money
+     * @param to       The player who is receiving money
+     * @param amount   The amount to transfer
+     * @param currency The currency name
+     * @param world    The transaction world
+     * @return true if success (Payer had enough cash, receiver was able to receive the funds)
+     */
+    boolean transfer(
+            @NotNull String from, @NotNull String to, double amount, @NotNull World world, @Nullable String currency);
 
     /**
      * Withdraws a given amount of money from the given username and turns it to thin air.
@@ -232,5 +234,4 @@ public interface EconomyCore {
      * @return True if success, false if they didn't have enough cash
      */
     boolean withdraw(@NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency);
-
 }

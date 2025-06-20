@@ -7,11 +7,10 @@ import com.ghostchu.quickshop.database.DatabaseIOUtil;
 import com.ghostchu.quickshop.database.SimpleDatabaseHelperV2;
 import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.logger.Log;
-import org.bukkit.command.ConsoleCommandSender;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.sql.SQLException;
+import org.bukkit.command.ConsoleCommandSender;
+import org.jetbrains.annotations.NotNull;
 
 public class SubCommand_Recovery implements CommandHandler<ConsoleCommandSender> {
 
@@ -22,14 +21,16 @@ public class SubCommand_Recovery implements CommandHandler<ConsoleCommandSender>
     }
 
     @Override
-    public void onCommand(@NotNull ConsoleCommandSender sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+    public void onCommand(
+            @NotNull ConsoleCommandSender sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
         File file = new File(plugin.getDataFolder(), "recovery.zip");
         if (!file.exists()) {
             plugin.text().of(sender, "importing-not-found", "recovery.zip").send();
             return;
         }
 
-        if (parser.getArgs().isEmpty() || !"confirm".equalsIgnoreCase(parser.getArgs().get(0))) {
+        if (parser.getArgs().isEmpty()
+                || !"confirm".equalsIgnoreCase(parser.getArgs().get(0))) {
             plugin.text().of(sender, "importing-early-warning").send();
             return;
         }
@@ -38,7 +39,8 @@ public class SubCommand_Recovery implements CommandHandler<ConsoleCommandSender>
         Log.debug("Initializing database recovery...");
         DatabaseIOUtil databaseIOUtil = new DatabaseIOUtil((SimpleDatabaseHelperV2) plugin.getDatabaseHelper());
         Log.debug("Unloading all shops...");
-        plugin.getShopManager().getAllShops().forEach(s -> plugin.getShopManager().unloadShop(s));
+        plugin.getShopManager().getAllShops().forEach(s -> plugin.getShopManager()
+                .unloadShop(s));
         Log.debug("Clean up in-memory data...");
         plugin.getShopManager().clear();
         Log.debug("Launching async thread for importing tables...");
@@ -49,7 +51,9 @@ public class SubCommand_Recovery implements CommandHandler<ConsoleCommandSender>
                 Log.debug("Re-loading shop from database...");
                 Util.mainThreadRun(() -> {
                     plugin.getShopLoader().loadShops();
-                    plugin.text().of(sender, "imported-database", "recovery.zip").send();
+                    plugin.text()
+                            .of(sender, "imported-database", "recovery.zip")
+                            .send();
                 });
             } catch (SQLException | ClassNotFoundException e) {
                 plugin.text().of(sender, "importing-failed", e.getMessage()).send();
@@ -57,5 +61,4 @@ public class SubCommand_Recovery implements CommandHandler<ConsoleCommandSender>
             }
         });
     }
-
 }

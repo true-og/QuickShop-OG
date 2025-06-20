@@ -12,6 +12,14 @@ import com.ghostchu.quickshop.common.util.RomanNumber;
 import com.ghostchu.quickshop.shop.display.AbstractDisplayItem;
 import com.ghostchu.quickshop.util.logger.Log;
 import io.papermc.lib.PaperLib;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.lang.management.ManagementFactory;
+import java.text.DecimalFormat;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -43,32 +51,24 @@ import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.lang.management.ManagementFactory;
-import java.text.DecimalFormat;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.CompletableFuture;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
-
 public class Util {
 
     private static final EnumMap<Material, Integer> CUSTOM_STACKSIZE = new EnumMap<>(Material.class);
     private static final EnumSet<Material> SHOPABLES = EnumSet.noneOf(Material.class);
-    private static final List<BlockFace> VERTICAL_FACING = List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
+    private static final List<BlockFace> VERTICAL_FACING =
+            List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
     private static int BYPASSED_CUSTOM_STACKSIZE = -1;
     private static Yaml yaml = null;
     private static Boolean devMode = null;
+
     @Setter
     private static QuickShop plugin;
+
     @Getter
     @Nullable
     private static DyeColor dyeColor = null;
 
-    private Util() {
-    }
+    private Util() {}
 
     @Deprecated
     @ApiStatus.Internal
@@ -90,7 +90,6 @@ public class Util {
     public static EnumSet<Material> getShopables() {
         return SHOPABLES;
     }
-
 
     /**
      * Execute the Runnable in async thread.
@@ -244,7 +243,8 @@ public class Util {
      * @return Game StackSize or Custom
      */
     public static int getItemMaxStackSize(@NotNull Material material) {
-        return CUSTOM_STACKSIZE.getOrDefault(material, BYPASSED_CUSTOM_STACKSIZE == -1 ? material.getMaxStackSize() : BYPASSED_CUSTOM_STACKSIZE);
+        return CUSTOM_STACKSIZE.getOrDefault(
+                material, BYPASSED_CUSTOM_STACKSIZE == -1 ? material.getMaxStackSize() : BYPASSED_CUSTOM_STACKSIZE);
     }
 
     /**
@@ -302,7 +302,7 @@ public class Util {
             DumperOptions yamlOptions = new DumperOptions();
             yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
             yamlOptions.setIndent(2);
-            yaml = new Yaml(yamlOptions); //Caching it!
+            yaml = new Yaml(yamlOptions); // Caching it!
         }
         YamlConfiguration yamlConfiguration = new YamlConfiguration();
         Map<Object, Object> root = yaml.load(config);
@@ -330,8 +330,13 @@ public class Util {
                     config = yaml.dump(root);
                     Log.debug("Updated, we will try load as hacked ItemStack: " + config);
                 } else {
-                    plugin.logger().warn("Cannot load ItemStack {} because it saved from higher Minecraft server version, the action will fail and you will receive a exception, PLEASE DON'T REPORT TO QUICKSHOP!", config);
-                    plugin.logger().warn("You can try force load this ItemStack by our hacked ItemStack read util (shop.force-load-downgrade-items), but beware, the data may corrupt if you load on this lower Minecraft server version, Please backup your world and database before enable!");
+                    plugin.logger()
+                            .warn(
+                                    "Cannot load ItemStack {} because it saved from higher Minecraft server version, the action will fail and you will receive a exception, PLEASE DON'T REPORT TO QUICKSHOP!",
+                                    config);
+                    plugin.logger()
+                            .warn(
+                                    "You can try force load this ItemStack by our hacked ItemStack read util (shop.force-load-downgrade-items), but beware, the data may corrupt if you load on this lower Minecraft server version, Please backup your world and database before enable!");
                 }
             }
             yamlConfiguration.loadFromString(config);
@@ -367,7 +372,9 @@ public class Util {
      * @return Equals or not.
      */
     private static boolean equalsBlockStateLocation(@NotNull Location b1, @NotNull Location b2) {
-        return (b1.getBlockX() == b2.getBlockX()) && (b1.getBlockY() == b2.getBlockY()) && (b1.getBlockZ() == b2.getBlockZ());
+        return (b1.getBlockX() == b2.getBlockX())
+                && (b1.getBlockY() == b2.getBlockY())
+                && (b1.getBlockZ() == b2.getBlockZ());
     }
 
     /**
@@ -447,7 +454,8 @@ public class Util {
             try {
                 result = plugin.getPlatform().getTranslation(itemStack);
             } catch (Throwable th) {
-                result = MsgUtil.setHandleFailedHover(null, Component.text(itemStack.getType().getKey().toString()));
+                result = MsgUtil.setHandleFailedHover(
+                        null, Component.text(itemStack.getType().getKey().toString()));
                 plugin.logger().warn("Failed to handle translation for ItemStack {}", Util.serialize(itemStack), th);
             }
         }
@@ -458,28 +466,33 @@ public class Util {
     public static Component getItemCustomName(@NotNull ItemStack itemStack) {
         if (useEnchantmentForEnchantedBook() && itemStack.getType() == Material.ENCHANTED_BOOK) {
             ItemMeta meta = itemStack.getItemMeta();
-            if (meta instanceof EnchantmentStorageMeta enchantmentStorageMeta && enchantmentStorageMeta.hasStoredEnchants()) {
+            if (meta instanceof EnchantmentStorageMeta enchantmentStorageMeta
+                    && enchantmentStorageMeta.hasStoredEnchants()) {
                 return getFirstEnchantmentName(enchantmentStorageMeta);
             }
         }
-//        if (plugin.getConfig().getBoolean("shop.use-effect-for-potion-item") && itemStack.getType().name().endsWith("POTION")) {
-//            ItemMeta meta = itemStack.getItemMeta();
-//            if (meta instanceof PotionMeta potionMeta) {
-//                PotionData potionData = potionMeta.getBasePotionData();
-//                PotionEffectType potionEffectType = potionData.getType().getEffectType();
-//                if (potionEffectType != null) {
-//                    //Because the bukkit API limit, we can't get the actual effect level
-//                    return plugin.getPlatform().getTranslation(potionEffectType);
-//                } else if (potionMeta.hasCustomEffects()) {
-//                    PotionEffect potionEffect = potionMeta.getCustomEffects().get(0);
-//                    if (potionEffect != null) {
-//                        int level = potionEffect.getAmplifier();
-//                        return plugin.getPlatform().getTranslation(potionEffect.getType()).append(LegacyComponentSerializer.legacySection().deserialize(" " + (level <= 10 ? RomanNumber.toRoman(potionEffect.getAmplifier()) : level)));
-//                    }
-//                }
-//            }
-//        }
-        if (itemStack.hasItemMeta() && Objects.requireNonNull(itemStack.getItemMeta()).hasDisplayName() && !QuickShop.getInstance().getConfig().getBoolean("shop.force-use-item-original-name")) {
+        //        if (plugin.getConfig().getBoolean("shop.use-effect-for-potion-item") &&
+        // itemStack.getType().name().endsWith("POTION")) {
+        //            ItemMeta meta = itemStack.getItemMeta();
+        //            if (meta instanceof PotionMeta potionMeta) {
+        //                PotionData potionData = potionMeta.getBasePotionData();
+        //                PotionEffectType potionEffectType = potionData.getType().getEffectType();
+        //                if (potionEffectType != null) {
+        //                    //Because the bukkit API limit, we can't get the actual effect level
+        //                    return plugin.getPlatform().getTranslation(potionEffectType);
+        //                } else if (potionMeta.hasCustomEffects()) {
+        //                    PotionEffect potionEffect = potionMeta.getCustomEffects().get(0);
+        //                    if (potionEffect != null) {
+        //                        int level = potionEffect.getAmplifier();
+        //                        return
+        // plugin.getPlatform().getTranslation(potionEffect.getType()).append(LegacyComponentSerializer.legacySection().deserialize(" " + (level <= 10 ? RomanNumber.toRoman(potionEffect.getAmplifier()) : level)));
+        //                    }
+        //                }
+        //            }
+        //        }
+        if (itemStack.hasItemMeta()
+                && Objects.requireNonNull(itemStack.getItemMeta()).hasDisplayName()
+                && !QuickShop.getInstance().getConfig().getBoolean("shop.force-use-item-original-name")) {
             return plugin.getPlatform().getDisplayName(itemStack.getItemMeta());
         }
         return null;
@@ -504,13 +517,19 @@ public class Util {
         if (!meta.hasStoredEnchants()) {
             throw new IllegalArgumentException("Item does not have an enchantment!");
         }
-        Entry<Enchantment, Integer> entry = meta.getStoredEnchants().entrySet().iterator().next();
+        Entry<Enchantment, Integer> entry =
+                meta.getStoredEnchants().entrySet().iterator().next();
         Component name;
         try {
             name = plugin.getPlatform().getTranslation(entry.getKey());
         } catch (Throwable throwable) {
-            name = MsgUtil.setHandleFailedHover(null, Component.text(entry.getKey().getKey().getKey()));
-            plugin.logger().warn("Failed to handle translation for Enchantment {}", entry.getKey().getKey(), throwable);
+            name = MsgUtil.setHandleFailedHover(
+                    null, Component.text(entry.getKey().getKey().getKey()));
+            plugin.logger()
+                    .warn(
+                            "Failed to handle translation for Enchantment {}",
+                            entry.getKey().getKey(),
+                            throwable);
         }
         if (entry.getValue() == 1 && entry.getKey().getMaxLevel() == 1) {
             return name;
@@ -534,9 +553,13 @@ public class Util {
      */
     @NotNull
     public static List<String> getPlayerList() {
-        List<String> tabList = Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
+        List<String> tabList =
+                Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
         if (plugin.getConfig().getBoolean("include-offlineplayer-list")) {
-            tabList.addAll(Arrays.stream(Bukkit.getOfflinePlayers()).map(OfflinePlayer::getName).filter(Objects::nonNull).toList());
+            tabList.addAll(Arrays.stream(Bukkit.getOfflinePlayers())
+                    .map(OfflinePlayer::getName)
+                    .filter(Objects::nonNull)
+                    .toList());
         }
         return tabList;
     }
@@ -584,7 +607,9 @@ public class Util {
             return null;
         }
         BlockFace towardsLeft = getRightSide(chest.getFacing());
-        BlockFace actuallyBlockFace = chest.getType() == org.bukkit.block.data.type.Chest.Type.LEFT ? towardsLeft : towardsLeft.getOppositeFace();
+        BlockFace actuallyBlockFace = chest.getType() == org.bukkit.block.data.type.Chest.Type.LEFT
+                ? towardsLeft
+                : towardsLeft.getOppositeFace();
         return block.getRelative(actuallyBlockFace);
     }
 
@@ -633,7 +658,8 @@ public class Util {
      */
     @NotNull
     public static Material getSignMaterial() {
-        Material signMaterial = Material.matchMaterial(plugin.getConfig().getString("shop.sign-material", "OAK_WALL_SIGN"));
+        Material signMaterial =
+                Material.matchMaterial(plugin.getConfig().getString("shop.sign-material", "OAK_WALL_SIGN"));
         if (signMaterial != null) {
             return signMaterial;
         }
@@ -754,7 +780,13 @@ public class Util {
                     }
                     iterator.remove();
                     Log.debug("Found shop display item in an inventory" + location + ", Removing...");
-                    MsgUtil.sendGlobalAlert(plugin.text().of("inventory-check-global-alert", location, inv.getHolder().getClass().getName(), Util.getItemStackName(itemStack)).forLocale(MsgUtil.getDefaultGameLanguageCode()));
+                    MsgUtil.sendGlobalAlert(plugin.text()
+                            .of(
+                                    "inventory-check-global-alert",
+                                    location,
+                                    inv.getHolder().getClass().getName(),
+                                    Util.getItemStackName(itemStack))
+                            .forLocale(MsgUtil.getDefaultGameLanguageCode()));
                 }
             }
         } catch (Exception ignored) {
@@ -786,7 +818,9 @@ public class Util {
      * @return DevEdition status
      */
     public static boolean isDevEdition() {
-        return !"origin/release".equalsIgnoreCase(QuickShop.getInstance().getBuildInfo().getGitInfo().getBranch());
+        return !"origin/release"
+                .equalsIgnoreCase(
+                        QuickShop.getInstance().getBuildInfo().getGitInfo().getBranch());
     }
 
     /**
@@ -859,7 +893,7 @@ public class Util {
      * @param args      the arg of method
      * @return boolean Available
      */
-    public static boolean isMethodAvailable(@NotNull String className, String method, Class<?>... args) {// nosemgrep
+    public static boolean isMethodAvailable(@NotNull String className, String method, Class<?>... args) { // nosemgrep
         try {
             Class<?> clazz = Class.forName(className);
             try {
@@ -887,7 +921,8 @@ public class Util {
         }
         Shop shop = plugin.getShopManager().getShopIncludeAttached(bshop.getLocation());
         if (shop == null) {
-            shop = plugin.getShopManager().getShopIncludeAttached(bshop.getLocation().clone().add(0, 1, 0));
+            shop = plugin.getShopManager()
+                    .getShopIncludeAttached(bshop.getLocation().clone().add(0, 1, 0));
         }
         return shop != null && !shop.playerAuthorize(p.getUniqueId(), BuiltInShopPermission.ACCESS_INVENTORY);
     }

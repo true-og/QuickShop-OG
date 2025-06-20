@@ -7,13 +7,12 @@ import com.ghostchu.quickshop.api.localization.text.TextManager;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.common.util.CalculateUtil;
 import com.ghostchu.quickshop.common.util.JsonUtil;
+import java.util.*;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
 
 public class DiscountCode {
     private final String code;
@@ -27,7 +26,16 @@ public class DiscountCode {
 
     private long expiredTime;
 
-    public DiscountCode(@NotNull UUID owner, @NotNull String code, @NotNull CodeType codeType, @NotNull DiscountRate rate, int maxUsage, @NotNull Map<UUID, Integer> usages, @NotNull Set<Long> shopScope, double threshold, long expiredTime) {
+    public DiscountCode(
+            @NotNull UUID owner,
+            @NotNull String code,
+            @NotNull CodeType codeType,
+            @NotNull DiscountRate rate,
+            int maxUsage,
+            @NotNull Map<UUID, Integer> usages,
+            @NotNull Set<Long> shopScope,
+            double threshold,
+            long expiredTime) {
         this.owner = owner;
         this.code = code;
         this.codeType = codeType;
@@ -39,7 +47,14 @@ public class DiscountCode {
         this.expiredTime = expiredTime;
     }
 
-    public DiscountCode(@NotNull UUID owner, @NotNull String code, @NotNull CodeType codeType, @NotNull DiscountRate rate, int maxUsage, double threshold, long expiredTime) {
+    public DiscountCode(
+            @NotNull UUID owner,
+            @NotNull String code,
+            @NotNull CodeType codeType,
+            @NotNull DiscountRate rate,
+            int maxUsage,
+            double threshold,
+            long expiredTime) {
         this.owner = owner;
         this.code = code;
         this.codeType = codeType;
@@ -87,7 +102,8 @@ public class DiscountCode {
         } else {
             rate = JsonUtil.getGson().fromJson(data.getRate(), FixedDiscountRate.class);
         }
-        return new DiscountCode(data.getOwner(),
+        return new DiscountCode(
+                data.getOwner(),
                 data.getCode(),
                 data.getCodeType(),
                 rate,
@@ -135,7 +151,8 @@ public class DiscountCode {
 
     public boolean addShopToScope(@NotNull Shop shop) {
         if (codeType != CodeType.SPECIFIC_SHOPS) {
-            throw new IllegalStateException("Cannot add shop to code scope, because this code is not a specific shop code.");
+            throw new IllegalStateException(
+                    "Cannot add shop to code scope, because this code is not a specific shop code.");
         }
         return this.shopScope.add(shop.getShopId());
     }
@@ -218,23 +235,24 @@ public class DiscountCode {
         if (usage + 1 > maxUsage) {
             return ApplicableType.REACHED_THE_LIMIT;
         }
-        ApplicableType type = switch (codeType) {
-            case SPECIFIC_SHOPS -> {
-                if (shopScope.contains(shop.getShopId())) {
-                    yield ApplicableType.APPLICABLE;
-                } else {
-                    yield ApplicableType.NOT_APPLICABLE;
-                }
-            }
-            case PLAYER_ALL_SHOPS -> {
-                if (owner.equals(shop.getOwner().getUniqueId())) {
-                    yield ApplicableType.APPLICABLE;
-                } else {
-                    yield ApplicableType.NOT_APPLICABLE;
-                }
-            }
-            case SERVER_ALL_SHOPS -> ApplicableType.APPLICABLE;
-        };
+        ApplicableType type =
+                switch (codeType) {
+                    case SPECIFIC_SHOPS -> {
+                        if (shopScope.contains(shop.getShopId())) {
+                            yield ApplicableType.APPLICABLE;
+                        } else {
+                            yield ApplicableType.NOT_APPLICABLE;
+                        }
+                    }
+                    case PLAYER_ALL_SHOPS -> {
+                        if (owner.equals(shop.getOwner().getUniqueId())) {
+                            yield ApplicableType.APPLICABLE;
+                        } else {
+                            yield ApplicableType.NOT_APPLICABLE;
+                        }
+                    }
+                    case SERVER_ALL_SHOPS -> ApplicableType.APPLICABLE;
+                };
         if (type != ApplicableType.APPLICABLE) {
             return type;
         }
@@ -256,8 +274,7 @@ public class DiscountCode {
                 threshold,
                 maxUsage,
                 usages,
-                shopScope
-        );
+                shopScope);
         return JsonUtil.getGson().toJson(data);
     }
 
@@ -274,22 +291,28 @@ public class DiscountCode {
         if (!(o instanceof DiscountCode that)) {
             return false;
         }
-        return maxUsage == that.maxUsage && Double.compare(that.threshold, threshold) == 0 && expiredTime == that.expiredTime && code.equals(that.code) && owner.equals(that.owner) && shopScope.equals(that.shopScope) && codeType == that.codeType && rate.equals(that.rate);
+        return maxUsage == that.maxUsage
+                && Double.compare(that.threshold, threshold) == 0
+                && expiredTime == that.expiredTime
+                && code.equals(that.code)
+                && owner.equals(that.owner)
+                && shopScope.equals(that.shopScope)
+                && codeType == that.codeType
+                && rate.equals(that.rate);
     }
 
     @Override
     public String toString() {
-        return "DiscountCode{" +
-                "code='" + code + '\'' +
-                ", owner=" + owner +
-                ", usages=" + usages +
-                ", shopScope=" + shopScope +
-                ", codeType=" + codeType +
-                ", rate=" + rate +
-                ", maxUsage=" + maxUsage +
-                ", threshold=" + threshold +
-                ", expiredTime=" + expiredTime +
-                '}';
+        return "DiscountCode{" + "code='"
+                + code + '\'' + ", owner="
+                + owner + ", usages="
+                + usages + ", shopScope="
+                + shopScope + ", codeType="
+                + codeType + ", rate="
+                + rate + ", maxUsage="
+                + maxUsage + ", threshold="
+                + threshold + ", expiredTime="
+                + expiredTime + '}';
     }
 
     public interface DiscountRate {
@@ -319,7 +342,9 @@ public class DiscountCode {
 
         @Override
         public @NotNull Component format(@NotNull CommandSender sender, @NotNull TextManager textManager) {
-            return textManager.of(sender, "addon.discount.fixed-off", String.format("%.2f", rate)).forLocale();
+            return textManager
+                    .of(sender, "addon.discount.fixed-off", String.format("%.2f", rate))
+                    .forLocale();
         }
     }
 
@@ -343,7 +368,9 @@ public class DiscountCode {
 
         @Override
         public @NotNull Component format(@NotNull CommandSender sender, @NotNull TextManager textManager) {
-            return textManager.of(sender, "addon.discount.percentage-off", CalculateUtil.multiply(percent, 100)).forLocale();
+            return textManager
+                    .of(sender, "addon.discount.percentage-off", CalculateUtil.multiply(percent, 100))
+                    .forLocale();
         }
     }
 }

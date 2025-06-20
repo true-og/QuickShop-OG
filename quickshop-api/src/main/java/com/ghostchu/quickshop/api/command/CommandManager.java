@@ -1,11 +1,10 @@
 package com.ghostchu.quickshop.api.command;
 
+import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * The manager that managing all sub-commands that registered
@@ -17,7 +16,8 @@ public interface CommandManager {
      *
      * @return All registered {@link CommandContainer}s.
      */
-    @NotNull List<CommandContainer> getRegisteredCommands();
+    @NotNull
+    List<CommandContainer> getRegisteredCommands();
 
     boolean onCommand(
             @NotNull CommandSender sender,
@@ -25,7 +25,8 @@ public interface CommandManager {
             @NotNull String commandLabel,
             @NotNull String[] cmdArg);
 
-    @Nullable List<String> onTabComplete(
+    @Nullable
+    List<String> onTabComplete(
             @NotNull CommandSender sender,
             @NotNull Command command,
             @NotNull String commandLabel,

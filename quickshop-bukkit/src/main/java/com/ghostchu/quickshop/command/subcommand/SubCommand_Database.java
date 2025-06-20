@@ -7,14 +7,13 @@ import com.ghostchu.quickshop.database.DataTables;
 import com.ghostchu.quickshop.database.SimpleDatabaseHelperV2;
 import com.ghostchu.quickshop.util.FastPlayerFinder;
 import com.ghostchu.quickshop.util.Util;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SubCommand_Database implements CommandHandler<CommandSender> {
     private final QuickShop plugin;
@@ -42,12 +41,15 @@ public class SubCommand_Database implements CommandHandler<CommandSender> {
             case "trim" -> handleTrim(sender, subParams);
             case "purgelogs" -> purgeLogs(sender, subParams);
             case "purgeplayerscache" -> purgePlayersCache(sender, subParams);
-            default -> plugin.text().of(sender, "bad-command-usage-detailed", "trim").send();
+            default -> plugin.text()
+                    .of(sender, "bad-command-usage-detailed", "trim")
+                    .send();
         }
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+    public @Nullable List<String> onTabComplete(
+            @NotNull CommandSender sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
         if (parser.getArgs().size() < 2) {
             return List.of("trim");
         }
@@ -61,42 +63,47 @@ public class SubCommand_Database implements CommandHandler<CommandSender> {
         }
         plugin.text().of(sender, "database.trim-start").send();
         SimpleDatabaseHelperV2 databaseHelper = (SimpleDatabaseHelperV2) plugin.getDatabaseHelper();
-        databaseHelper.purgeIsolated()
-                .thenAccept(i -> plugin.text().of(sender, "database.trim-complete", i).send())
+        databaseHelper
+                .purgeIsolated()
+                .thenAccept(i ->
+                        plugin.text().of(sender, "database.trim-complete", i).send())
                 .exceptionally(err -> {
                     plugin.text().of(sender, "internal-error", err.getMessage()).send();
                     return null;
                 });
-
     }
-//
-//    private void handleStatus(@NotNull CommandSender sender) {
-//        DatabaseStatusHolder holder = plugin.getDatabaseMaintenanceWatcher().getResult();
-//        if (holder == null) {
-//            plugin.text().of(sender, "database.scanning-sync").send();
-//            plugin.getDatabaseMaintenanceWatcher().runTaskAsynchronously(plugin);
-//            return;
-//        }
-//        Component statusComponent = switch (holder.getStatus()) {
-//            case GOOD -> plugin.text().of(sender, "database.status-good").forLocale();
-//            case MAINTENANCE_REQUIRED -> plugin.text().of(sender, "database.status-bad").forLocale();
-//        };
-//        ChatSheetPrinter printer = new ChatSheetPrinter(sender);
-//        printer.printHeader();
-//        printer.printLine(plugin.text().of(sender, "database.status", statusComponent).forLocale());
-//        printer.printLine(plugin.text().of(sender, "database.isolated").forLocale());
-//        printer.printLine(plugin.text().of(sender, "database.isolated-data-ids", holder.getDataIds().getIsolated().size()).forLocale());
-//        printer.printLine(plugin.text().of(sender, "database.isolated-shop-ids", holder.getShopIds().getIsolated().size()).forLocale());
-//        if (holder.getStatus() == DatabaseStatusHolder.Status.MAINTENANCE_REQUIRED) {
-//            printer.printLine(plugin.text().of(sender, "database.suggestion.trim").forLocale());
-//        }
-//        printer.printFooter();
-//    }
+    //
+    //    private void handleStatus(@NotNull CommandSender sender) {
+    //        DatabaseStatusHolder holder = plugin.getDatabaseMaintenanceWatcher().getResult();
+    //        if (holder == null) {
+    //            plugin.text().of(sender, "database.scanning-sync").send();
+    //            plugin.getDatabaseMaintenanceWatcher().runTaskAsynchronously(plugin);
+    //            return;
+    //        }
+    //        Component statusComponent = switch (holder.getStatus()) {
+    //            case GOOD -> plugin.text().of(sender, "database.status-good").forLocale();
+    //            case MAINTENANCE_REQUIRED -> plugin.text().of(sender, "database.status-bad").forLocale();
+    //        };
+    //        ChatSheetPrinter printer = new ChatSheetPrinter(sender);
+    //        printer.printHeader();
+    //        printer.printLine(plugin.text().of(sender, "database.status", statusComponent).forLocale());
+    //        printer.printLine(plugin.text().of(sender, "database.isolated").forLocale());
+    //        printer.printLine(plugin.text().of(sender, "database.isolated-data-ids",
+    // holder.getDataIds().getIsolated().size()).forLocale());
+    //        printer.printLine(plugin.text().of(sender, "database.isolated-shop-ids",
+    // holder.getShopIds().getIsolated().size()).forLocale());
+    //        if (holder.getStatus() == DatabaseStatusHolder.Status.MAINTENANCE_REQUIRED) {
+    //            printer.printLine(plugin.text().of(sender, "database.suggestion.trim").forLocale());
+    //        }
+    //        printer.printFooter();
+    //    }
 
     private void purgeLogs(@NotNull CommandSender sender, @NotNull List<String> subParams) {
         // TODO: Only purge before x days
         if (subParams.isEmpty()) {
-            plugin.text().of(sender, "command-incorrect", "/quickshop database purgelogs <before-days>").send();
+            plugin.text()
+                    .of(sender, "command-incorrect", "/quickshop database purgelogs <before-days>")
+                    .send();
             return;
         }
         if (subParams.size() < 2 || !"confirm".equalsIgnoreCase(subParams.get(1))) {
@@ -112,19 +119,27 @@ public class SubCommand_Database implements CommandHandler<CommandSender> {
             databaseHelper.purgeLogsRecords(calendar.getTime()).whenComplete((r, e) -> {
                 if (e != null) {
                     plugin.logger().warn("Failed to execute database purge.", e);
-                    plugin.text().of(sender, "database.purge-done-with-error", r).send();
+                    plugin.text()
+                            .of(sender, "database.purge-done-with-error", r)
+                            .send();
                 } else {
                     if (r == -1) {
                         plugin.logger().warn("Failed to execute database purge, check the exception above.");
-                        plugin.text().of(sender, "database.purge-done-with-error", r).send();
+                        plugin.text()
+                                .of(sender, "database.purge-done-with-error", r)
+                                .send();
                     } else {
-                        plugin.text().of(sender, "database.purge-done-with-line", r).send();
+                        plugin.text()
+                                .of(sender, "database.purge-done-with-line", r)
+                                .send();
                     }
                 }
             });
             // Then we need also purge the isolated data after purge the logs.
             plugin.text().of(sender, "database.trim-start").send();
-            databaseHelper.purgeIsolated().whenComplete((data, err) -> plugin.text().of(sender, "database.trim-complete", data).send());
+            databaseHelper.purgeIsolated().whenComplete((data, err) -> plugin.text()
+                    .of(sender, "database.trim-complete", data)
+                    .send());
         } catch (NumberFormatException e) {
             plugin.text().of(sender, "not-a-number", subParams.get(0)).send();
         }
@@ -135,12 +150,20 @@ public class SubCommand_Database implements CommandHandler<CommandSender> {
         Util.asyncThreadRun(() -> DataTables.PLAYERS
                 .createDelete()
                 .build()
-                .executeAsync((lines) -> {
-                    ((FastPlayerFinder) plugin.getPlayerFinder()).getNameCache().invalidateAll();
-                    plugin.text().of(sender, "database.purge-players-completed", lines).send();
-                }, (error, sqlAction) -> {
-                    plugin.logger().error("Failed to purge players caches!", error);
-                    plugin.text().of(sender, "database.purge-players-error").send();
-                }));
+                .executeAsync(
+                        (lines) -> {
+                            ((FastPlayerFinder) plugin.getPlayerFinder())
+                                    .getNameCache()
+                                    .invalidateAll();
+                            plugin.text()
+                                    .of(sender, "database.purge-players-completed", lines)
+                                    .send();
+                        },
+                        (error, sqlAction) -> {
+                            plugin.logger().error("Failed to purge players caches!", error);
+                            plugin.text()
+                                    .of(sender, "database.purge-players-error")
+                                    .send();
+                        }));
     }
 }

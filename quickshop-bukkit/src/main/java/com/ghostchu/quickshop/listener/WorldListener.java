@@ -5,6 +5,9 @@ import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.api.shop.ShopChunk;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.ReloadStatus;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -12,10 +15,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
-
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class WorldListener extends AbstractQSListener {
 
@@ -87,7 +86,7 @@ public class WorldListener extends AbstractQSListener {
                 continue;
             }
             for (final Shop shop : inChunk.values()) {
-                if (shop.isLoaded()) { //Don't unload already unloaded shops.
+                if (shop.isLoaded()) { // Don't unload already unloaded shops.
                     shop.handleUnloading();
                 }
             }

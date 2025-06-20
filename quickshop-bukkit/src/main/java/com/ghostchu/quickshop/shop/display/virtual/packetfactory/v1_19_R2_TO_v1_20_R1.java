@@ -16,6 +16,10 @@ import com.ghostchu.quickshop.shop.SimpleShopChunk;
 import com.ghostchu.quickshop.shop.display.virtual.VirtualDisplayItem;
 import com.ghostchu.quickshop.shop.display.virtual.VirtualDisplayItemManager;
 import com.ghostchu.quickshop.util.Util;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,11 +29,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 public class v1_19_R2_TO_v1_20_R1 implements VirtualDisplayPacketFactory {
     private final QuickShop plugin;
@@ -43,7 +42,8 @@ public class v1_19_R2_TO_v1_20_R1 implements VirtualDisplayPacketFactory {
     @Override
     public @Nullable Throwable testFakeItem() {
         try {
-            createFakeItemSpawnPacket(0, new Location(Bukkit.getServer().getWorlds().get(0), 0, 0, 0));
+            createFakeItemSpawnPacket(
+                    0, new Location(Bukkit.getServer().getWorlds().get(0), 0, 0, 0));
             createFakeItemMetaPacket(0, new ItemStack(Material.values()[0]));
             createFakeItemVelocityPacket(0);
             createFakeItemDestroyPacket(0);
@@ -55,61 +55,70 @@ public class v1_19_R2_TO_v1_20_R1 implements VirtualDisplayPacketFactory {
 
     @Override
     public @NotNull PacketContainer createFakeItemSpawnPacket(int entityID, @NotNull Location displayLocation) {
-        //First, create a new packet to spawn item
+        // First, create a new packet to spawn item
         PacketContainer fakeItemPacket = manager.getProtocolManager().createPacket(PacketType.Play.Server.SPAWN_ENTITY);
-        //and add data based on packet class in NMS  (global scope variable)
-        //Reference: https://wiki.vg/Protocol#Spawn_Object
-        fakeItemPacket.getIntegers()
-                //Entity ID
+        // and add data based on packet class in NMS  (global scope variable)
+        // Reference: https://wiki.vg/Protocol#Spawn_Object
+        fakeItemPacket
+                .getIntegers()
+                // Entity ID
                 .write(0, entityID);
-        //Velocity x
+        // Velocity x
         fakeItemPacket.getEntityTypeModifier().write(0, EntityType.DROPPED_ITEM);
-        //UUID
+        // UUID
         fakeItemPacket.getUUIDs().write(0, UUID.randomUUID());
-        //Location
-        fakeItemPacket.getDoubles()
-                //X
+        // Location
+        fakeItemPacket
+                .getDoubles()
+                // X
                 .write(0, displayLocation.getX())
-                //Y
+                // Y
                 .write(1, displayLocation.getY())
-                //Z
+                // Z
                 .write(2, displayLocation.getZ());
         return fakeItemPacket;
     }
 
     @Override
     public @NotNull PacketContainer createFakeItemMetaPacket(int entityID, @NotNull ItemStack itemStack) {
-        //Next, create a new packet to update item data (default is empty)
-        PacketContainer fakeItemMetaPacket = manager.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_METADATA);
-        //Entity ID
+        // Next, create a new packet to update item data (default is empty)
+        PacketContainer fakeItemMetaPacket =
+                manager.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_METADATA);
+        // Entity ID
         fakeItemMetaPacket.getIntegers().write(0, entityID);
 
-        //List<DataWatcher$Item> Type are more complex
-        //Create a DataWatcher
+        // List<DataWatcher$Item> Type are more complex
+        // Create a DataWatcher
         WrappedDataWatcher wpw = new WrappedDataWatcher();
-        //https://wiki.vg/index.php?title=Entity_metadata#Entity
+        // https://wiki.vg/index.php?title=Entity_metadata#Entity
         if (plugin.getConfig().getBoolean("shop.display-item-use-name")) {
             String itemName = GsonComponentSerializer.gson().serialize(Util.getItemStackName(itemStack));
-            wpw.setObject(2, WrappedDataWatcher.Registry.getChatComponentSerializer(true), Optional.of(WrappedChatComponent.fromJson(itemName).getHandle()));
-            wpw.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(3, WrappedDataWatcher.Registry.get(Boolean.class)), true);
+            wpw.setObject(
+                    2,
+                    WrappedDataWatcher.Registry.getChatComponentSerializer(true),
+                    Optional.of(WrappedChatComponent.fromJson(itemName).getHandle()));
+            wpw.setObject(
+                    new WrappedDataWatcher.WrappedDataWatcherObject(3, WrappedDataWatcher.Registry.get(Boolean.class)),
+                    true);
         }
 
-        //Must in the certain slot:https://wiki.vg/Entity_metadata#Item
+        // Must in the certain slot:https://wiki.vg/Entity_metadata#Item
         wpw.setObject(8, WrappedDataWatcher.Registry.getItemStackSerializer(false), itemStack);
-        //Add it
-        //For 1.19.2+, we need to use DataValue instead of WatchableObject
-        //Check for new version protocolLib
+        // Add it
+        // For 1.19.2+, we need to use DataValue instead of WatchableObject
+        // Check for new version protocolLib
         try {
             Class.forName("com.comphenix.protocol.wrappers.WrappedDataValue");
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Unable to initialize packet, ProtocolLib update needed", e);
         }
-        //Convert List<WrappedWatchableObject> to List<WrappedDataValue>
+        // Convert List<WrappedWatchableObject> to List<WrappedDataValue>
         List<WrappedWatchableObject> wrappedWatchableObjects = wpw.getWatchableObjects();
         List<WrappedDataValue> wrappedDataValues = new java.util.LinkedList<>();
         for (WrappedWatchableObject wrappedWatchableObject : wrappedWatchableObjects) {
             WrappedDataWatcher.WrappedDataWatcherObject watchableObject = wrappedWatchableObject.getWatcherObject();
-            wrappedDataValues.add(new WrappedDataValue(watchableObject.getIndex(), watchableObject.getSerializer(), wrappedWatchableObject.getRawValue()));
+            wrappedDataValues.add(new WrappedDataValue(
+                    watchableObject.getIndex(), watchableObject.getSerializer(), wrappedWatchableObject.getRawValue()));
         }
         fakeItemMetaPacket.getDataValueCollectionModifier().write(0, wrappedDataValues);
         return fakeItemMetaPacket;
@@ -117,27 +126,30 @@ public class v1_19_R2_TO_v1_20_R1 implements VirtualDisplayPacketFactory {
 
     @Override
     public @NotNull PacketContainer createFakeItemVelocityPacket(int entityID) {
-        //And, create a entity velocity packet to make it at a proper location (otherwise it will fly randomly)
-        PacketContainer fakeItemVelocityPacket = manager.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_VELOCITY);
-        fakeItemVelocityPacket.getIntegers()
-                //Entity ID
+        // And, create a entity velocity packet to make it at a proper location (otherwise it will fly randomly)
+        PacketContainer fakeItemVelocityPacket =
+                manager.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_VELOCITY);
+        fakeItemVelocityPacket
+                .getIntegers()
+                // Entity ID
                 .write(0, entityID)
-                //Velocity x
+                // Velocity x
                 .write(1, 0)
-                //Velocity y
+                // Velocity y
                 .write(2, 0)
-                //Velocity z
+                // Velocity z
                 .write(3, 0);
         return fakeItemVelocityPacket;
     }
 
     @Override
     public @NotNull PacketContainer createFakeItemDestroyPacket(int entityID) {
-        //Also make a DestroyPacket to remove it
-        PacketContainer fakeItemDestroyPacket = manager.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_DESTROY);
+        // Also make a DestroyPacket to remove it
+        PacketContainer fakeItemDestroyPacket =
+                manager.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_DESTROY);
         MinecraftVersion minecraftVersion = manager.getProtocolManager().getMinecraftVersion();
-        //On 1.17.1 (may be 1.17.1+? it's enough, Mojang, stop the changes), we need add the int list
-        //Entity to remove
+        // On 1.17.1 (may be 1.17.1+? it's enough, Mojang, stop the changes), we need add the int list
+        // Entity to remove
         try {
             fakeItemDestroyPacket.getIntLists().write(0, Collections.singletonList(entityID));
         } catch (NoSuchMethodError e) {
@@ -159,25 +171,28 @@ public class v1_19_R2_TO_v1_20_R1 implements VirtualDisplayPacketFactory {
                 if (player.getClass().getName().contains("TemporaryPlayer")) {
                     return;
                 }
-                StructureModifier<Integer> integerStructureModifier = event.getPacket().getIntegers();
-                //chunk x
+                StructureModifier<Integer> integerStructureModifier =
+                        event.getPacket().getIntegers();
+                // chunk x
                 int x = integerStructureModifier.read(0);
-                //chunk z
+                // chunk z
                 int z = integerStructureModifier.read(1);
 
-                manager.getChunksMapping().computeIfPresent(new SimpleShopChunk(player.getWorld().getName(), x, z), (chunkLoc, targetList) -> {
-                    for (VirtualDisplayItem target : targetList) {
-                        if (!target.isSpawned()) {
-                            continue;
-                        }
-                        if (target.isApplicableForPlayer(player)) { // TODO: Refactor with better way
-                            target.getPacketSenders().add(player.getUniqueId());
-                            target.sendDestroyItem(player);
-                            target.sendFakeItem(player);
-                        }
-                    }
-                    return targetList;
-                });
+                manager.getChunksMapping()
+                        .computeIfPresent(
+                                new SimpleShopChunk(player.getWorld().getName(), x, z), (chunkLoc, targetList) -> {
+                                    for (VirtualDisplayItem target : targetList) {
+                                        if (!target.isSpawned()) {
+                                            continue;
+                                        }
+                                        if (target.isApplicableForPlayer(player)) { // TODO: Refactor with better way
+                                            target.getPacketSenders().add(player.getUniqueId());
+                                            target.sendDestroyItem(player);
+                                            target.sendFakeItem(player);
+                                        }
+                                    }
+                                    return targetList;
+                                });
             }
         };
     }
@@ -194,22 +209,25 @@ public class v1_19_R2_TO_v1_20_R1 implements VirtualDisplayPacketFactory {
                 if (player.getClass().getName().contains("TemporaryPlayer")) {
                     return;
                 }
-                StructureModifier<Integer> integerStructureModifier = event.getPacket().getIntegers();
-                //chunk x
+                StructureModifier<Integer> integerStructureModifier =
+                        event.getPacket().getIntegers();
+                // chunk x
                 int x = integerStructureModifier.read(0);
-                //chunk z
+                // chunk z
                 int z = integerStructureModifier.read(1);
 
-                manager.getChunksMapping().computeIfPresent(new SimpleShopChunk(player.getWorld().getName(), x, z), (chunkLoc, targetList) -> {
-                    for (VirtualDisplayItem target : targetList) {
-                        if (!target.isSpawned()) {
-                            continue;
-                        }
-                        target.sendDestroyItem(player);
-                        target.getPacketSenders().remove(player.getUniqueId());
-                    }
-                    return targetList;
-                });
+                manager.getChunksMapping()
+                        .computeIfPresent(
+                                new SimpleShopChunk(player.getWorld().getName(), x, z), (chunkLoc, targetList) -> {
+                                    for (VirtualDisplayItem target : targetList) {
+                                        if (!target.isSpawned()) {
+                                            continue;
+                                        }
+                                        target.sendDestroyItem(player);
+                                        target.getPacketSenders().remove(player.getUniqueId());
+                                    }
+                                    return targetList;
+                                });
             }
         };
     }

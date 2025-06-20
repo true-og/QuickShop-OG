@@ -6,12 +6,11 @@ import com.ghostchu.quickshop.api.command.CommandParser;
 import com.ghostchu.quickshop.database.DatabaseIOUtil;
 import com.ghostchu.quickshop.database.SimpleDatabaseHelperV2;
 import com.ghostchu.quickshop.util.Util;
-import org.bukkit.command.ConsoleCommandSender;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import org.bukkit.command.ConsoleCommandSender;
+import org.jetbrains.annotations.NotNull;
 
 public class SubCommand_Export implements CommandHandler<ConsoleCommandSender> {
     private final QuickShop plugin;
@@ -21,7 +20,8 @@ public class SubCommand_Export implements CommandHandler<ConsoleCommandSender> {
     }
 
     @Override
-    public synchronized void onCommand(@NotNull ConsoleCommandSender sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+    public synchronized void onCommand(
+            @NotNull ConsoleCommandSender sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
         plugin.text().of(sender, "exporting-database").send();
         File file = new File(QuickShop.getInstance().getDataFolder(), "export-" + System.currentTimeMillis() + ".zip");
 
@@ -35,8 +35,5 @@ public class SubCommand_Export implements CommandHandler<ConsoleCommandSender> {
                 plugin.text().of(sender, "exporting-failed", e.getMessage()).send();
             }
         });
-
     }
-
-
 }

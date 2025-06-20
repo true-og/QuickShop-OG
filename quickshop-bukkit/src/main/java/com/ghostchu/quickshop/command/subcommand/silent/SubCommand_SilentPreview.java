@@ -7,7 +7,6 @@ import com.ghostchu.quickshop.api.shop.permission.BuiltInShopPermission;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-
 public class SubCommand_SilentPreview extends SubCommand_SilentBase {
 
     public SubCommand_SilentPreview(QuickShop plugin) {
@@ -21,5 +20,4 @@ public class SubCommand_SilentPreview extends SubCommand_SilentBase {
             shop.openPreview(sender);
         }
     }
-
 }

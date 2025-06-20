@@ -1,14 +1,14 @@
 package com.ghostchu.quickshop.util.paste.item;
 
 import com.ghostchu.quickshop.QuickShop;
+import java.util.Map;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-
 @Data
 public class HeaderItem implements PasteItem {
-    private static final String TEMPLATE = """
+    private static final String TEMPLATE =
+            """
             <h1>{title}</h1>
             <blockquote>
             <p>
@@ -32,8 +32,8 @@ public class HeaderItem implements PasteItem {
 
     @Override
     public @NotNull String toHTML() {
-        return TEMPLATE
-                .replace("{title}", "QuickShop-" + QuickShop.getInstance().getFork() + " // Paste")
+        return TEMPLATE.replace(
+                        "{title}", "QuickShop-" + QuickShop.getInstance().getFork() + " // Paste")
                 .replace("{content}", buildContent());
     }
 

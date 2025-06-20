@@ -5,12 +5,11 @@ import com.ghostchu.quickshop.api.command.CommandHandler;
 import com.ghostchu.quickshop.api.command.CommandParser;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.util.logger.Log;
+import java.util.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public class SubCommand_RemoveWorld implements CommandHandler<CommandSender> {
 
@@ -28,7 +27,9 @@ public class SubCommand_RemoveWorld implements CommandHandler<CommandSender> {
         }
         World world = Bukkit.getWorld(parser.getArgs().get(0));
         if (world == null) {
-            plugin.text().of(sender, "world-not-exists", parser.getArgs().get(0)).send();
+            plugin.text()
+                    .of(sender, "world-not-exists", parser.getArgs().get(0))
+                    .send();
             return;
         }
         int shopsDeleted = 0;
@@ -39,7 +40,8 @@ public class SubCommand_RemoveWorld implements CommandHandler<CommandSender> {
             }
         }
         Log.debug("Successfully deleted all shops in world " + parser.getArgs().get(0) + "!");
-        plugin.text().of(sender, "shops-removed-in-world", shopsDeleted, world.getName()).send();
+        plugin.text()
+                .of(sender, "shops-removed-in-world", shopsDeleted, world.getName())
+                .send();
     }
-
 }

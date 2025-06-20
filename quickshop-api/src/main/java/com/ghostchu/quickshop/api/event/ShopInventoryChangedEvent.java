@@ -11,6 +11,7 @@ public class ShopInventoryChangedEvent extends AbstractQSEvent {
 
     @NotNull
     private final InventoryWrapper wrapper;
+
     @NotNull
     private final InventoryWrapperManager manager;
 

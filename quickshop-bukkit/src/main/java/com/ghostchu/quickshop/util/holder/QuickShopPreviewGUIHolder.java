@@ -9,6 +9,4 @@ public class QuickShopPreviewGUIHolder implements InventoryHolder {
     public @NotNull Inventory getInventory() {
         return null;
     }
-
-
 }

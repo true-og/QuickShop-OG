@@ -1,13 +1,12 @@
 package com.ghostchu.quickshop.util.paste;
 
 import com.ghostchu.quickshop.common.util.JsonUtil;
+import java.io.IOException;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
 
 /**
  * Paste the paste through <a href="https://bytebin.lucko.me/post">https://bytebin.lucko.me/post</a>
@@ -19,9 +18,8 @@ public class LuckoPastebinPaster implements PasteInterface {
     @Override
     @NotNull
     public String pasteTheText(@NotNull String text) throws IOException {
-        HttpResponse<String> response = Unirest.post("https://bytebin.lucko.me/post")
-                .body(text)
-                .asString();
+        HttpResponse<String> response =
+                Unirest.post("https://bytebin.lucko.me/post").body(text).asString();
         if (response.isSuccess()) {
             String json = response.getBody();
             Response req = JsonUtil.getGson().fromJson(json, Response.class);
@@ -29,7 +27,6 @@ public class LuckoPastebinPaster implements PasteInterface {
         } else {
             throw new IOException(response.getStatus() + " " + response.getStatusText() + ": " + response.getBody());
         }
-
     }
 
     @Override
@@ -62,4 +59,3 @@ public class LuckoPastebinPaster implements PasteInterface {
         }
     }
 }
-

@@ -9,15 +9,14 @@ import com.ghostchu.quickshop.database.MetricQuery;
 import com.ghostchu.quickshop.database.SimpleDatabaseHelperV2;
 import com.ghostchu.quickshop.obj.QUserImpl;
 import com.ghostchu.quickshop.papi.PAPISubHandler;
-import org.apache.commons.lang3.StringUtils;
-import org.bukkit.OfflinePlayer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
+import org.apache.commons.lang3.StringUtils;
+import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class TransactionAmountPAPI implements PAPISubHandler {
     private final QuickShop plugin;
@@ -62,7 +61,8 @@ public class TransactionAmountPAPI implements PAPISubHandler {
         }
         ShopType shopType = ShopType.fromString(type.toUpperCase(Locale.ROOT));
         int recentDays = Integer.parseInt(days);
-        Date startTime = new Date(Instant.now().minus(Duration.ofDays(recentDays)).toEpochMilli());
+        Date startTime =
+                new Date(Instant.now().minus(Duration.ofDays(recentDays)).toEpochMilli());
         long count = this.query.queryServerPurchaseRecords(startTime, -1, false).stream()
                 .filter(record -> {
                     if (shopType == null) {
@@ -76,7 +76,8 @@ public class TransactionAmountPAPI implements PAPISubHandler {
                     }
                     return false;
                 })
-                .mapToLong(ShopMetricRecord::getAmount).sum();
+                .mapToLong(ShopMetricRecord::getAmount)
+                .sum();
         return String.valueOf(count);
     }
 
@@ -92,7 +93,8 @@ public class TransactionAmountPAPI implements PAPISubHandler {
         }
         ShopType shopType = ShopType.fromString(type.toUpperCase(Locale.ROOT));
         int recentDays = Integer.parseInt(days);
-        Date startTime = new Date(Instant.now().minus(Duration.ofDays(recentDays)).toEpochMilli());
+        Date startTime =
+                new Date(Instant.now().minus(Duration.ofDays(recentDays)).toEpochMilli());
         long count = this.query.queryServerPurchaseRecords(startTime, -1, false).stream()
                 .filter(record -> {
                     if (shopType == null) {
@@ -110,7 +112,8 @@ public class TransactionAmountPAPI implements PAPISubHandler {
                     QUser qUser = QUserImpl.createSync(plugin.getPlayerFinder(), record.getPlayer());
                     return player.getUniqueId().equals(qUser.getUniqueId());
                 })
-                .mapToLong(ShopMetricRecord::getAmount).sum();
+                .mapToLong(ShopMetricRecord::getAmount)
+                .sum();
         return String.valueOf(count);
     }
 }

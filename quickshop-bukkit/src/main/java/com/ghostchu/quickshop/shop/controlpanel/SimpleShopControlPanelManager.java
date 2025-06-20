@@ -6,17 +6,16 @@ import com.ghostchu.quickshop.api.shop.ShopControlPanel;
 import com.ghostchu.quickshop.api.shop.ShopControlPanelManager;
 import com.ghostchu.quickshop.util.ChatSheetPrinter;
 import com.ghostchu.quickshop.util.paste.item.SubPasteItem;
-import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 public class SimpleShopControlPanelManager implements ShopControlPanelManager, SubPasteItem {
     private final QuickShop plugin;
@@ -31,16 +30,24 @@ public class SimpleShopControlPanelManager implements ShopControlPanelManager, S
     public void openControlPanel(@NotNull Player player, @NotNull Shop shop) {
         ChatSheetPrinter chatSheetPrinter = new ChatSheetPrinter(player);
         chatSheetPrinter.printHeader();
-        chatSheetPrinter.printLine(plugin.text().of(player, "controlpanel.infomation").forLocale());
+        chatSheetPrinter.printLine(
+                plugin.text().of(player, "controlpanel.infomation").forLocale());
         List<Component> total = new ArrayList<>();
         for (ShopControlPanel entry : registry.keySet()) {
             try {
                 total.addAll(entry.generate(player, shop));
             } catch (Exception e) {
                 try {
-                    plugin.logger().warn("Failed to generate control panel for {}. Contact the developer of the plugin {}.", entry.getPlugin().getName(), entry.getClass().getName());
+                    plugin.logger()
+                            .warn(
+                                    "Failed to generate control panel for {}. Contact the developer of the plugin {}.",
+                                    entry.getPlugin().getName(),
+                                    entry.getClass().getName());
                 } catch (Exception e2) {
-                    plugin.logger().warn("Failed to generate control panel for {}. Contact the developer of that plugin", entry.getClass().getName());
+                    plugin.logger()
+                            .warn(
+                                    "Failed to generate control panel for {}. Contact the developer of that plugin",
+                                    entry.getClass().getName());
                 }
             }
         }
@@ -84,7 +91,6 @@ public class SimpleShopControlPanelManager implements ShopControlPanelManager, S
         } finally {
             LOCK.unlock();
         }
-
     }
 
     @Override

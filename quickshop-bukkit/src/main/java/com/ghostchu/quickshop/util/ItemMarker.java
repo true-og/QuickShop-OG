@@ -6,12 +6,6 @@ import com.ghostchu.quickshop.util.paste.item.SubPasteItem;
 import com.ghostchu.quickshop.util.paste.util.HTMLTable;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.Reloadable;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,13 +14,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ItemMarker implements Reloadable, SubPasteItem {
     private static final String NAME_REG_EXP = "[a-zA-Z0-9_]*";
     private final QuickShop plugin;
     private final Map<String, ItemStack> stacks = new HashMap<>();
     private final File file;
-    //private static final String NAME_REG_EXP = "\\w";
+    // private static final String NAME_REG_EXP = "\\w";
     private final Pattern namePattern = Pattern.compile(NAME_REG_EXP);
     private YamlConfiguration configuration;
 
@@ -143,7 +142,10 @@ public class ItemMarker implements Reloadable, SubPasteItem {
         HTMLTable table = new HTMLTable(2);
         table.setTableTitle("Name", "Item");
         for (Map.Entry<String, ItemStack> entry : stacks.entrySet()) {
-            table.insert(entry.getKey(), PlainTextComponentSerializer.plainText().serialize(Util.getItemStackName(entry.getValue())) + " [" + entry.getValue().getType().getKey() + "]");
+            table.insert(
+                    entry.getKey(),
+                    PlainTextComponentSerializer.plainText().serialize(Util.getItemStackName(entry.getValue())) + " ["
+                            + entry.getValue().getType().getKey() + "]");
         }
         return table.render();
     }

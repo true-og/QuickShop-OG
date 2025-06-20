@@ -9,7 +9,6 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-
 public class CalendarEvent extends AbstractQSEvent {
     private CalendarTriggerType calendarTriggerType;
 
@@ -18,6 +17,13 @@ public class CalendarEvent extends AbstractQSEvent {
     }
 
     public enum CalendarTriggerType {
-        NOTHING_CHANGED, SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, YEAR
+        NOTHING_CHANGED,
+        SECOND,
+        MINUTE,
+        HOUR,
+        DAY,
+        WEEK,
+        MONTH,
+        YEAR
     }
 }

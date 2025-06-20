@@ -1,9 +1,8 @@
 package com.ghostchu.quickshop.api.economy;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Map;
 import java.util.UUID;
+import org.jetbrains.annotations.NotNull;
 
 public interface Benefit {
     /**
@@ -54,8 +53,7 @@ public interface Benefit {
     @NotNull
     String serialize();
 
-    class BenefitExistsException extends Exception {
-    }
+    class BenefitExistsException extends Exception {}
 
     class BenefitOverflowException extends Exception {
         private final double overflow;

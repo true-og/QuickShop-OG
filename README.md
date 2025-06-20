@@ -1,11 +1,5 @@
 <!-- Links -->
 
-[codacy]: https://www.codacy.com/gh/Ghost-chu/QuickShop-Hikari/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Ghost-chu/QuickShop-Hikari&amp;utm_campaign=Badge_Grade
-
-[codeFactor]: https://www.codefactor.io/repository/github/ghost-chu/quickshop-hikari
-
-[codeScore]: https://app.codiga.io/public/project/32011/QuickShop-Hikari/dashboard
-
 [license]: https://github.com/Ghost-chu/QuickShop-Hikari/blob/hikari/LICENSE
 
 [contributors]: https://github.com/Ghost-chu/QuickShop-Hikari/graphs/contributors
@@ -22,8 +16,6 @@
 
 [quickshop-original]: https://github.com/KaiKikuchi/QuickShop
 
-[codemc]: https://ci.codemc.io/job/Ghost-chu/job/QuickShop-Hikari/
-
 [clearlagg]: https://www.spigotmc.org/resources/68271/
 
 [worldguard]: https://dev.bukkit.org/projects/worldguard
@@ -36,27 +28,15 @@
 
 [optional_modules]: https://ci.codemc.io/job/Ghost-chu/job/QuickShop-Hikari/
 
-[googlejava]: https://google.github.io/styleguide/javaguide.html
-
-[adoptium]: https://adoptium.net/
-
 [bStats-site]: https://bstats.org
 
 [bStats-plugin]: https://bstats.org/plugin/bukkit/QuickShop-Hikari/14281
 
 <!-- Images/Badges -->
 
-[codacyBadge]: https://app.codacy.com/project/badge/Grade/a04ef7174d9f4e65b60ae28b09222809
-
-[codeFactorBadge]: https://www.codefactor.io/repository/github/ghost-chu/quickshop-hikari/badge
-
-[codeScoreBadge]: https://api.codiga.io/project/32011/score/svg
-
 [licenseBadge]: https://img.shields.io/github/license/Ghost-chu/QuickShop-Hikari.svg
 
 [contributorsBadge]: https://img.shields.io/github/contributors/Ghost-chu/QuickShop-Hikari
-
-[passedTests]: https://img.shields.io/jenkins/tests?compact_message&jobUrl=https://ci.codemc.io/job/Ghost-chu/job/QuickShop-Hikari
 
 [fossaStatusBadge]: https://app.fossa.com/api/projects/git%2Bgithub.com%2FGhost-chu%2FQuickShop-Hikari.svg?type=shield
 
@@ -70,16 +50,9 @@
 
 [Ver]: https://img.shields.io/spiget/version/100125?label=version
 
-<!-- Unused? -->
-<!-- [//]: # (![Downloads]&#40;https://img.shields.io/spiget/downloads/62575?label=downloads&#41;) -->
-<!-- [//]: # (![Rating]&#40;https://img.shields.io/spiget/rating/62575?label=rating&#41;) -->
-
 <!-- Start of README -->
+# QuickShop-OG
 
-# QuickShop-Hikari
-
-[![codacyBadge]][codacy]
-[![codeScoreBadge]][codeScore]
 [![licenseBadge]][license]
 [![contributorsBadge]][contributors]
 ![passedTests]
@@ -91,22 +64,16 @@
 
 ## Introduction
 
-QuickShop Hikari is a Shop plugin that allows players to create Chest Shops to easily sell and buy items, without the
+QuickShop-OG is a GPLv3 based fork of QuickShop Hikari maintained by [TrueOG Network](https://trueog.net) for Purpur 1.19.4. QuickShop Hikari is a Shop plugin that allows players to create Chest Shops to easily sell and buy items, without the
 need for any commands.  
 In fact, all commands in QuickShop are not even needed for normal gameplay.
 
-This version of QuickShop ([Ghost-chu/QuickShop-Hikari][quickshop-hikari]) is a fork
+QuickShop-OG is based on an older version of ([Ghost-chu/QuickShop-Hikari][quickshop-hikari]), which is a fork
 from [PotatoCraft-Studio's version][quickshop-potato] which itself is a fork from the [Reremake][quickshop-ghostchu] of
 the [original QuickShop][quickshop-original].
 
 QuickShop Hikari is maintained by Ghost-Chu and has the goal to modernize the core content of QuickShop and adapt it to
 the latest versions of Minecraft.
-
-## Community & Support
-
-[Discussions](https://github.com/Ghost-chu/QuickShop-Hikari/discussions)  
-[Bug Tracker](https://github.com/Ghost-chu/QuickShop-Hikari/issues)  
-[Discord](https://discord.gg/Bu3dVtmsD3)
 
 ## Features
 
@@ -136,10 +103,6 @@ the latest versions of Minecraft.
 - Shop benefits between shop owner and other players!
 - And much much more!
 
-## Downloads
-
-Obtain the latest version from [ci.codemc.io][codemc]
-
 ## Compatibility Modules
 
 You can download optional modules [here][optional_modules] for compatibility with other plugins.
@@ -164,16 +127,9 @@ You can download optional modules [here][optional_modules] for compatibility wit
 
 - Flag-based shop control.
 
-## Contribute
-
-If you're a developer, you can contribute to the QuickShop source code! Just make a fork, install the Lombok plugin (if
-not done automatically), make your changes and create a pull request when you're done!  
-Please try to follow [Google's Java Code Style][googlejava] and do not increase the Plugin version. Thank you!
-
 ### Distributing forks
 
 You're allowed to create your fork to share. No permission is needed.  
-Though it would be nice if you could pull-request your changes into this repository when they are good ones.
 
 ### Compile and Debugging
 

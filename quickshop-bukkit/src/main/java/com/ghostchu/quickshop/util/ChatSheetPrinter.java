@@ -8,7 +8,6 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-
 @Getter
 @Setter
 /*
@@ -30,10 +29,17 @@ public class ChatSheetPrinter {
             return;
         }
 
-        MsgUtil.sendDirectMessage(p,
-                QuickShop.getInstance().text().of(p, "tableformat.left_half_line").forLocale()
+        MsgUtil.sendDirectMessage(
+                p,
+                QuickShop.getInstance()
+                        .text()
+                        .of(p, "tableformat.left_half_line")
+                        .forLocale()
                         .append(text)
-                        .append(QuickShop.getInstance().text().of(p, "tableformat.right_half_line").forLocale()));
+                        .append(QuickShop.getInstance()
+                                .text()
+                                .of(p, "tableformat.right_half_line")
+                                .forLocale()));
     }
 
     public void printFooter() {
@@ -41,7 +47,8 @@ public class ChatSheetPrinter {
     }
 
     private void printFullLine() {
-        MsgUtil.sendDirectMessage(p, QuickShop.getInstance().text().of(p, "tableformat.full_line").forLocale());
+        MsgUtil.sendDirectMessage(
+                p, QuickShop.getInstance().text().of(p, "tableformat.full_line").forLocale());
     }
 
     public void printHeader() {
@@ -52,7 +59,13 @@ public class ChatSheetPrinter {
         if (Util.isEmptyComponent(component)) {
             return;
         }
-        MsgUtil.sendDirectMessage(p, QuickShop.getInstance().text().of(p, "tableformat.left_begin").forLocale().append(component));
+        MsgUtil.sendDirectMessage(
+                p,
+                QuickShop.getInstance()
+                        .text()
+                        .of(p, "tableformat.left_begin")
+                        .forLocale()
+                        .append(component));
     }
 
     public CommandSender getSender() {

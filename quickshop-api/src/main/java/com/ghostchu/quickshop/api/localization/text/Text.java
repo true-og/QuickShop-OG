@@ -13,14 +13,16 @@ public interface Text {
      * @param locale The minecraft locale code (like en_us)
      * @return The text
      */
-    @NotNull Component forLocale(@NotNull String locale);
+    @NotNull
+    Component forLocale(@NotNull String locale);
 
     /**
      * Getting the text for player locale
      *
      * @return Getting the text for player locale
      */
-    @NotNull Component forLocale();
+    @NotNull
+    Component forLocale();
 
     /**
      * Getting this text is exists in the translation file

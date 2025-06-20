@@ -79,7 +79,13 @@ public enum GameVersion {
      */
     private final boolean signTextDyeSupport;
 
-    GameVersion(boolean coreSupports, boolean endOfLife, boolean virtualDisplaySupports, boolean newNmsName, boolean signGlowingSupport, boolean signTextDyeSupport) {
+    GameVersion(
+            boolean coreSupports,
+            boolean endOfLife,
+            boolean virtualDisplaySupports,
+            boolean newNmsName,
+            boolean signGlowingSupport,
+            boolean signTextDyeSupport) {
         this.coreSupports = coreSupports;
         this.endOfLife = endOfLife;
         this.virtualDisplaySupports = virtualDisplaySupports;
@@ -87,7 +93,6 @@ public enum GameVersion {
         this.signGlowingSupport = signGlowingSupport;
         this.signTextDyeSupport = signTextDyeSupport;
     }
-
 
     /**
      * Matches the version that QuickShop supports or not
@@ -104,5 +109,4 @@ public enum GameVersion {
         }
         return UNKNOWN;
     }
-
 }

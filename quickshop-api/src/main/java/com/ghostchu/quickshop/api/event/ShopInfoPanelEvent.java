@@ -1,13 +1,12 @@
 package com.ghostchu.quickshop.api.event;
 
 import com.ghostchu.quickshop.api.shop.Shop;
+import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.UUID;
 
 /**
  * Calling when purchaser prepared to purchase a shop (click the shop)
@@ -19,6 +18,7 @@ public class ShopInfoPanelEvent extends AbstractQSEvent implements QSCancellable
 
     @NotNull
     private final UUID purchaser;
+
     @Nullable
     private final Player player;
 

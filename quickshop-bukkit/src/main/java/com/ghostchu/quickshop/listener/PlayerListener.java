@@ -22,6 +22,13 @@ import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.logger.Log;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.ReloadStatus;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.AbstractMap;
+import java.util.Date;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -42,14 +49,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.AbstractMap;
-import java.util.Date;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class PlayerListener extends AbstractQSListener {
     private final ExpiringSet<UUID> adventureWorkaround = new ExpiringSet<>(1, TimeUnit.SECONDS);
@@ -72,8 +71,8 @@ public class PlayerListener extends AbstractQSListener {
         // ----Adventure dupe click workaround end----
         Block focused = event.getPlayer().getTargetBlockExact(5);
         if (focused != null) {
-            PlayerInteractEvent interactEvent
-                    = new PlayerInteractEvent(event.getPlayer(),
+            PlayerInteractEvent interactEvent = new PlayerInteractEvent(
+                    event.getPlayer(),
                     focused.getType() == Material.AIR ? Action.LEFT_CLICK_AIR : Action.LEFT_CLICK_BLOCK,
                     event.getPlayer().getInventory().getItemInMainHand(),
                     focused,
@@ -97,7 +96,8 @@ public class PlayerListener extends AbstractQSListener {
         }
         // ----Adventure dupe click workaround end----
         if (rateLimit.contains(e.getPlayer().getUniqueId())) {
-            Log.debug("Player " + e.getPlayer().getName() + " click the blocks too fast and reached the rate limit, ignoring the event...");
+            Log.debug("Player " + e.getPlayer().getName()
+                    + " click the blocks too fast and reached the rate limit, ignoring the event...");
             return;
         }
         rateLimit.add(e.getPlayer().getUniqueId());
@@ -111,15 +111,23 @@ public class PlayerListener extends AbstractQSListener {
         InteractionController.Interaction interaction = null;
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (e.getPlayer().isSneaking()) {
-                interaction = shopSearched.getValue() == ClickType.SIGN ? InteractionController.Interaction.SNEAKING_RIGHT_CLICK_SIGN : InteractionController.Interaction.SNEAKING_RIGHT_CLICK_SHOPBLOCK;
+                interaction = shopSearched.getValue() == ClickType.SIGN
+                        ? InteractionController.Interaction.SNEAKING_RIGHT_CLICK_SIGN
+                        : InteractionController.Interaction.SNEAKING_RIGHT_CLICK_SHOPBLOCK;
             } else {
-                interaction = shopSearched.getValue() == ClickType.SIGN ? InteractionController.Interaction.STANDING_RIGHT_CLICK_SIGN : InteractionController.Interaction.STANDING_RIGHT_CLICK_SHOPBLOCK;
+                interaction = shopSearched.getValue() == ClickType.SIGN
+                        ? InteractionController.Interaction.STANDING_RIGHT_CLICK_SIGN
+                        : InteractionController.Interaction.STANDING_RIGHT_CLICK_SHOPBLOCK;
             }
         } else if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
             if (e.getPlayer().isSneaking()) {
-                interaction = shopSearched.getValue() == ClickType.SIGN ? InteractionController.Interaction.SNEAKING_LEFT_CLICK_SIGN : InteractionController.Interaction.SNEAKING_LEFT_CLICK_SHOPBLOCK;
+                interaction = shopSearched.getValue() == ClickType.SIGN
+                        ? InteractionController.Interaction.SNEAKING_LEFT_CLICK_SIGN
+                        : InteractionController.Interaction.SNEAKING_LEFT_CLICK_SHOPBLOCK;
             } else {
-                interaction = shopSearched.getValue() == ClickType.SIGN ? InteractionController.Interaction.STANDING_LEFT_CLICK_SIGN : InteractionController.Interaction.STANDING_LEFT_CLICK_SHOPBLOCK;
+                interaction = shopSearched.getValue() == ClickType.SIGN
+                        ? InteractionController.Interaction.STANDING_LEFT_CLICK_SIGN
+                        : InteractionController.Interaction.STANDING_LEFT_CLICK_SHOPBLOCK;
             }
         }
         if (interaction == null) {
@@ -127,7 +135,8 @@ public class PlayerListener extends AbstractQSListener {
         }
         if (Util.isDevMode()) {
             Log.debug("Click: " + interaction.name());
-            Log.debug("Behavior Mapping: " + plugin.getInteractionController().getBehavior(interaction).name());
+            Log.debug("Behavior Mapping: "
+                    + plugin.getInteractionController().getBehavior(interaction).name());
         }
         switch (plugin.getInteractionController().getBehavior(interaction)) {
             case CONTROL_PANEL -> {
@@ -140,7 +149,9 @@ public class PlayerListener extends AbstractQSListener {
             }
             case TRADE_INTERACTION -> {
                 if (shopSearched.getKey() == null) {
-                    if (e.getItem() != null && createShop(e.getPlayer(), e.getClickedBlock(), e.getBlockFace(), e.getHand(), e.getItem())) {
+                    if (e.getItem() != null
+                            && createShop(
+                                    e.getPlayer(), e.getClickedBlock(), e.getBlockFace(), e.getHand(), e.getItem())) {
                         e.setCancelled(true);
                         e.setUseInteractedBlock(Event.Result.DENY);
                         e.setUseItemInHand(Event.Result.DENY);
@@ -223,7 +234,8 @@ public class PlayerListener extends AbstractQSListener {
                 attached = Util.getSecondHalf(b);
                 if (attached != null) {
                     Shop secondHalfShop = plugin.getShopManager().getShop(attached.getLocation());
-                    if (secondHalfShop != null && !p.getUniqueId().equals(secondHalfShop.getOwner().getUniqueId())) {
+                    if (secondHalfShop != null
+                            && !p.getUniqueId().equals(secondHalfShop.getOwner().getUniqueId())) {
                         // If player not the owner of the shop, make him select the second half of the
                         // shop
                         // Otherwise owner will be able to create new double chest shop
@@ -242,7 +254,12 @@ public class PlayerListener extends AbstractQSListener {
         shop.setSignText(plugin.text().findRelativeLanguages(p));
     }
 
-    public boolean createShop(@NotNull Player player, @Nullable Block block, @NotNull BlockFace blockFace, @NotNull EquipmentSlot hand, @NotNull ItemStack item) {
+    public boolean createShop(
+            @NotNull Player player,
+            @Nullable Block block,
+            @NotNull BlockFace blockFace,
+            @NotNull EquipmentSlot hand,
+            @NotNull ItemStack item) {
         QUser qUser = QUserImpl.createFullFilled(player);
         if (block == null) {
             return false; // This shouldn't happen because we have checked action type.
@@ -276,15 +293,16 @@ public class PlayerListener extends AbstractQSListener {
             return false;
         }
         // Double chest creation permission check
-        if (Util.isDoubleChest(block.getBlockData()) &&
-                !plugin.perm().hasPermission(player, "quickshop.create.double")) {
+        if (Util.isDoubleChest(block.getBlockData())
+                && !plugin.perm().hasPermission(player, "quickshop.create.double")) {
             plugin.text().of(player, "no-double-chests").send();
             return false;
         }
         // Blacklist check
         if (plugin.getShopItemBlackList().isBlacklisted(stack)
                 && !plugin.perm()
-                .hasPermission(player, "quickshop.bypass." + stack.getType().name())) {
+                        .hasPermission(
+                                player, "quickshop.bypass." + stack.getType().name())) {
             plugin.text().of(player, "blacklisted-item").send();
             return false;
         }
@@ -327,10 +345,15 @@ public class PlayerListener extends AbstractQSListener {
             return false;
         }
         plugin.getShopManager().getInteractiveManager().put(player.getUniqueId(), info);
-        plugin.text().of(player, "how-much-to-trade-for", Util.getItemStackName(stack),
-                plugin.isAllowStack() &&
-                        plugin.perm().hasPermission(player, "quickshop.create.stacks")
-                        ? stack.getAmount() : 1).send();
+        plugin.text()
+                .of(
+                        player,
+                        "how-much-to-trade-for",
+                        Util.getItemStackName(stack),
+                        plugin.isAllowStack() && plugin.perm().hasPermission(player, "quickshop.create.stacks")
+                                ? stack.getAmount()
+                                : 1)
+                .send();
         return false;
     }
 
@@ -353,7 +376,8 @@ public class PlayerListener extends AbstractQSListener {
         final double price = shop.getPrice();
         final Inventory playerInventory = p.getInventory();
         final String tradeAllWord = plugin.getConfig().getString("shop.word-for-trade-all-items", "all");
-        final double ownerBalance = eco.getBalance(shop.getOwner(), shop.getLocation().getWorld(), shop.getCurrency());
+        final double ownerBalance =
+                eco.getBalance(shop.getOwner(), shop.getLocation().getWorld(), shop.getCurrency());
         int items = getPlayerCanSell(shop, ownerBalance, price, new BukkitInventoryWrapper(playerInventory));
         ShopManager.InteractiveManager actions = plugin.getShopManager().getInteractiveManager();
         if (shop.playerAuthorize(p.getUniqueId(), BuiltInShopPermission.PURCHASE)
@@ -362,7 +386,9 @@ public class PlayerListener extends AbstractQSListener {
             actions.put(p.getUniqueId(), info);
             if (!direct) {
                 if (shop.isStackingShop()) {
-                    plugin.text().of(p, "how-many-sell-stack", shop.getItem().getAmount(), items, tradeAllWord).send();
+                    plugin.text()
+                            .of(p, "how-many-sell-stack", shop.getItem().getAmount(), items, tradeAllWord)
+                            .send();
                 } else {
                     plugin.text().of(p, "how-many-sell", items, tradeAllWord).send();
                 }
@@ -376,7 +402,8 @@ public class PlayerListener extends AbstractQSListener {
                 if (arg == 0) {
                     return true;
                 }
-                plugin.getShopManager().actionBuying(p, new BukkitInventoryWrapper(p.getInventory()), eco, info, shop, arg);
+                plugin.getShopManager()
+                        .actionBuying(p, new BukkitInventoryWrapper(p.getInventory()), eco, info, shop, arg);
             }
         }
         return true;
@@ -402,7 +429,8 @@ public class PlayerListener extends AbstractQSListener {
         final Inventory playerInventory = p.getInventory();
         final String tradeAllWord = plugin.getConfig().getString("shop.word-for-trade-all-items", "all");
         ShopManager.InteractiveManager actions = plugin.getShopManager().getInteractiveManager();
-        final double traderBalance = eco.getBalance(p.getUniqueId(), shop.getLocation().getWorld(), shop.getCurrency());
+        final double traderBalance =
+                eco.getBalance(p.getUniqueId(), shop.getLocation().getWorld(), shop.getCurrency());
         int itemAmount = getPlayerCanBuy(shop, traderBalance, price, new BukkitInventoryWrapper(playerInventory));
         if (shop.playerAuthorize(p.getUniqueId(), BuiltInShopPermission.PURCHASE)
                 || plugin.perm().hasPermission(p, "quickshop.other.use")) {
@@ -410,9 +438,13 @@ public class PlayerListener extends AbstractQSListener {
             actions.put(p.getUniqueId(), info);
             if (!direct) {
                 if (shop.isStackingShop()) {
-                    plugin.text().of(p, "how-many-buy-stack", shop.getItem().getAmount(), itemAmount, tradeAllWord).send();
+                    plugin.text()
+                            .of(p, "how-many-buy-stack", shop.getItem().getAmount(), itemAmount, tradeAllWord)
+                            .send();
                 } else {
-                    plugin.text().of(p, "how-many-buy", itemAmount, tradeAllWord).send();
+                    plugin.text()
+                            .of(p, "how-many-buy", itemAmount, tradeAllWord)
+                            .send();
                 }
             } else {
                 int arg;
@@ -424,7 +456,8 @@ public class PlayerListener extends AbstractQSListener {
                 if (arg == 0) {
                     return true;
                 }
-                plugin.getShopManager().actionSelling(p, new BukkitInventoryWrapper(p.getInventory()), eco, info, shop, arg);
+                plugin.getShopManager()
+                        .actionSelling(p, new BukkitInventoryWrapper(p.getInventory()), eco, info, shop, arg);
             }
         }
         return true;
@@ -436,10 +469,13 @@ public class PlayerListener extends AbstractQSListener {
         }
     }
 
-    private int getPlayerCanSell(@NotNull Shop shop, double ownerBalance, double price, @NotNull InventoryWrapper playerInventory) {
+    private int getPlayerCanSell(
+            @NotNull Shop shop, double ownerBalance, double price, @NotNull InventoryWrapper playerInventory) {
         boolean isContainerCountingNeeded = shop.isUnlimited();
         if (shop.isFreeShop()) {
-            return isContainerCountingNeeded ? Util.countItems(playerInventory, shop) : Math.min(shop.getRemainingSpace(), Util.countItems(playerInventory, shop));
+            return isContainerCountingNeeded
+                    ? Util.countItems(playerInventory, shop)
+                    : Math.min(shop.getRemainingSpace(), Util.countItems(playerInventory, shop));
         }
 
         int items = Util.countItems(playerInventory, shop);
@@ -463,13 +499,10 @@ public class PlayerListener extends AbstractQSListener {
 
     private int buyingShopAllCalc(@NotNull AbstractEconomy eco, @NotNull Shop shop, @NotNull Player p) {
         int amount;
-        int shopHaveSpaces =
-                Util.countSpace(shop.getInventory(), shop);
+        int shopHaveSpaces = Util.countSpace(shop.getInventory(), shop);
         int invHaveItems = Util.countItems(new BukkitInventoryWrapper(p.getInventory()), shop);
         // Check if shop owner has enough money
-        double ownerBalance = eco
-                .getBalance(shop.getOwner(), shop.getLocation().getWorld(),
-                        shop.getCurrency());
+        double ownerBalance = eco.getBalance(shop.getOwner(), shop.getLocation().getWorld(), shop.getCurrency());
         int ownerCanAfford;
         if (shop.getPrice() != 0) {
             ownerCanAfford = (int) (ownerBalance / shop.getPrice());
@@ -491,33 +524,45 @@ public class PlayerListener extends AbstractQSListener {
         if (amount < 1) { // typed 'all' but the auto set amount is 0
             if (shopHaveSpaces == 0) {
                 // when typed 'all' but the shop doesn't have any empty space
-                plugin.text().of(p, "shop-has-no-space", shopHaveSpaces,
-                        Util.getItemStackName(shop.getItem())).send();
+                plugin.text()
+                        .of(p, "shop-has-no-space", shopHaveSpaces, Util.getItemStackName(shop.getItem()))
+                        .send();
                 return 0;
             }
             if (ownerCanAfford == 0
-                    && (!shop.isUnlimited()
-                    || plugin.getConfig().getBoolean("shop.pay-unlimited-shop-owners"))) {
+                    && (!shop.isUnlimited() || plugin.getConfig().getBoolean("shop.pay-unlimited-shop-owners"))) {
                 // when typed 'all' but the shop owner doesn't have enough money to buy at least 1
                 // item (and shop isn't unlimited or pay-unlimited is true)
-                plugin.text().of(p, "the-owner-cant-afford-to-buy-from-you",
-                        plugin.getShopManager().format(shop.getPrice(), shop.getLocation().getWorld(),
-                                shop.getCurrency()),
-                        plugin.getShopManager().format(ownerBalance, shop.getLocation().getWorld(),
-                                shop.getCurrency())).send();
+                plugin.text()
+                        .of(
+                                p,
+                                "the-owner-cant-afford-to-buy-from-you",
+                                plugin.getShopManager()
+                                        .format(
+                                                shop.getPrice(),
+                                                shop.getLocation().getWorld(),
+                                                shop.getCurrency()),
+                                plugin.getShopManager()
+                                        .format(ownerBalance, shop.getLocation().getWorld(), shop.getCurrency()))
+                        .send();
                 return 0;
             }
             // when typed 'all' but player doesn't have any items to sell
-            plugin.text().of(p, "you-dont-have-that-many-items", amount, Util.getItemStackName(shop.getItem())).send();
+            plugin.text()
+                    .of(p, "you-dont-have-that-many-items", amount, Util.getItemStackName(shop.getItem()))
+                    .send();
             return 0;
         }
         return amount;
     }
 
-    private int getPlayerCanBuy(@NotNull Shop shop, double traderBalance, double price, @NotNull InventoryWrapper playerInventory) {
+    private int getPlayerCanBuy(
+            @NotNull Shop shop, double traderBalance, double price, @NotNull InventoryWrapper playerInventory) {
         boolean isContainerCountingNeeded = shop.isUnlimited();
         if (shop.isFreeShop()) { // Free shop
-            return isContainerCountingNeeded ? Util.countSpace(playerInventory, shop) : Math.min(shop.getRemainingStock(), Util.countSpace(playerInventory, shop));
+            return isContainerCountingNeeded
+                    ? Util.countSpace(playerInventory, shop)
+                    : Math.min(shop.getRemainingStock(), Util.countSpace(playerInventory, shop));
         }
         int itemAmount = Math.min(Util.countSpace(playerInventory, shop), (int) Math.floor(traderBalance / price));
         if (!isContainerCountingNeeded) {
@@ -542,29 +587,31 @@ public class PlayerListener extends AbstractQSListener {
         }
         // typed 'all', check if player has enough money than price * amount
         double price = shop.getPrice();
-        double balance = eco.getBalance(p.getUniqueId(), shop.getLocation().getWorld(),
-                shop.getCurrency());
+        double balance = eco.getBalance(p.getUniqueId(), shop.getLocation().getWorld(), shop.getCurrency());
         amount = Math.min(amount, (int) Math.floor(balance / price));
         if (amount < 1) { // typed 'all' but the auto set amount is 0
             // when typed 'all' but player can't buy any items
             if (!shop.isUnlimited() && shopHaveItems < 1) {
                 // but also the shop's stock is 0
-                plugin.text().of(p, "shop-stock-too-low",
-                        shop.getRemainingStock(),
-                        Util.getItemStackName(shop.getItem())).send();
+                plugin.text()
+                        .of(p, "shop-stock-too-low", shop.getRemainingStock(), Util.getItemStackName(shop.getItem()))
+                        .send();
                 return 0;
             } else {
                 // when if player's inventory is full
                 if (invHaveSpaces <= 0) {
-                    plugin.text().of(p, "not-enough-space",
-                            invHaveSpaces).send();
+                    plugin.text().of(p, "not-enough-space", invHaveSpaces).send();
                     return 0;
                 }
-                plugin.text().of(p, "you-cant-afford-to-buy",
-                        plugin.getShopManager().format(price, shop.getLocation().getWorld(),
-                                shop.getCurrency()),
-                        plugin.getShopManager().format(balance, shop.getLocation().getWorld(),
-                                shop.getCurrency())).send();
+                plugin.text()
+                        .of(
+                                p,
+                                "you-cant-afford-to-buy",
+                                plugin.getShopManager()
+                                        .format(price, shop.getLocation().getWorld(), shop.getCurrency()),
+                                plugin.getShopManager()
+                                        .format(balance, shop.getLocation().getWorld(), shop.getCurrency()))
+                        .send();
             }
             return 0;
         }
@@ -573,7 +620,9 @@ public class PlayerListener extends AbstractQSListener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onDyeing(PlayerInteractEvent e) {
-        if (e.getAction() != Action.RIGHT_CLICK_BLOCK || e.getItem() == null || !Util.isDyes(e.getItem().getType())) {
+        if (e.getAction() != Action.RIGHT_CLICK_BLOCK
+                || e.getItem() == null
+                || !Util.isDyes(e.getItem().getType())) {
             return;
         }
         final Block block = e.getClickedBlock();
@@ -581,7 +630,8 @@ public class PlayerListener extends AbstractQSListener {
             return;
         }
         final Block attachedBlock = Util.getAttached(block);
-        if (attachedBlock == null || plugin.getShopManager().getShopIncludeAttached(attachedBlock.getLocation()) == null) {
+        if (attachedBlock == null
+                || plugin.getShopManager().getShopIncludeAttached(attachedBlock.getLocation()) == null) {
             return;
         }
         e.setCancelled(true);
@@ -610,8 +660,8 @@ public class PlayerListener extends AbstractQSListener {
             if (location == null) {
                 return; /// ignored as workaround, GH-303
             }
-            //Cannot tick distance manager while unloading playerchunks
-            //https://github.com/pl3xgaming/Purpur/issues/631
+            // Cannot tick distance manager while unloading playerchunks
+            // https://github.com/pl3xgaming/Purpur/issues/631
             if (!Util.isLoaded(location)) {
                 return;
             }
@@ -625,8 +675,14 @@ public class PlayerListener extends AbstractQSListener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onJoin(PlayerLocaleChangeEvent e) {
-        Log.debug("Player " + e.getPlayer().getName() + " using new locale " + e.getLocale() + ": " + LegacyComponentSerializer.legacySection().serialize(plugin.text().of(e.getPlayer(), "file-test").forLocale(e.getLocale())));
-        plugin.getDatabaseHelper().updatePlayerProfile(e.getPlayer().getUniqueId(), e.getLocale(), e.getPlayer().getName())
+        Log.debug("Player " + e.getPlayer().getName() + " using new locale " + e.getLocale() + ": "
+                + LegacyComponentSerializer.legacySection()
+                        .serialize(plugin.text().of(e.getPlayer(), "file-test").forLocale(e.getLocale())));
+        plugin.getDatabaseHelper()
+                .updatePlayerProfile(
+                        e.getPlayer().getUniqueId(),
+                        e.getLocale(),
+                        e.getPlayer().getName())
                 .exceptionally(throwable -> {
                     Log.debug("Failed to set player locale: " + throwable.getMessage());
                     return null;
@@ -636,7 +692,8 @@ public class PlayerListener extends AbstractQSListener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onJoin(PlayerJoinEvent e) {
         // Notify the player any messages they were sent
-        plugin.getPlayerFinder().cache(e.getPlayer().getUniqueId(), e.getPlayer().getName());
+        plugin.getPlayerFinder()
+                .cache(e.getPlayer().getUniqueId(), e.getPlayer().getName());
         if (plugin.getConfig().getBoolean("shop.auto-fetch-shop-messages")) {
             MsgUtil.flush(e.getPlayer());
         }
@@ -646,9 +703,17 @@ public class PlayerListener extends AbstractQSListener {
     public void onJoinEasterEgg(PlayerJoinEvent e) {
         if (plugin.perm().hasPermission(e.getPlayer(), "quickshop.alert")) {
             Date date = new Date();
-            LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            if ((localDate.getMonthValue() == 4 && localDate.getDayOfMonth() == 1) || PackageUtil.parsePackageProperly("april-rickandroll").asBoolean()) {
-                Bukkit.getScheduler().runTaskLater(plugin.getJavaPlugin(), (() -> plugin.text().of(e.getPlayer(), "april-rick-and-roll-easter-egg").send()), 80L);
+            LocalDate localDate =
+                    date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            if ((localDate.getMonthValue() == 4 && localDate.getDayOfMonth() == 1)
+                    || PackageUtil.parsePackageProperly("april-rickandroll").asBoolean()) {
+                Bukkit.getScheduler()
+                        .runTaskLater(
+                                plugin.getJavaPlugin(),
+                                (() -> plugin.text()
+                                        .of(e.getPlayer(), "april-rick-and-roll-easter-egg")
+                                        .send()),
+                                80L);
             }
         }
     }
@@ -678,7 +743,11 @@ public class PlayerListener extends AbstractQSListener {
     public void onPlayerQuit(PlayerQuitEvent e) {
         // Remove them from the menu
         plugin.getShopManager().getInteractiveManager().remove(e.getPlayer().getUniqueId());
-        plugin.getDatabaseHelper().updatePlayerProfile(e.getPlayer().getUniqueId(), e.getPlayer().getLocale(), e.getPlayer().getName())
+        plugin.getDatabaseHelper()
+                .updatePlayerProfile(
+                        e.getPlayer().getUniqueId(),
+                        e.getPlayer().getLocale(),
+                        e.getPlayer().getName())
                 .exceptionally(throwable -> {
                     Log.debug("Failed to set player locale: " + throwable.getMessage());
                     return null;
@@ -695,7 +764,9 @@ public class PlayerListener extends AbstractQSListener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onMove(PlayerMoveEvent e) {
-        final Info info = plugin.getShopManager().getInteractiveManager().get(e.getPlayer().getUniqueId());
+        final Info info = plugin.getShopManager()
+                .getInteractiveManager()
+                .get(e.getPlayer().getUniqueId());
         if (info == null) {
             return;
         }

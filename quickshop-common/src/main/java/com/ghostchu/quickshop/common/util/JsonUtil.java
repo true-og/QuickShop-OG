@@ -1,11 +1,9 @@
 package com.ghostchu.quickshop.common.util;
 
 import com.google.gson.*;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.Reader;
 import java.util.Objects;
-
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Utilities to prevent create Gson object in other place and reuse gson object in runtime
@@ -94,9 +92,7 @@ public final class JsonUtil {
         prettyPrinting().toJson(object, writer);
     }
 
-    public @interface Hidden {
-
-    }
+    public @interface Hidden {}
 
     public static class HiddenAnnotationExclusionStrategy implements ExclusionStrategy {
         @Override
@@ -109,5 +105,4 @@ public final class JsonUtil {
             return clazz.getDeclaredAnnotation(Hidden.class) != null;
         }
     }
-
 }

@@ -7,6 +7,8 @@ import com.ghostchu.quickshop.api.shop.ShopAction;
 import com.ghostchu.quickshop.shop.SimpleInfo;
 import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.logger.Log;
+import java.util.Collections;
+import java.util.List;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,13 +18,9 @@ import org.bukkit.util.BlockIterator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.List;
-
 public class SubCommand_Create implements CommandHandler<Player> {
 
     private final QuickShop plugin;
-
 
     public SubCommand_Create(@NotNull QuickShop plugin) {
         this.plugin = plugin;
@@ -48,7 +46,9 @@ public class SubCommand_Create implements CommandHandler<Player> {
                 plugin.text().of(sender, "item-not-exist", matName).send();
                 return;
             }
-            if (parser.getArgs().size() > 2 && plugin.perm().hasPermission(sender, "quickshop.create.stack") && plugin.isAllowStack()) {
+            if (parser.getArgs().size() > 2
+                    && plugin.perm().hasPermission(sender, "quickshop.create.stack")
+                    && plugin.isAllowStack()) {
                 try {
                     int amount = Integer.parseInt(parser.getArgs().get(2));
                     if (amount < 1) {
@@ -72,8 +72,16 @@ public class SubCommand_Create implements CommandHandler<Player> {
                 continue;
             }
             // Send creation menu.
-            plugin.getShopManager().getInteractiveManager().put(sender.getUniqueId(),
-                    new SimpleInfo(b.getLocation(), ShopAction.CREATE_SELL, item, b.getRelative(sender.getFacing().getOppositeFace()), false));
+            plugin.getShopManager()
+                    .getInteractiveManager()
+                    .put(
+                            sender.getUniqueId(),
+                            new SimpleInfo(
+                                    b.getLocation(),
+                                    ShopAction.CREATE_SELL,
+                                    item,
+                                    b.getRelative(sender.getFacing().getOppositeFace()),
+                                    false));
             plugin.getShopManager().handleChat(sender, price);
             return;
         }
@@ -100,17 +108,20 @@ public class SubCommand_Create implements CommandHandler<Player> {
     public List<String> onTabComplete(
             @NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
         if (parser.getArgs().size() == 1) {
-            return Collections.singletonList(LegacyComponentSerializer.legacySection().serialize(plugin.text().of(sender, "tabcomplete.price").forLocale()));
+            return Collections.singletonList(LegacyComponentSerializer.legacySection()
+                    .serialize(plugin.text().of(sender, "tabcomplete.price").forLocale()));
         }
         if (sender.getInventory().getItemInMainHand().getType().isAir()) {
             if (parser.getArgs().size() == 2) {
-                return Collections.singletonList(LegacyComponentSerializer.legacySection().serialize(plugin.text().of(sender, "tabcomplete.item").forLocale()));
+                return Collections.singletonList(LegacyComponentSerializer.legacySection()
+                        .serialize(plugin.text().of(sender, "tabcomplete.item").forLocale()));
             }
             if (parser.getArgs().size() == 3) {
-                return Collections.singletonList(LegacyComponentSerializer.legacySection().serialize(plugin.text().of(sender, "tabcomplete.amount").forLocale()));
+                return Collections.singletonList(LegacyComponentSerializer.legacySection()
+                        .serialize(
+                                plugin.text().of(sender, "tabcomplete.amount").forLocale()));
             }
         }
         return Collections.emptyList();
     }
-
 }

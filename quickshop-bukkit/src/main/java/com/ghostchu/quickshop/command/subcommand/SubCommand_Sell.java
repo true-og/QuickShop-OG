@@ -26,7 +26,9 @@ public class SubCommand_Sell implements CommandHandler<Player> {
                     || plugin.perm().hasPermission(sender, "quickshop.other.control")) {
                 shop.setShopType(ShopType.SELLING);
                 shop.setSignText(plugin.text().findRelativeLanguages(sender));
-                plugin.text().of(sender, "command.now-selling", Util.getItemStackName(shop.getItem())).send();
+                plugin.text()
+                        .of(sender, "command.now-selling", Util.getItemStackName(shop.getItem()))
+                        .send();
             } else {
                 plugin.text().of(sender, "not-managed-shop").send();
             }
@@ -34,5 +36,4 @@ public class SubCommand_Sell implements CommandHandler<Player> {
             plugin.text().of(sender, "not-looking-at-shop").send();
         }
     }
-
 }

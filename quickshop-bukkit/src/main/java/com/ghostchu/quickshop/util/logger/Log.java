@@ -5,6 +5,12 @@ import com.ghostchu.quickshop.common.util.QuickExecutor;
 import com.ghostchu.quickshop.common.util.Timer;
 import com.ghostchu.quickshop.util.Util;
 import com.google.common.collect.EvictingQueue;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.logging.Level;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -12,13 +18,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.logging.Level;
 
 public class Log {
     private static final ReentrantReadWriteLock LOCK = new ReentrantReadWriteLock();
@@ -51,7 +50,6 @@ public class Log {
         } finally {
             LOCK.writeLock().unlock();
         }
-
     }
 
     private static void debugStdOutputs(Record recordEntry) {
@@ -91,7 +89,6 @@ public class Log {
         debug(level, message, Caller.create());
     }
 
-
     public static void privacy(@NotNull String message) {
         privacy(Level.INFO, message, Caller.create());
     }
@@ -116,7 +113,6 @@ public class Log {
     public static void privacy(@NotNull Level level, @NotNull String message) {
         privacy(level, message, Caller.create());
     }
-
 
     public static void performance(@NotNull Level level, @NotNull String message, @NotNull Caller caller) {
         LOCK.writeLock().lock();
@@ -143,7 +139,9 @@ public class Log {
     public static List<Record> fetchLogs(@NotNull Type type) {
         LOCK.readLock().lock();
         try {
-            return LOGGER_BUFFER.stream().filter(recordEntry -> recordEntry.getType() == type).toList();
+            return LOGGER_BUFFER.stream()
+                    .filter(recordEntry -> recordEntry.getType() == type)
+                    .toList();
         } finally {
             LOCK.readLock().unlock();
         }
@@ -170,7 +168,9 @@ public class Log {
     public static List<Record> fetchLogsLevel(@NotNull Type type, @NotNull Level level) {
         LOCK.readLock().lock();
         try {
-            return LOGGER_BUFFER.stream().filter(recordEntry -> recordEntry.getType() == type && recordEntry.getLevel() == level).toList();
+            return LOGGER_BUFFER.stream()
+                    .filter(recordEntry -> recordEntry.getType() == type && recordEntry.getLevel() == level)
+                    .toList();
         } finally {
             LOCK.readLock().unlock();
         }
@@ -195,7 +195,6 @@ public class Log {
         } finally {
             LOCK.writeLock().unlock();
         }
-
     }
 
     public static void permission(@NotNull Level level, @NotNull String message) {
@@ -207,21 +206,23 @@ public class Log {
     }
 
     @ApiStatus.Internal
-    public static void timing(@NotNull Level level, @NotNull String operation, @NotNull Timer timer, @Nullable Caller caller) {
+    public static void timing(
+            @NotNull Level level, @NotNull String operation, @NotNull Timer timer, @Nullable Caller caller) {
         LOCK.writeLock().lock();
         try {
             Record recordEntry;
             if (DISABLE_LOCATION_RECORDING) {
-                recordEntry = new Record(level, Type.TIMING, operation + " (cost " + timer.getPassedTime() + " ms)", null);
+                recordEntry =
+                        new Record(level, Type.TIMING, operation + " (cost " + timer.getPassedTime() + " ms)", null);
             } else {
-                recordEntry = new Record(level, Type.TIMING, operation + " (cost " + timer.getPassedTime() + " ms)", caller);
+                recordEntry =
+                        new Record(level, Type.TIMING, operation + " (cost " + timer.getPassedTime() + " ms)", caller);
             }
             LOGGER_BUFFER.offer(recordEntry);
             debugStdOutputs(recordEntry);
         } finally {
             LOCK.writeLock().unlock();
         }
-
     }
 
     public static void transaction(@NotNull String message) {
@@ -263,12 +264,16 @@ public class Log {
     @EqualsAndHashCode
     public static class Record {
         private final long timestamp = System.currentTimeMillis();
+
         @NotNull
         private final Level level;
+
         @NotNull
         private final Type type;
+
         @NotNull
         private final String message;
+
         @Nullable
         private final Caller caller;
 
@@ -280,28 +285,35 @@ public class Log {
         }
 
         public CompletableFuture<String> generate() {
-            return CompletableFuture.supplyAsync(() -> {
-                StringBuilder sb = new StringBuilder();
-                Log.Caller caller;
-                if (this.caller == null) {
-                    caller = new Caller("<NO RECORDING>", "<NO RECORDING>", "<NO RECORDING>", -1);
-                } else {
-                    caller = this.caller;
-                }
-                String simpleClassName = caller.getClassName().substring(caller.getClassName().lastIndexOf('.') + 1);
-                sb.append("[");
-                sb.append(caller.getThreadName());
-                sb.append("/");
-                sb.append(this.getLevel().getName());
-                sb.append("]");
-                sb.append(" ");
-                sb.append("(");
-                sb.append(simpleClassName).append("#").append(caller.getMethodName()).append(":").append(caller.getLineNumber());
-                sb.append(")");
-                sb.append(" ");
-                sb.append(this.getMessage());
-                return sb.toString();
-            }, QuickExecutor.getCommonExecutor());
+            return CompletableFuture.supplyAsync(
+                    () -> {
+                        StringBuilder sb = new StringBuilder();
+                        Log.Caller caller;
+                        if (this.caller == null) {
+                            caller = new Caller("<NO RECORDING>", "<NO RECORDING>", "<NO RECORDING>", -1);
+                        } else {
+                            caller = this.caller;
+                        }
+                        String simpleClassName = caller.getClassName()
+                                .substring(caller.getClassName().lastIndexOf('.') + 1);
+                        sb.append("[");
+                        sb.append(caller.getThreadName());
+                        sb.append("/");
+                        sb.append(this.getLevel().getName());
+                        sb.append("]");
+                        sb.append(" ");
+                        sb.append("(");
+                        sb.append(simpleClassName)
+                                .append("#")
+                                .append(caller.getMethodName())
+                                .append(":")
+                                .append(caller.getLineNumber());
+                        sb.append(")");
+                        sb.append(" ");
+                        sb.append(this.getMessage());
+                        return sb.toString();
+                    },
+                    QuickExecutor.getCommonExecutor());
         }
 
         @Override
@@ -311,16 +323,20 @@ public class Log {
     }
 
     @Data
-    public final static class Caller {
+    public static final class Caller {
         @NotNull
         private final String threadName;
+
         @NotNull
         private final String className;
+
         @NotNull
         private final String methodName;
+
         private final int lineNumber;
 
-        public Caller(@NotNull String threadName, @NotNull String className, @NotNull String methodName, int lineNumber) {
+        public Caller(
+                @NotNull String threadName, @NotNull String className, @NotNull String methodName, int lineNumber) {
             this.threadName = threadName;
             this.className = className;
             this.methodName = methodName;
@@ -349,16 +365,16 @@ public class Log {
                     return new Caller("<DISABLED>", "<DISABLED>", "<DISABLED>", -1);
                 }
             }
-            return STACK_WALKER.walk(stream -> stream.skip(steps).findFirst()
-                .map(frame -> {
-                    String threadName = Thread.currentThread().getName();
-                    String className = frame.getClassName();
-                    String methodName = frame.getMethodName();
-                    int codeLine = frame.getLineNumber();
-                    return new Caller(threadName, className, methodName, codeLine);
-                })
-                .orElseGet(() -> new Caller("<INVALID>", "<INVALID>", "<INVALID>", -1)));
+            return STACK_WALKER.walk(stream -> stream.skip(steps)
+                    .findFirst()
+                    .map(frame -> {
+                        String threadName = Thread.currentThread().getName();
+                        String className = frame.getClassName();
+                        String methodName = frame.getMethodName();
+                        int codeLine = frame.getLineNumber();
+                        return new Caller(threadName, className, methodName, codeLine);
+                    })
+                    .orElseGet(() -> new Caller("<INVALID>", "<INVALID>", "<INVALID>", -1)));
         }
     }
-
 }

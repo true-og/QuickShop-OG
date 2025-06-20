@@ -5,6 +5,7 @@ import com.ghostchu.quickshop.api.economy.AbstractEconomy;
 import com.ghostchu.quickshop.util.economyformatter.BuiltInEconomyFormatter;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.ReloadStatus;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,14 +17,13 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
-
 @ToString
 public class Economy_GemsEconomy extends AbstractEconomy {
 
     private final QuickShop plugin;
     private final BuiltInEconomyFormatter formatter;
     private boolean allowLoan;
+
     @Getter
     @Setter
     private GemsEconomyAPI api;
@@ -36,7 +36,6 @@ public class Economy_GemsEconomy extends AbstractEconomy {
         init();
         setupEconomy();
     }
-
 
     private void init() {
         this.allowLoan = plugin.getConfig().getBoolean("shop.allow-economy-loan");
@@ -78,7 +77,6 @@ public class Economy_GemsEconomy extends AbstractEconomy {
         return this.api.getCurrency(currency);
     }
 
-
     @Override
     public boolean deposit(@NotNull String name, double amount, @NotNull World world, @Nullable String currency) {
         if (!isValid()) {
@@ -114,7 +112,8 @@ public class Economy_GemsEconomy extends AbstractEconomy {
      * @return True if success (Should be almost always)
      */
     @Override
-    public boolean deposit(@NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency) {
+    public boolean deposit(
+            @NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency) {
         return deposit(trader.getUniqueId(), amount, world, currency);
     }
 
@@ -207,7 +206,8 @@ public class Economy_GemsEconomy extends AbstractEconomy {
      * @return True if success, false if they didn't have enough cash
      */
     @Override
-    public boolean withdraw(@NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency) {
+    public boolean withdraw(
+            @NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency) {
         return withdraw(trader.getUniqueId(), amount, world, currency);
     }
 
@@ -261,11 +261,8 @@ public class Economy_GemsEconomy extends AbstractEconomy {
         return this.api != null;
     }
 
-
     @Override
     public @NotNull Plugin getPlugin() {
         return this.plugin.getJavaPlugin();
     }
-
-
 }

@@ -3,13 +3,12 @@ package com.ghostchu.quickshop.economy;
 import com.ghostchu.quickshop.api.economy.Benefit;
 import com.ghostchu.quickshop.common.util.JsonUtil;
 import com.google.gson.reflect.TypeToken;
-import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SimpleBenefit implements Benefit {
     private final Map<UUID, Double> benefits;
@@ -27,8 +26,7 @@ public class SimpleBenefit implements Benefit {
         if (StringUtils.isEmpty(json)) {
             return new SimpleBenefit();
         }
-        Map<UUID, Double> map = JsonUtil.regular().fromJson(json, new TypeToken<Map<UUID, Double>>() {
-        }.getType());
+        Map<UUID, Double> map = JsonUtil.regular().fromJson(json, new TypeToken<Map<UUID, Double>>() {}.getType());
         return new SimpleBenefit(map);
     }
 
@@ -51,7 +49,8 @@ public class SimpleBenefit implements Benefit {
     }
 
     @Override
-    public void addBenefit(@NotNull UUID player, double benefit) throws BenefitOverflowException, BenefitExistsException {
+    public void addBenefit(@NotNull UUID player, double benefit)
+            throws BenefitOverflowException, BenefitExistsException {
         double overflow = getOverflow(benefit);
         if (overflow != 0) {
             throw new BenefitOverflowException(overflow);

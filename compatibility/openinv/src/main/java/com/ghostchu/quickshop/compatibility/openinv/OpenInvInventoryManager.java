@@ -3,9 +3,8 @@ package com.ghostchu.quickshop.compatibility.openinv;
 import com.ghostchu.quickshop.api.inventory.InventoryWrapper;
 import com.ghostchu.quickshop.api.inventory.InventoryWrapperManager;
 import com.lishid.openinv.IOpenInv;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.UUID;
+import org.jetbrains.annotations.NotNull;
 
 public class OpenInvInventoryManager implements InventoryWrapperManager {
     private final IOpenInv openInv;
@@ -42,6 +41,7 @@ public class OpenInvInventoryManager implements InventoryWrapperManager {
         if (wrapper instanceof EnderChestWrapper wrap) {
             return wrap.getUuid().toString();
         }
-        throw new IllegalArgumentException("Cannot create symbol link for target Inventory: " + wrapper.getClass().getName());
+        throw new IllegalArgumentException("Cannot create symbol link for target Inventory: "
+                + wrapper.getClass().getName());
     }
 }

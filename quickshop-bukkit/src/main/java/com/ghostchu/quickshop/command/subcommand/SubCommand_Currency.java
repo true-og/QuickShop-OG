@@ -9,13 +9,12 @@ import com.ghostchu.quickshop.api.shop.PriceLimiterStatus;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.api.shop.permission.BuiltInShopPermission;
 import com.ghostchu.quickshop.util.Util;
-import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class SubCommand_Currency implements CommandHandler<Player> {
 
@@ -40,21 +39,32 @@ public class SubCommand_Currency implements CommandHandler<Player> {
                     plugin.text().of(sender, "currency-not-support").send();
                     return;
                 }
-                if (!plugin.getEconomy().hasCurrency(Objects.requireNonNull(shop.getLocation().getWorld()), parser.getArgs().get(0))) {
+                if (!plugin.getEconomy()
+                        .hasCurrency(
+                                Objects.requireNonNull(shop.getLocation().getWorld()),
+                                parser.getArgs().get(0))) {
                     plugin.text().of(sender, "currency-not-exists").send();
                     return;
                 }
 
                 PriceLimiter limiter = plugin.getShopManager().getPriceLimiter();
-                PriceLimiterCheckResult checkResult = limiter.check(sender, shop.getItem(), parser.getArgs().get(0), shop.getPrice());
+                PriceLimiterCheckResult checkResult =
+                        limiter.check(sender, shop.getItem(), parser.getArgs().get(0), shop.getPrice());
                 if (checkResult.getStatus() != PriceLimiterStatus.PASS) {
-                    plugin.text().of(sender, "restricted-prices", Util.getItemStackName(shop.getItem()),
-                            Component.text(checkResult.getMin()),
-                            Component.text(checkResult.getMax())).send();
+                    plugin.text()
+                            .of(
+                                    sender,
+                                    "restricted-prices",
+                                    Util.getItemStackName(shop.getItem()),
+                                    Component.text(checkResult.getMin()),
+                                    Component.text(checkResult.getMax()))
+                            .send();
                     return;
                 }
                 shop.setCurrency(parser.getArgs().get(0));
-                plugin.text().of(sender, "currency-set", parser.getArgs().get(0)).send();
+                plugin.text()
+                        .of(sender, "currency-set", parser.getArgs().get(0))
+                        .send();
                 return;
 
             } else {
@@ -71,5 +81,4 @@ public class SubCommand_Currency implements CommandHandler<Player> {
             @NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
         return Collections.emptyList();
     }
-
 }

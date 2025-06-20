@@ -4,14 +4,13 @@ import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.api.event.CalendarEvent;
 import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.logger.Log;
+import java.io.File;
+import java.io.IOException;
+import java.util.Calendar;
 import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Calendar;
 
 /**
  * CalendarWatcher check-call calendar events related stuffs
@@ -21,8 +20,10 @@ import java.util.Calendar;
 public class CalendarWatcher extends BukkitRunnable {
     @Getter
     private final File calendarFile = new File(Util.getCacheFolder(), "calendar.cache");
+
     @Getter
     private final YamlConfiguration configuration;
+
     private final QuickShop plugin;
     private BukkitTask task;
 
@@ -32,7 +33,11 @@ public class CalendarWatcher extends BukkitRunnable {
             try {
                 calendarFile.createNewFile();
             } catch (IOException ioException) {
-                plugin.logger().warn("Cannot create calendar cache file at {}, scheduled tasks may cannot or execute wrongly!", calendarFile.getAbsolutePath(), ioException);
+                plugin.logger()
+                        .warn(
+                                "Cannot create calendar cache file at {}, scheduled tasks may cannot or execute wrongly!",
+                                calendarFile.getAbsolutePath(),
+                                ioException);
             }
         }
         configuration = YamlConfiguration.loadConfiguration(calendarFile);
@@ -86,7 +91,6 @@ public class CalendarWatcher extends BukkitRunnable {
             type = CalendarEvent.CalendarTriggerType.YEAR;
         }
 
-
         configuration.set("second", secondNow);
         configuration.set("minute", minuteNow);
         configuration.set("hour", hourNow);
@@ -94,9 +98,8 @@ public class CalendarWatcher extends BukkitRunnable {
         configuration.set("week", weekNow);
         configuration.set("month", monthNow);
         configuration.set("year", yearNow);
-        //We can use ordinal() to check we need update or not
-        //If we need update every minute, use type.ordinal() >= MINUTE
-
+        // We can use ordinal() to check we need update or not
+        // If we need update every minute, use type.ordinal() >= MINUTE
 
         if (type.ordinal() >= CalendarEvent.CalendarTriggerType.HOUR.ordinal()) {
             save();
@@ -109,7 +112,11 @@ public class CalendarWatcher extends BukkitRunnable {
         try {
             configuration.save(calendarFile);
         } catch (IOException ioException) {
-            plugin.logger().warn("Cannot save calendar cache file at {}, scheduled tasks may cannot or execute wrongly!", calendarFile.getAbsolutePath(), ioException);
+            plugin.logger()
+                    .warn(
+                            "Cannot save calendar cache file at {}, scheduled tasks may cannot or execute wrongly!",
+                            calendarFile.getAbsolutePath(),
+                            ioException);
         }
     }
 

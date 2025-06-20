@@ -14,7 +14,6 @@ public interface ShopControlPanelManager {
      * @param player the player to open
      * @param shop   the shop to open
      */
-
     void openControlPanel(@NotNull Player player, @NotNull Shop shop);
 
     /**
@@ -36,6 +35,5 @@ public interface ShopControlPanelManager {
      *
      * @param panel the panel to unregister
      */
-
     void unregister(@NotNull ShopControlPanel panel);
 }

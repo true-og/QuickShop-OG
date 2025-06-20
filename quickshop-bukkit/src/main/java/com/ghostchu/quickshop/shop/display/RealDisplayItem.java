@@ -9,6 +9,10 @@ import com.ghostchu.quickshop.util.MsgUtil;
 import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.logger.Log;
 import io.papermc.lib.PaperLib;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import lombok.ToString;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -19,11 +23,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 
 @ToString
 public class RealDisplayItem extends AbstractDisplayItem {
@@ -85,14 +84,17 @@ public class RealDisplayItem extends AbstractDisplayItem {
 
     public void fixDisplayMovedOld() {
         Util.ensureThread(false);
-        for (Entity entity : Objects.requireNonNull(this.shop.getLocation().getWorld())
-                .getEntities()) {
+        for (Entity entity :
+                Objects.requireNonNull(this.shop.getLocation().getWorld()).getEntities()) {
             if (!(entity instanceof Item eItem)) {
                 continue;
             }
             if (eItem.getUniqueId().equals(Objects.requireNonNull(this.item).getUniqueId())) {
                 Log.debug("Fixing moved Item displayItem " + eItem.getUniqueId() + " at " + eItem.getLocation());
-                PaperLib.teleportAsync(entity, Objects.requireNonNull(getDisplayLocation()), PlayerTeleportEvent.TeleportCause.UNKNOWN);
+                PaperLib.teleportAsync(
+                        entity,
+                        Objects.requireNonNull(getDisplayLocation()),
+                        PlayerTeleportEvent.TeleportCause.UNKNOWN);
                 return;
             }
         }
@@ -175,8 +177,7 @@ public class RealDisplayItem extends AbstractDisplayItem {
     public void safeGuard(@NotNull Entity entity) {
         Util.ensureThread(false);
         if (!(entity instanceof Item itemEntity)) {
-            Log.debug(
-                    "Failed to safeGuard " + entity.getLocation() + ", cause target not a Item");
+            Log.debug("Failed to safeGuard " + entity.getLocation() + ", cause target not a Item");
             return;
         }
         // Set item protect in the armorstand's hand
@@ -211,7 +212,8 @@ public class RealDisplayItem extends AbstractDisplayItem {
             return;
         }
         if (item != null && item.isValid()) {
-            Log.debug("Warning: Spawning the Dropped Item for DisplayItem when there is already an existing Dropped Item, May cause a duplicated Dropped Item!");
+            Log.debug(
+                    "Warning: Spawning the Dropped Item for DisplayItem when there is already an existing Dropped Item, May cause a duplicated Dropped Item!");
             MsgUtil.debugStackTrace(Thread.currentThread().getStackTrace());
         }
         if (!Util.isDisplayAllowBlock(
@@ -220,14 +222,17 @@ public class RealDisplayItem extends AbstractDisplayItem {
             return;
         }
 
-
         if (new ShopDisplayItemSpawnEvent(shop, originalItemStack, DisplayType.REALITEM).callCancellableEvent()) {
-            Log.debug("Canceled the displayItem spawning because a plugin setCancelled the spawning event, usually this is a QuickShop Add on");
+            Log.debug(
+                    "Canceled the displayItem spawning because a plugin setCancelled the spawning event, usually this is a QuickShop Add on");
             return;
         }
         this.guardedIstack = AbstractDisplayItem.createGuardItemStack(this.originalItemStack, this.shop);
         try {
-            this.item = this.shop.getLocation().getWorld().dropItem(getDisplayLocation(), this.guardedIstack, this::safeGuard);
+            this.item = this.shop
+                    .getLocation()
+                    .getWorld()
+                    .dropItem(getDisplayLocation(), this.guardedIstack, this::safeGuard);
         } catch (NoSuchMethodError noSuchMethodError) {
             try {
                 this.item = this.shop.getLocation().getWorld().dropItem(getDisplayLocation(), this.guardedIstack);
@@ -249,5 +254,4 @@ public class RealDisplayItem extends AbstractDisplayItem {
         Util.ensureThread(false);
         return shop.getLocation().clone().add(0.5, 1.2, 0.5);
     }
-
 }

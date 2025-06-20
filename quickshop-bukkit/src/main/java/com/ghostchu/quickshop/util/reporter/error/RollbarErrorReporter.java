@@ -10,12 +10,6 @@ import com.google.common.collect.Lists;
 import com.rollbar.notifier.Rollbar;
 import com.rollbar.notifier.config.Config;
 import com.rollbar.notifier.config.ConfigBuilder;
-import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.InvalidPluginException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.IOException;
 import java.net.ProtocolException;
 import java.sql.SQLException;
@@ -23,27 +17,32 @@ import java.util.*;
 import java.util.logging.Filter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import lombok.Getter;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.InvalidPluginException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class RollbarErrorReporter {
     private static final String QUICKSHOP_ROOT_PACKAGE_NAME = "com.ghostchu.quickshop";
     private final Rollbar rollbar;
     private final List<String> reported = new ArrayList<>(5);
-    private final List<Class<?>> ignoredException = Lists.newArrayList(IOException.class
-            , OutOfMemoryError.class
-            , ProtocolException.class
-            , InvalidPluginException.class
-            , UnsupportedClassVersionError.class
-            , LinkageError.class
-            , SQLException.class
-    );
+    private final List<Class<?>> ignoredException = Lists.newArrayList(
+            IOException.class,
+            OutOfMemoryError.class,
+            ProtocolException.class,
+            InvalidPluginException.class,
+            UnsupportedClassVersionError.class,
+            LinkageError.class,
+            SQLException.class);
     private final QuickShop plugin;
     private final QuickShopExceptionFilter quickShopExceptionFilter;
     private final GlobalExceptionFilter serverExceptionFilter;
     private boolean disable;
     private boolean tempDisable;
+
     @Getter
     private volatile boolean enabled;
-
 
     public RollbarErrorReporter(@NotNull QuickShop plugin) {
         this.plugin = plugin;
@@ -55,10 +54,14 @@ public class RollbarErrorReporter {
                 .build();
         this.rollbar = Rollbar.init(config);
 
-        quickShopExceptionFilter = new QuickShopExceptionFilter(plugin.getJavaPlugin().getLogger().getFilter());
-        plugin.getJavaPlugin().getLogger().setFilter(quickShopExceptionFilter); // Redirect log request passthrough our error catcher.
+        quickShopExceptionFilter =
+                new QuickShopExceptionFilter(plugin.getJavaPlugin().getLogger().getFilter());
+        plugin.getJavaPlugin()
+                .getLogger()
+                .setFilter(quickShopExceptionFilter); // Redirect log request passthrough our error catcher.
 
-        serverExceptionFilter = new GlobalExceptionFilter(plugin.getJavaPlugin().getLogger().getFilter());
+        serverExceptionFilter =
+                new GlobalExceptionFilter(plugin.getJavaPlugin().getLogger().getFilter());
         Bukkit.getLogger().setFilter(serverExceptionFilter);
 
         Log.debug("Rollbar error reporter success loaded.");
@@ -96,41 +99,54 @@ public class RollbarErrorReporter {
             }
         }
         @NotNull Throwable finalThrowable = throwable;
-        plugin.getPrivacyController().privacyReview(MetricDataType.DIAGNOSTIC, "RollbarErrorReporter", "QuickShop detected a error, we will report it to Rollbar Error Tracker so QuickShop's developers will receive the notification so we can fix it.",
-                () -> {
-                    try {
-                        this.rollbar.error(finalThrowable, this.makeMapping(), throwable.getMessage());
-                        plugin
-                                .logger()
-                                .warn(
-                                        "A exception was thrown, QuickShop already caught this exception and reported it. This error will only shown once before next restart.");
-                        plugin.logger().warn("====QuickShop Error Report BEGIN===");
-                        plugin.logger().warn("Description: {}", finalThrowable.getMessage());
-                        plugin.logger().warn("Server   ID: {}", plugin.getServerUniqueID());
-                        plugin.logger().warn("Exception  : ");
-                        ignoreThrows();
-                        finalThrowable.printStackTrace();
-                        resetIgnores();
-                        plugin.logger().warn("====QuickShop Error Report E N D===");
-                        plugin
-                                .logger()
-                                .warn(
-                                        "If this error affects any function, you can join our Discord server to report it and track the feedback: https://discord.gg/Bu3dVtmsD3");
-                        Log.debug(finalThrowable.getMessage());
-                        Arrays.stream(finalThrowable.getStackTrace()).forEach(a -> Log.debug(a.getClassName() + "." + a.getMethodName() + ":" + a.getLineNumber()));
-                        if (Util.isDevMode()) {
-                            finalThrowable.printStackTrace();
-                        }
-                    } catch (Exception ex) {
-                        ignoreThrow();
-                        plugin.logger().warn("An error occurred during error handling, hard break it to prevent StackOverFlowError", throwable);
-                        plugin.logger().warn("An error occurred during error handling, hard break it to prevent StackOverFlowError", ex);
-                    }
-                }, () -> {
-                    ignoreThrow();
-                    plugin.logger().warn("An error occurred during running, because your privacy setting, the error not reported to server.", throwable);
-                });
-
+        plugin.getPrivacyController()
+                .privacyReview(
+                        MetricDataType.DIAGNOSTIC,
+                        "RollbarErrorReporter",
+                        "QuickShop detected a error, we will report it to Rollbar Error Tracker so QuickShop's developers will receive the notification so we can fix it.",
+                        () -> {
+                            try {
+                                this.rollbar.error(finalThrowable, this.makeMapping(), throwable.getMessage());
+                                plugin.logger()
+                                        .warn(
+                                                "A exception was thrown, QuickShop already caught this exception and reported it. This error will only shown once before next restart.");
+                                plugin.logger().warn("====QuickShop Error Report BEGIN===");
+                                plugin.logger().warn("Description: {}", finalThrowable.getMessage());
+                                plugin.logger().warn("Server   ID: {}", plugin.getServerUniqueID());
+                                plugin.logger().warn("Exception  : ");
+                                ignoreThrows();
+                                finalThrowable.printStackTrace();
+                                resetIgnores();
+                                plugin.logger().warn("====QuickShop Error Report E N D===");
+                                plugin.logger()
+                                        .warn(
+                                                "If this error affects any function, you can join our Discord server to report it and track the feedback: https://discord.gg/Bu3dVtmsD3");
+                                Log.debug(finalThrowable.getMessage());
+                                Arrays.stream(finalThrowable.getStackTrace())
+                                        .forEach(a -> Log.debug(
+                                                a.getClassName() + "." + a.getMethodName() + ":" + a.getLineNumber()));
+                                if (Util.isDevMode()) {
+                                    finalThrowable.printStackTrace();
+                                }
+                            } catch (Exception ex) {
+                                ignoreThrow();
+                                plugin.logger()
+                                        .warn(
+                                                "An error occurred during error handling, hard break it to prevent StackOverFlowError",
+                                                throwable);
+                                plugin.logger()
+                                        .warn(
+                                                "An error occurred during error handling, hard break it to prevent StackOverFlowError",
+                                                ex);
+                            }
+                        },
+                        () -> {
+                            ignoreThrow();
+                            plugin.logger()
+                                    .warn(
+                                            "An error occurred during running, because your privacy setting, the error not reported to server.",
+                                            throwable);
+                        });
     }
 
     /**
@@ -163,7 +179,8 @@ public class RollbarErrorReporter {
             return PossiblyLevel.IMPOSSIBLE;
         }
 
-        if (stackTraceElements[0].getClassName().contains(QUICKSHOP_ROOT_PACKAGE_NAME) && stackTraceElements[1].getClassName().contains(QUICKSHOP_ROOT_PACKAGE_NAME)) {
+        if (stackTraceElements[0].getClassName().contains(QUICKSHOP_ROOT_PACKAGE_NAME)
+                && stackTraceElements[1].getClassName().contains(QUICKSHOP_ROOT_PACKAGE_NAME)) {
             return PossiblyLevel.CONFIRM;
         }
 
@@ -248,7 +265,8 @@ public class RollbarErrorReporter {
             Log.debug("Cannot to check reportable: " + exception.getMessage());
             return false;
         }
-        if (!GameVersion.get(plugin.getPlatform().getMinecraftVersion()).isCoreSupports()) { // Ignore errors if user install quickshop on unsupported
+        if (!GameVersion.get(plugin.getPlatform().getMinecraftVersion())
+                .isCoreSupports()) { // Ignore errors if user install quickshop on unsupported
             // version.
             return false;
         }
@@ -272,12 +290,11 @@ public class RollbarErrorReporter {
             resetIgnores();
             return false;
         }
-        String text =
-                stackTraceElement.getClassName()
-                        + "#"
-                        + stackTraceElement.getMethodName()
-                        + "#"
-                        + stackTraceElement.getLineNumber();
+        String text = stackTraceElement.getClassName()
+                + "#"
+                + stackTraceElement.getMethodName()
+                + "#"
+                + stackTraceElement.getLineNumber();
         if (!reported.contains(text)) {
             reported.add(text);
             return true;
@@ -349,7 +366,9 @@ public class RollbarErrorReporter {
                     return true;
                 }
                 if (possiblyLevel == PossiblyLevel.MAYBE) {
-                    plugin.logger().warn("This seems not a QuickShop error. If you have any question, you should ask QuickShop developer.");
+                    plugin.logger()
+                            .warn(
+                                    "This seems not a QuickShop error. If you have any question, you should ask QuickShop developer.");
                     return true;
                 }
                 return false;
@@ -359,7 +378,6 @@ public class RollbarErrorReporter {
         private boolean defaultValue(LogRecord rec) {
             return preFilter == null || preFilter.isLoggable(rec);
         }
-
     }
 
     class QuickShopExceptionFilter implements Filter {
@@ -399,7 +417,9 @@ public class RollbarErrorReporter {
                     return true;
                 }
                 if (possiblyLevel == PossiblyLevel.MAYBE) {
-                    plugin.logger().warn("This seems not a QuickShop error. If you have any question, you may can ask QuickShop developer but don't except any solution.");
+                    plugin.logger()
+                            .warn(
+                                    "This seems not a QuickShop error. If you have any question, you may can ask QuickShop developer but don't except any solution.");
                     return true;
                 }
                 return false;
@@ -409,6 +429,5 @@ public class RollbarErrorReporter {
         private boolean defaultValue(LogRecord rec) {
             return preFilter == null || preFilter.isLoggable(rec);
         }
-
     }
 }

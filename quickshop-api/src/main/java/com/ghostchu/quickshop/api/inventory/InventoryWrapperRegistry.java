@@ -1,11 +1,10 @@
 package com.ghostchu.quickshop.api.inventory;
 
 import com.google.common.collect.MapMaker;
+import java.util.Map;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 public class InventoryWrapperRegistry {
     private final Map<String, InventoryWrapperManager> registry = new MapMaker().makeMap();
@@ -27,10 +26,13 @@ public class InventoryWrapperRegistry {
 
     public void register(@NotNull Plugin plugin, @NotNull InventoryWrapperManager manager) {
         if (registry.containsKey(plugin.getName())) {
-            plugin.getLogger().warning("Nag Author: Plugin " + plugin.getName() + " already have a registered InventoryWrapperManager: "
-                    + registry.get(plugin.getName()).getClass().getName() +
-                    " but trying register another new manager: " + manager.getClass().getName() +
-                    ". This may cause unexpected behavior! Replacing with new instance...");
+            plugin.getLogger()
+                    .warning("Nag Author: Plugin " + plugin.getName()
+                            + " already have a registered InventoryWrapperManager: "
+                            + registry.get(plugin.getName()).getClass().getName()
+                            + " but trying register another new manager: "
+                            + manager.getClass().getName()
+                            + ". This may cause unexpected behavior! Replacing with new instance...");
         }
         registry.put(plugin.getName(), manager);
     }
@@ -38,6 +40,4 @@ public class InventoryWrapperRegistry {
     public void unregister(@NotNull Plugin plugin) {
         registry.remove(plugin.getName());
     }
-
-
 }

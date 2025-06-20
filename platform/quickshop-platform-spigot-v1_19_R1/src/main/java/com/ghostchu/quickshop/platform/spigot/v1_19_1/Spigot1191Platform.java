@@ -3,6 +3,7 @@ package com.ghostchu.quickshop.platform.spigot.v1_19_1;
 import com.ghostchu.quickshop.platform.Platform;
 import com.ghostchu.quickshop.platform.Util;
 import com.ghostchu.quickshop.platform.spigot.AbstractSpigotPlatform;
+import java.util.Optional;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.nbt.api.BinaryTagHolder;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -23,8 +24,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
-
 public class Spigot1191Platform extends AbstractSpigotPlatform implements Platform {
 
     public Spigot1191Platform(@NotNull Plugin plugin) {
@@ -37,10 +36,12 @@ public class Spigot1191Platform extends AbstractSpigotPlatform implements Platfo
         Key key = Key.key(namespacedKey.toString());
         BinaryTagHolder holder;
         if (Util.methodExists(BinaryTagHolder.class, "binaryTagHolder")) {
-            holder = BinaryTagHolder.binaryTagHolder(CraftItemStack.asNMSCopy(stack).save(new CompoundTag()).toString());
+            holder = BinaryTagHolder.binaryTagHolder(
+                    CraftItemStack.asNMSCopy(stack).save(new CompoundTag()).toString());
         } else {
             //noinspection UnstableApiUsage
-            holder = BinaryTagHolder.of(CraftItemStack.asNMSCopy(stack).save(new CompoundTag()).toString());
+            holder = BinaryTagHolder.of(
+                    CraftItemStack.asNMSCopy(stack).save(new CompoundTag()).toString());
         }
         return HoverEvent.showItem(key, stack.getAmount(), holder);
     }
@@ -62,7 +63,8 @@ public class Spigot1191Platform extends AbstractSpigotPlatform implements Platfo
         if (material.isBlock()) {
             return CraftMagicNumbers.getBlock(material).getDescriptionId();
         } else {
-            return postProcessingTranslationKey(CraftMagicNumbers.getItem(material).getDescriptionId());
+            return postProcessingTranslationKey(
+                    CraftMagicNumbers.getItem(material).getDescriptionId());
         }
     }
 
@@ -72,7 +74,8 @@ public class Spigot1191Platform extends AbstractSpigotPlatform implements Platfo
 
     @Override
     public @NotNull String getTranslationKey(@NotNull EntityType type) {
-        Optional<net.minecraft.world.entity.EntityType<?>> op = net.minecraft.world.entity.EntityType.byString(type.getKey().toString());
+        Optional<net.minecraft.world.entity.EntityType<?>> op =
+                net.minecraft.world.entity.EntityType.byString(type.getKey().toString());
         if (op.isPresent()) {
             return postProcessingTranslationKey(op.get().getDescriptionId());
         } else {

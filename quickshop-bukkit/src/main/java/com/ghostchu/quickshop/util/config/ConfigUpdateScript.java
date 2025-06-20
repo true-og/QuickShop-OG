@@ -2,16 +2,16 @@ package com.ghostchu.quickshop.util.config;
 
 import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.util.Util;
+import java.io.File;
+import java.util.List;
 import lombok.Getter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.util.List;
-
 @SuppressWarnings("unused")
 public class ConfigUpdateScript {
     private final QuickShop plugin;
+
     @Getter
     private final FileConfiguration config;
 
@@ -52,7 +52,6 @@ public class ConfigUpdateScript {
     public void protectionCheckMonitorListeners() {
         getConfig().set("shop.cancel-protection-fake-event-before-reach-monitor-listeners", true);
     }
-
 
     @UpdateScript(version = 1019)
     public void oldConfigCleanup() {
@@ -127,7 +126,6 @@ public class ConfigUpdateScript {
         getConfig().set("shop.per-player-shop-sign", false);
         getConfig().set("tax-free-for-unlimited-shop", false);
     }
-
 
     @UpdateScript(version = 1007)
     public void refundFromTaxAccountOption() {

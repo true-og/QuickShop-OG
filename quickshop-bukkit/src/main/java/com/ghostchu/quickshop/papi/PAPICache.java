@@ -9,14 +9,13 @@ import com.ghostchu.simplereloadlib.Reloadable;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheStats;
-import lombok.Data;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiFunction;
+import lombok.Data;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PAPICache implements Reloadable {
     private QuickShop plugin;
@@ -38,9 +37,11 @@ public class PAPICache implements Reloadable {
     }
 
     @NotNull
-    public Optional<String> getCached(@NotNull UUID player, @NotNull String args, @NotNull BiFunction<UUID, String, String> loader) {
+    public Optional<String> getCached(
+            @NotNull UUID player, @NotNull String args, @NotNull BiFunction<UUID, String, String> loader) {
         try (PerfMonitor ignored = new PerfMonitor("PlaceHolder API Handling")) {
-            return performCaches.get(compileUniqueKey(player, args), () -> Optional.ofNullable(loader.apply(player, args)));
+            return performCaches.get(
+                    compileUniqueKey(player, args), () -> Optional.ofNullable(loader.apply(player, args)));
         } catch (ExecutionException ex) {
             plugin.logger().warn("Failed to get cache for " + player + " " + args, ex);
             return Optional.empty();
@@ -61,23 +62,27 @@ public class PAPICache implements Reloadable {
     }
 
     private long getLoadedPlayerShops(@NotNull UUID uuid) {
-        return plugin.getShopManager().getLoadedShops().stream().filter(shop -> {
-            UUID souid = shop.getOwner().getUniqueId();
-            if (souid == null) {
-                return false;
-            }
-            return souid.equals(uuid);
-        }).count();
+        return plugin.getShopManager().getLoadedShops().stream()
+                .filter(shop -> {
+                    UUID souid = shop.getOwner().getUniqueId();
+                    if (souid == null) {
+                        return false;
+                    }
+                    return souid.equals(uuid);
+                })
+                .count();
     }
 
     private long getLoadedPlayerShops(@NotNull String name) {
-        return plugin.getShopManager().getLoadedShops().stream().filter(shop -> {
-            String sousrname = shop.getOwner().getUsername();
-            if (sousrname == null) {
-                return false;
-            }
-            return name.equals(sousrname);
-        }).count();
+        return plugin.getShopManager().getLoadedShops().stream()
+                .filter(shop -> {
+                    String sousrname = shop.getOwner().getUsername();
+                    if (sousrname == null) {
+                        return false;
+                    }
+                    return name.equals(sousrname);
+                })
+                .count();
     }
 
     private long getPlayerShopsInventoryUnavailable(@NotNull UUID uuid) {
@@ -124,6 +129,4 @@ public class PAPICache implements Reloadable {
             this.queryString = queryString;
         }
     }
-
-
 }

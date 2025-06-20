@@ -9,6 +9,4 @@ public interface QuickShopProvider {
 
     @NotNull
     Plugin getInstance();
-
-
 }

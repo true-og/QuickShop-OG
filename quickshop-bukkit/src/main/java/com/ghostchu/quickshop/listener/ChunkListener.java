@@ -8,6 +8,9 @@ import com.ghostchu.quickshop.util.logger.Log;
 import com.ghostchu.quickshop.util.performance.PerfMonitor;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.ReloadStatus;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.Map;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -16,10 +19,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
-
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-import java.util.Map;
 
 public class ChunkListener extends AbstractQSListener {
 
@@ -37,8 +36,10 @@ public class ChunkListener extends AbstractQSListener {
             return;
         }
         cleanDisplayItems(e.getChunk());
-        String chunkName = e.getChunk().getWorld().getName() + ", X=" + e.getChunk().getX() + ", Z=" + e.getChunk().getZ();
-        try (PerfMonitor ignored = new PerfMonitor("Load shops in chunk [" + chunkName + "]", Duration.of(500, ChronoUnit.MILLIS))) {
+        String chunkName = e.getChunk().getWorld().getName() + ", X="
+                + e.getChunk().getX() + ", Z=" + e.getChunk().getZ();
+        try (PerfMonitor ignored =
+                new PerfMonitor("Load shops in chunk [" + chunkName + "]", Duration.of(500, ChronoUnit.MILLIS))) {
             for (Shop shop : inChunk.values()) {
                 plugin.getShopManager().loadShop(shop);
             }
@@ -53,7 +54,8 @@ public class ChunkListener extends AbstractQSListener {
             if (entity instanceof Item itemEntity) {
                 if (AbstractDisplayItem.checkIsGuardItemStack(itemEntity.getItemStack())) {
                     itemEntity.remove();
-                    Log.debug("Removed shop display item at " + itemEntity.getLocation() + " while chunk loading, pending for regenerate.");
+                    Log.debug("Removed shop display item at " + itemEntity.getLocation()
+                            + " while chunk loading, pending for regenerate.");
                 }
             }
         }
@@ -66,7 +68,8 @@ public class ChunkListener extends AbstractQSListener {
             return;
         }
         for (Shop shop : inChunk.values()) {
-            try (PerfMonitor ignored = new PerfMonitor("Unload shops in chunk " + e.getChunk(), Duration.of(500, ChronoUnit.MILLIS))) {
+            try (PerfMonitor ignored =
+                    new PerfMonitor("Unload shops in chunk " + e.getChunk(), Duration.of(500, ChronoUnit.MILLIS))) {
                 if (shop.isLoaded()) {
                     plugin.getShopManager().unloadShop(shop);
                 }

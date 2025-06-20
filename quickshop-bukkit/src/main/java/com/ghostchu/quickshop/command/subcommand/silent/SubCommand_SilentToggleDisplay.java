@@ -19,5 +19,4 @@ public class SubCommand_SilentToggleDisplay extends SubCommand_SilentBase {
         shop.setSignText(plugin.text().findRelativeLanguages(sender));
         MsgUtil.sendControlPanelInfo(sender, shop);
     }
-
 }

@@ -20,5 +20,4 @@ public interface PasteInterface {
      * @throws Exception IOException if paste failed
      */
     String pasteTheTextJson(@NotNull String text) throws Exception;
-
 }

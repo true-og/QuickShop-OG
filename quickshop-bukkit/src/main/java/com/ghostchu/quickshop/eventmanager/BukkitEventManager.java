@@ -1,12 +1,11 @@
 package com.ghostchu.quickshop.eventmanager;
 
 import com.ghostchu.quickshop.api.eventmanager.QuickEventManager;
+import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Consumer;
 
 /**
  * A simple impl for Bukkit original EventManager

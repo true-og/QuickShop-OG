@@ -24,5 +24,4 @@ public class PlaceHolderApiProcessor implements PostProcessor {
         }
         return text;
     }
-
 }

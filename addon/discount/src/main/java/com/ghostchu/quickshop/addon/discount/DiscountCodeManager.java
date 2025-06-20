@@ -3,16 +3,15 @@ package com.ghostchu.quickshop.addon.discount;
 import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.addon.discount.type.CodeCreationResponse;
 import com.ghostchu.quickshop.addon.discount.type.CodeType;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DiscountCodeManager {
     public static final String NAME_REG_EXP = "[a-zA-Z0-9_]*";
@@ -49,7 +48,8 @@ public class DiscountCodeManager {
 
     public void saveDatabase() {
         try {
-            this.config.set("codes", this.codes.stream().map(DiscountCode::saveToString).toList());
+            this.config.set(
+                    "codes", this.codes.stream().map(DiscountCode::saveToString).toList());
             this.config.save(this.file);
         } catch (IOException e) {
             main.getLogger().log(Level.WARNING, "Couldn't save the player discount codes status into database.", e);
@@ -76,7 +76,15 @@ public class DiscountCodeManager {
     }
 
     @NotNull
-    public CodeCreationResponse createDiscountCode(@NotNull CommandSender sender, @NotNull UUID owner, @NotNull String code, @NotNull CodeType codeType, @NotNull String rate, int maxUsage, double threshold, long expiredTime) {
+    public CodeCreationResponse createDiscountCode(
+            @NotNull CommandSender sender,
+            @NotNull UUID owner,
+            @NotNull String code,
+            @NotNull CodeType codeType,
+            @NotNull String rate,
+            int maxUsage,
+            double threshold,
+            long expiredTime) {
         if (!namePattern.matcher(code).matches()) {
             return CodeCreationResponse.REGEX_FAILURE;
         }
@@ -96,15 +104,18 @@ public class DiscountCodeManager {
         if (discountRate == null) {
             return CodeCreationResponse.INVALID_RATE;
         }
-        if (!QuickShop.getPermissionManager().hasPermission(sender, "quickshopaddon.discount.create." + codeType.name().toLowerCase())) {
+        if (!QuickShop.getPermissionManager()
+                .hasPermission(
+                        sender,
+                        "quickshopaddon.discount.create." + codeType.name().toLowerCase())) {
             return CodeCreationResponse.PERMISSION_DENIED;
         }
-        DiscountCode discountCode = new DiscountCode(owner, code, codeType, discountRate, maxUsage, threshold, expiredTime);
+        DiscountCode discountCode =
+                new DiscountCode(owner, code, codeType, discountRate, maxUsage, threshold, expiredTime);
         if (!this.codes.add(discountCode)) {
             return CodeCreationResponse.CODE_EXISTS;
         }
         main.getCodeManager().saveDatabase();
         return CodeCreationResponse.SUCCESS;
     }
-
 }

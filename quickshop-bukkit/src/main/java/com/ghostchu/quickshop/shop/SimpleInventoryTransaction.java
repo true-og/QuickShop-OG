@@ -10,16 +10,15 @@ import com.ghostchu.quickshop.shop.operation.RemoveItemOperation;
 import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.logger.Log;
 import com.ghostchu.quickshop.util.performance.PerfMonitor;
-import lombok.Builder;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
+import lombok.Builder;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SimpleInventoryTransaction implements InventoryTransaction {
     private final Deque<Operation> processingStack = new LinkedList<>();
@@ -31,7 +30,8 @@ public class SimpleInventoryTransaction implements InventoryTransaction {
     private String lastError;
 
     @Builder
-    public SimpleInventoryTransaction(@Nullable InventoryWrapper from, @Nullable InventoryWrapper to, @NotNull ItemStack item, int amount) {
+    public SimpleInventoryTransaction(
+            @Nullable InventoryWrapper from, @Nullable InventoryWrapper to, @NotNull ItemStack item, int amount) {
         if (from == null && to == null) {
             throw new IllegalArgumentException("Both from and to are null");
         }
@@ -60,18 +60,14 @@ public class SimpleInventoryTransaction implements InventoryTransaction {
          *
          * @param transaction Transaction
          */
-        default void onFailed(@NotNull SimpleInventoryTransaction transaction) {
-        }
+        default void onFailed(@NotNull SimpleInventoryTransaction transaction) {}
 
         /**
          * Calling while Transaction commit successfully
          *
          * @param transaction Transaction
          */
-        default void onSuccess(@NotNull SimpleInventoryTransaction transaction) {
-        }
-
-
+        default void onSuccess(@NotNull SimpleInventoryTransaction transaction) {}
     }
 
     /**
@@ -84,8 +80,7 @@ public class SimpleInventoryTransaction implements InventoryTransaction {
         try (PerfMonitor ignored = new PerfMonitor("Inventory Transaction - Commit")) {
             return this.commit(new SimpleTransactionCallback() {
                 @Override
-                public void onSuccess(@NotNull SimpleInventoryTransaction inventoryTransaction) {
-                }
+                public void onSuccess(@NotNull SimpleInventoryTransaction inventoryTransaction) {}
             });
         }
     }
@@ -98,7 +93,8 @@ public class SimpleInventoryTransaction implements InventoryTransaction {
      */
     @Override
     public boolean commit(@NotNull TransactionCallback callback) {
-        Log.transaction("Transaction begin: Regular Commit --> " + from + " => " + to + "; Amount: " + amount + " Item: " + Util.serialize(item));
+        Log.transaction("Transaction begin: Regular Commit --> " + from + " => " + to + "; Amount: " + amount
+                + " Item: " + Util.serialize(item));
         if (!callback.onCommit(this)) {
             this.lastError = "Plugin cancelled this transaction.";
             return false;
@@ -116,7 +112,6 @@ public class SimpleInventoryTransaction implements InventoryTransaction {
         callback.onSuccess(this);
         return true;
     }
-
 
     @Override
     public void setFrom(@Nullable InventoryWrapper from) {
@@ -180,7 +175,8 @@ public class SimpleInventoryTransaction implements InventoryTransaction {
      */
     @Override
     public boolean failSafeCommit() {
-        Log.transaction("Transaction begin: FailSafe Commit --> " + from + " => " + to + "; Amount: " + amount + " Item: " + Util.serialize(item));
+        Log.transaction("Transaction begin: FailSafe Commit --> " + from + " => " + to + "; Amount: " + amount
+                + " Item: " + Util.serialize(item));
         boolean result = commit();
         if (!result) {
             Log.transaction(Level.WARNING, "Fail-safe commit failed, starting rollback: " + lastError);
@@ -226,9 +222,17 @@ public class SimpleInventoryTransaction implements InventoryTransaction {
                 } catch (Exception exception) {
                     if (continueWhenFailed) {
                         operations.add(operation);
-                        plugin.logger().warn("Failed to rollback transaction: Operation: {}; Transaction: {}; Skipping...", operation, this);
+                        plugin.logger()
+                                .warn(
+                                        "Failed to rollback transaction: Operation: {}; Transaction: {}; Skipping...",
+                                        operation,
+                                        this);
                     } else {
-                        plugin.logger().warn("Failed to rollback transaction: Operation: {}; Transaction: {}", operation, this);
+                        plugin.logger()
+                                .warn(
+                                        "Failed to rollback transaction: Operation: {}; Transaction: {}",
+                                        operation,
+                                        this);
                         break;
                     }
                 }
@@ -247,6 +251,4 @@ public class SimpleInventoryTransaction implements InventoryTransaction {
             return false;
         }
     }
-
-
 }

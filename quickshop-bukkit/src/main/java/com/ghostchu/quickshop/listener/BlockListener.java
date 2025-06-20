@@ -44,7 +44,8 @@ public class BlockListener extends AbstractProtectionListener {
     }
 
     private void init() {
-        this.updateSignWhenInventoryMoving = super.getPlugin().getConfig().getBoolean("shop.update-sign-when-inventory-moving", true);
+        this.updateSignWhenInventoryMoving =
+                super.getPlugin().getConfig().getBoolean("shop.update-sign-when-inventory-moving", true);
     }
 
     /*
@@ -62,7 +63,8 @@ public class BlockListener extends AbstractProtectionListener {
             }
             // If they're either survival or the owner, they can break it
             if (p.getGameMode() == GameMode.CREATIVE
-                    && (shop.playerAuthorize(p.getUniqueId(), BuiltInShopPermission.DELETE) || plugin.perm().hasPermission(p, "quickshop.other.destory"))) {
+                    && (shop.playerAuthorize(p.getUniqueId(), BuiltInShopPermission.DELETE)
+                            || plugin.perm().hasPermission(p, "quickshop.other.destory"))) {
                 // Check SuperTool
                 if (p.getInventory().getItemInMainHand().getType() == Material.GOLDEN_AXE) {
                     if (getPlugin().getConfig().getBoolean("shop.disable-super-tool")) {
@@ -80,12 +82,14 @@ public class BlockListener extends AbstractProtectionListener {
             }
 
             // Cancel their current menu... Doesnt cancel other's menu's.
-            final Info action = super.getPlugin().getShopManager().getInteractiveManager().get(p.getUniqueId());
+            final Info action =
+                    super.getPlugin().getShopManager().getInteractiveManager().get(p.getUniqueId());
 
             if (action != null) {
                 action.setAction(ShopAction.CANCELLED);
             }
-            plugin.logEvent(new ShopRemoveLog(QUserImpl.createFullFilled(p), "BlockBreak(player)", shop.saveToInfoStorage()));
+            plugin.logEvent(
+                    new ShopRemoveLog(QUserImpl.createFullFilled(p), "BlockBreak(player)", shop.saveToInfoStorage()));
             plugin.getShopManager().deleteShop(shop);
             plugin.text().of(p, "success-removed-shop").send();
         } else if (Util.isWallSign(b.getType())) {
@@ -97,7 +101,7 @@ public class BlockListener extends AbstractProtectionListener {
             // (accidents happen)
             if (p.getGameMode() == GameMode.CREATIVE
                     && (shop.playerAuthorize(p.getUniqueId(), BuiltInShopPermission.DELETE)
-                    || plugin.perm().hasPermission(p, "quickshop.other.destory"))) {
+                            || plugin.perm().hasPermission(p, "quickshop.other.destory"))) {
                 // Check SuperTool
                 if (p.getInventory().getItemInMainHand().getType() == Material.GOLDEN_AXE) {
                     if (getPlugin().getConfig().getBoolean("shop.disable-super-tool")) {
@@ -106,7 +110,8 @@ public class BlockListener extends AbstractProtectionListener {
                         return;
                     }
                     plugin.text().of(p, "break-shop-use-supertool").send();
-                    plugin.logEvent(new ShopRemoveLog(QUserImpl.createFullFilled(p), "BlockBreak(player)", shop.saveToInfoStorage()));
+                    plugin.logEvent(new ShopRemoveLog(
+                            QUserImpl.createFullFilled(p), "BlockBreak(player)", shop.saveToInfoStorage()));
                     plugin.getShopManager().deleteShop(shop);
                     return;
                 }
@@ -115,8 +120,9 @@ public class BlockListener extends AbstractProtectionListener {
                 plugin.text().of(p, "no-creative-break", component).send();
                 return;
             }
-            //Allow Shop owner break the shop sign(for sign replacement)
-            if (getPlugin().getConfig().getBoolean("shop.allow-owner-break-shop-sign") && p.getUniqueId().equals(shop.getOwner().getUniqueId())) {
+            // Allow Shop owner break the shop sign(for sign replacement)
+            if (getPlugin().getConfig().getBoolean("shop.allow-owner-break-shop-sign")
+                    && p.getUniqueId().equals(shop.getOwner().getUniqueId())) {
                 return;
             }
             Log.debug("Player cannot break the shop information sign.");
@@ -180,31 +186,34 @@ public class BlockListener extends AbstractProtectionListener {
         }
         Block chest = null;
 
-        //Chest combine mechanic based checking
+        // Chest combine mechanic based checking
         if (player.isSneaking()) {
             Block blockAgainst = e.getBlockAgainst();
-            if (blockAgainst.getType() == Material.CHEST && placingBlock.getFace(blockAgainst) != BlockFace.UP && placingBlock.getFace(blockAgainst) != BlockFace.DOWN && !Util.isDoubleChest(blockAgainst.getBlockData())) {
+            if (blockAgainst.getType() == Material.CHEST
+                    && placingBlock.getFace(blockAgainst) != BlockFace.UP
+                    && placingBlock.getFace(blockAgainst) != BlockFace.DOWN
+                    && !Util.isDoubleChest(blockAgainst.getBlockData())) {
                 chest = e.getBlockAgainst();
             } else {
                 return;
             }
         } else {
-            //Get all chest in vertical Location
+            // Get all chest in vertical Location
             BlockFace placingChestFacing = ((Directional) (placingBlock.getBlockData())).getFacing();
             for (BlockFace face : Util.getVerticalFacing()) {
-                //just check the right side and left side
+                // just check the right side and left side
                 if (!face.equals(placingChestFacing) && !face.equals(placingChestFacing.getOppositeFace())) {
                     Block nearByBlock = placingBlock.getRelative(face);
                     BlockData nearByBlockData = nearByBlock.getBlockData();
                     if (nearByBlock.getType() == Material.CHEST
-                            //non double chest
+                            // non double chest
                             && !Util.isDoubleChest(nearByBlockData)
-                            //same facing
+                            // same facing
                             && placingChestFacing == ((Directional) nearByBlockData).getFacing()) {
                         if (chest == null) {
                             chest = nearByBlock;
                         } else {
-                            //when multiply chests competed, minecraft will always combine with right side
+                            // when multiply chests competed, minecraft will always combine with right side
                             if (placingBlock.getFace(nearByBlock) == Util.getRightSide(placingChestFacing)) {
                                 chest = nearByBlock;
                             }

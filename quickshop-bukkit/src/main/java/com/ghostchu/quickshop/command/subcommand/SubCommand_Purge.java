@@ -19,6 +19,4 @@ public class SubCommand_Purge implements CommandHandler<CommandSender> {
         plugin.getShopPurger().purge();
         plugin.text().of(sender, "shop-purged-start").send();
     }
-
-
 }

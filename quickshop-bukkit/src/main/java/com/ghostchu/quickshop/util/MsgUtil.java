@@ -12,6 +12,10 @@ import com.ghostchu.quickshop.util.logging.container.PluginGlobalAlertLog;
 import com.google.common.collect.Iterables;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import java.text.DecimalFormat;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.logging.Level;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -30,12 +34,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.text.DecimalFormat;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-
 
 public class MsgUtil {
     private static final QuickShop PLUGIN = QuickShop.getInstance();
@@ -65,10 +63,10 @@ public class MsgUtil {
      * Deletes any messages that are older than a week in the database, to save on space.
      */
     public static void clean() {
-        PLUGIN.logger()
-                .info("Cleaning purchase messages from the database that are over a week old...");
+        PLUGIN.logger().info("Cleaning purchase messages from the database that are over a week old...");
         // 604800,000 msec = 1 week.
-        PLUGIN.getDatabaseHelper().cleanMessage(System.currentTimeMillis() - 604800000)
+        PLUGIN.getDatabaseHelper()
+                .cleanMessage(System.currentTimeMillis() - 604800000)
                 .thenAccept(result -> Log.debug("Cleaned " + result + " messages from the database"))
                 .exceptionally(error -> {
                     Log.debug(Level.SEVERE, "Error cleaning purchase messages from the database:" + error.getMessage());
@@ -91,7 +89,7 @@ public class MsgUtil {
 
     public static String decimalFormat(double value) {
         if (decimalFormat == null) {
-            //lazy initialize
+            // lazy initialize
             try {
                 String format = PLUGIN.getConfig().getString("dep.sendMessage(\"容器设置成功\");cimal-format");
                 decimalFormat = format == null ? new DecimalFormat() : new DecimalFormat(format);
@@ -153,14 +151,19 @@ public class MsgUtil {
             return false;
         }
         UUID playerUniqueId = player.getUniqueId();
-        PLUGIN.getDatabaseHelper().selectPlayerMessages(playerUniqueId)
+        PLUGIN.getDatabaseHelper()
+                .selectPlayerMessages(playerUniqueId)
                 .thenAccept(msgs -> {
                     for (String msg : msgs) {
-                        PLUGIN.getPlatform().sendMessage(player, GsonComponentSerializer.gson().deserialize(msg));
+                        PLUGIN.getPlatform()
+                                .sendMessage(
+                                        player, GsonComponentSerializer.gson().deserialize(msg));
                     }
-                    PLUGIN.getDatabaseHelper().cleanMessageForPlayer(playerUniqueId)
+                    PLUGIN.getDatabaseHelper()
+                            .cleanMessageForPlayer(playerUniqueId)
                             .exceptionally(error -> {
-                                PLUGIN.logger().warn("Error on cleaning the purchase messages from the database", error);
+                                PLUGIN.logger()
+                                        .warn("Error on cleaning the purchase messages from the database", error);
                                 return 0;
                             });
                 })
@@ -216,11 +219,12 @@ public class MsgUtil {
     @NotNull
     @Deprecated(since = "4.2.0.0")
     public static Component getTranslateText(@NotNull ItemStack stack) {
-        //if (PLUGIN.getConfig().getBoolean("shop.force-use-item-original-name") || !stack.hasItemMeta() || !stack.getItemMeta().hasDisplayName()) {
+        // if (PLUGIN.getConfig().getBoolean("shop.force-use-item-original-name") || !stack.hasItemMeta() ||
+        // !stack.getItemMeta().hasDisplayName()) {
         //    return PLUGIN.getPlatform().getTranslation(stack.getType());
-        //} else {
+        // } else {
         return Util.getItemStackName(stack);
-        //}
+        // }
     }
 
     @Deprecated
@@ -236,28 +240,40 @@ public class MsgUtil {
         printEnchantment(chatSheetPrinter, enchantmentIntegerMap);
     }
 
-    private static void printEnchantment(@NotNull ChatSheetPrinter chatSheetPrinter, @NotNull Map<Enchantment, Integer> enchs) {
+    private static void printEnchantment(
+            @NotNull ChatSheetPrinter chatSheetPrinter, @NotNull Map<Enchantment, Integer> enchs) {
         if (enchs.isEmpty()) {
             return;
         }
         chatSheetPrinter.printCenterLine(PLUGIN.text().of("menu.enchants").forLocale());
         for (Entry<Enchantment, Integer> entries : enchs.entrySet()) {
-            //Use boxed object to avoid NPE
+            // Use boxed object to avoid NPE
             Integer level = entries.getValue();
             Component component;
             try {
-                component = Component.empty().color(NamedTextColor.YELLOW).append(PLUGIN.getPlatform().getTranslation(entries.getKey()));
+                component = Component.empty()
+                        .color(NamedTextColor.YELLOW)
+                        .append(PLUGIN.getPlatform().getTranslation(entries.getKey()));
             } catch (Throwable error) {
-                component = MsgUtil.setHandleFailedHover(null, Component.text(entries.getKey().getKey().toString()));
-                QuickShop.getInstance().logger().warn("Failed to handle translation for Enchantment {}", entries.getKey().getKey(), error);
+                component = MsgUtil.setHandleFailedHover(
+                        null, Component.text(entries.getKey().getKey().toString()));
+                QuickShop.getInstance()
+                        .logger()
+                        .warn(
+                                "Failed to handle translation for Enchantment {}",
+                                entries.getKey().getKey(),
+                                error);
             }
-            chatSheetPrinter.printLine(component.append(Component.text(" " + RomanNumber.toRoman(level == null ? 1 : level))));
+            chatSheetPrinter.printLine(
+                    component.append(Component.text(" " + RomanNumber.toRoman(level == null ? 1 : level))));
         }
     }
 
     @NotNull
-    private static HoverEvent<Component> getHandleFailedHoverEvent(@Nullable CommandSender sender, @Nullable HoverEvent<Component> oldHoverEvent) {
-        HoverEvent<Component> hoverEvent = HoverEvent.showText(PLUGIN.text().of(sender, "display-fallback").forLocale());
+    private static HoverEvent<Component> getHandleFailedHoverEvent(
+            @Nullable CommandSender sender, @Nullable HoverEvent<Component> oldHoverEvent) {
+        HoverEvent<Component> hoverEvent =
+                HoverEvent.showText(PLUGIN.text().of(sender, "display-fallback").forLocale());
         if (oldHoverEvent != null) {
             hoverEvent = hoverEvent.value(hoverEvent.value().appendNewline().append(hoverEvent.value()));
         }
@@ -266,13 +282,12 @@ public class MsgUtil {
 
     @NotNull
     public static Component setHandleFailedHover(@Nullable CommandSender sender, @NotNull Component component) {
-        return Component.empty().append(component.hoverEvent(
-                        getHandleFailedHoverEvent(sender, null))
-                .decorate(TextDecoration.UNDERLINED)
-                .color(NamedTextColor.RED)
-        );
+        return Component.empty()
+                .append(component
+                        .hoverEvent(getHandleFailedHoverEvent(sender, null))
+                        .decorate(TextDecoration.UNDERLINED)
+                        .color(NamedTextColor.RED));
     }
-
 
     /**
      * @param shop The shop purchased
@@ -310,9 +325,9 @@ public class MsgUtil {
         Log.debug(serialized);
         OfflinePlayer p = Bukkit.getOfflinePlayer(uuid);
         if (!p.isOnline()) {
-            PLUGIN.getDatabaseHelper().saveOfflineTransactionMessage(uuid, serialized, System.currentTimeMillis())
-                    .thenAccept(v -> {
-                    })
+            PLUGIN.getDatabaseHelper()
+                    .saveOfflineTransactionMessage(uuid, serialized, System.currentTimeMillis())
+                    .thenAccept(v -> {})
                     .exceptionally(err -> {
                         PLUGIN.logger().warn("Could not save transaction message to database", err);
                         return null;
@@ -326,7 +341,8 @@ public class MsgUtil {
                     });
                 }
             } catch (Exception e) {
-                Log.debug("Could not send shop transaction message to player " + p.getName() + " via BungeeCord: " + e.getMessage());
+                Log.debug("Could not send shop transaction message to player " + p.getName() + " via BungeeCord: "
+                        + e.getMessage());
             }
         } else {
             Player player = p.getPlayer();
@@ -336,8 +352,10 @@ public class MsgUtil {
         }
     }
 
-    public static void sendBungeeMessage(@NotNull String playerName, @NotNull Component message, @NotNull String locale) {
-        Component csmMessage = PLUGIN.text().of("bungee-cross-server-msg", message).forLocale(locale);
+    public static void sendBungeeMessage(
+            @NotNull String playerName, @NotNull Component message, @NotNull String locale) {
+        Component csmMessage =
+                PLUGIN.text().of("bungee-cross-server-msg", message).forLocale(locale);
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("MessageRaw");
         out.writeUTF(playerName);
@@ -367,7 +385,6 @@ public class MsgUtil {
         }
         PLUGIN.getShopManager().bakeShopRuntimeRandomUniqueIdCache(shop);
         PLUGIN.getShopControlPanelManager().openControlPanel((Player) sender, shop);
-
     }
 
     public static void sendDirectMessage(@NotNull UUID sender, @Nullable Component... messages) {
@@ -426,8 +443,7 @@ public class MsgUtil {
     public static void sendGlobalAlert(@Nullable String content) {
         if (content == null) {
             Log.debug("Content is null");
-            Throwable throwable =
-                    new Throwable("Known issue: Global Alert accepted null string, what the fuck");
+            Throwable throwable = new Throwable("Known issue: Global Alert accepted null string, what the fuck");
             PLUGIN.getSentryErrorReporter().sendError(throwable, "NullCheck");
             return;
         }
@@ -444,14 +460,14 @@ public class MsgUtil {
     public static void sendGlobalAlert(@Nullable Component content) {
         if (content == null) {
             Log.debug("Content is null");
-            Throwable throwable =
-                    new Throwable("Known issue: Global Alert accepted null string, what the fuck");
+            Throwable throwable = new Throwable("Known issue: Global Alert accepted null string, what the fuck");
             PLUGIN.getSentryErrorReporter().sendError(throwable, "NullCheck");
             return;
         }
         sendMessageToOps(content);
         PLUGIN.logger().warn(LegacyComponentSerializer.legacySection().serialize(content));
-        PLUGIN.logEvent(new PluginGlobalAlertLog(LegacyComponentSerializer.legacySection().serialize(content)));
+        PLUGIN.logEvent(new PluginGlobalAlertLog(
+                LegacyComponentSerializer.legacySection().serialize(content)));
     }
 
     /**
@@ -462,7 +478,8 @@ public class MsgUtil {
     public static void sendMessageToOps(@NotNull String message) {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (QuickShop.getPermissionManager().hasPermission(player, "quickshop.alerts")) {
-                MsgUtil.sendDirectMessage(player, LegacyComponentSerializer.legacySection().deserialize(message));
+                MsgUtil.sendDirectMessage(
+                        player, LegacyComponentSerializer.legacySection().deserialize(message));
             }
         }
     }
@@ -487,7 +504,6 @@ public class MsgUtil {
         if (profile != null) {
             name = profile.getName();
             uuid = profile.getUniqueId().toString();
-
         }
         if (name == null) {
             name = "Unknown";
@@ -497,13 +513,14 @@ public class MsgUtil {
         }
 
         if (PLUGIN == null) {
-            return Component.text(name).color(TextColor.color(NamedTextColor.AQUA))
+            return Component.text(name)
+                    .color(TextColor.color(NamedTextColor.AQUA))
                     .append(Component.text("(").color(TextColor.color(NamedTextColor.GOLD)))
-                    .append(Component.text(uuid)).color(TextColor.color(NamedTextColor.YELLOW))
+                    .append(Component.text(uuid))
+                    .color(TextColor.color(NamedTextColor.YELLOW))
                     .append(Component.text(")").color(TextColor.color(NamedTextColor.GOLD)));
         } else {
             return PLUGIN.text().of(sender, "player-profile-format", name, uuid).forLocale();
         }
     }
-
 }

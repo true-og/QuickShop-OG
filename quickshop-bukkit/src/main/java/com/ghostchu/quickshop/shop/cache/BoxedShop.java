@@ -1,9 +1,8 @@
 package com.ghostchu.quickshop.shop.cache;
 
 import com.ghostchu.quickshop.api.shop.Shop;
-import org.jetbrains.annotations.Nullable;
-
 import java.lang.ref.WeakReference;
+import org.jetbrains.annotations.Nullable;
 
 public class BoxedShop {
     @Nullable

@@ -1,13 +1,12 @@
 package com.ghostchu.quickshop.util;
 
-import org.apache.commons.lang3.tuple.Triple;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
+import org.apache.commons.lang3.tuple.Triple;
+import org.jetbrains.annotations.NotNull;
 
 public class ProgressMonitor<T> implements Iterable<T> {
     private final Collection<T> elements;

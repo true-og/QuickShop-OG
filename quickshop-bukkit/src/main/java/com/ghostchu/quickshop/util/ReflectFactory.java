@@ -12,8 +12,7 @@ public class ReflectFactory {
 
     private static String nmsVersion;
 
-    private ReflectFactory() {
-    }
+    private ReflectFactory() {}
 
     @NotNull
     public static String getNMSVersion() {

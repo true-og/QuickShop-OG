@@ -2,6 +2,10 @@ package com.ghostchu.quickshop.api.command;
 
 import com.ghostchu.quickshop.api.CommonUtil;
 import com.ghostchu.quickshop.api.QuickShopAPI;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
@@ -11,11 +15,6 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Builds a CommandContainer that can be registered into CommandManager.
@@ -34,20 +33,28 @@ public class CommandContainer {
     */
     @Singular
     private List<String> selectivePermissions;
+
     @Singular
     private List<String> permissions; // E.g quickshop.unlimited
+
     @NotNull
     private String prefix; // E.g /quickshop <prefix>
-    @Nullable
-    private Function<@NotNull String, @Nullable Component> description; // Will show in the /quickshop help, provide an arg that pass a player locale code
 
-    private boolean disabled; //Set command is disabled or not.
     @Nullable
-    private Supplier<Boolean> disabledSupplier; //Set command is disabled or not.
+    private Function<@NotNull String, @Nullable Component>
+            description; // Will show in the /quickshop help, provide an arg that pass a player locale code
+
+    private boolean disabled; // Set command is disabled or not.
+
     @Nullable
-    private Supplier<Component> disablePlaceholder; //Set the text shown if command disabled
+    private Supplier<Boolean> disabledSupplier; // Set command is disabled or not.
+
     @Nullable
-    private Function<@Nullable CommandSender, @NotNull Component> disableCallback; //Set the callback that should return a text to shown
+    private Supplier<Component> disablePlaceholder; // Set the text shown if command disabled
+
+    @Nullable
+    private Function<@Nullable CommandSender, @NotNull Component>
+            disableCallback; // Set the callback that should return a text to shown
 
     private Class<?> executorType;
 
@@ -60,10 +67,16 @@ public class CommandContainer {
     public final @NotNull Component getDisableText(@NotNull CommandSender sender) {
         if (this.getDisableCallback() != null) {
             return this.getDisableCallback().apply(sender);
-        } else if (this.getDisablePlaceholder() != null && !CommonUtil.isEmptyComponent(this.getDisablePlaceholder().get())) {
+        } else if (this.getDisablePlaceholder() != null
+                && !CommonUtil.isEmptyComponent(this.getDisablePlaceholder().get())) {
             return this.getDisablePlaceholder().get();
         } else {
-            return Component.empty().color(NamedTextColor.GRAY).append(QuickShopAPI.getInstance().getTextManager().of(sender, "command.feature-not-enabled").forLocale());
+            return Component.empty()
+                    .color(NamedTextColor.GRAY)
+                    .append(QuickShopAPI.getInstance()
+                            .getTextManager()
+                            .of(sender, "command.feature-not-enabled")
+                            .forLocale());
         }
     }
 
@@ -80,7 +93,9 @@ public class CommandContainer {
     public void bakeExecutorType() {
         for (Method declaredMethod : getExecutor().getClass().getMethods()) {
             if ("onCommand".equals(declaredMethod.getName()) || "onTabComplete".equals(declaredMethod.getName())) {
-                if (declaredMethod.getParameterCount() != 3 || declaredMethod.isSynthetic() || declaredMethod.isBridge()) {
+                if (declaredMethod.getParameterCount() != 3
+                        || declaredMethod.isSynthetic()
+                        || declaredMethod.isBridge()) {
                     continue;
                 }
                 executorType = declaredMethod.getParameterTypes()[0];

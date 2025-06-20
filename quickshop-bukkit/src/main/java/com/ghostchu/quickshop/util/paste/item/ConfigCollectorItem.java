@@ -2,18 +2,16 @@ package com.ghostchu.quickshop.util.paste.item;
 
 import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.common.util.CommonUtil;
-import org.apache.commons.text.StringEscapeUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
+import org.apache.commons.text.StringEscapeUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ConfigCollectorItem implements SubPasteItem {
     private final List<File> file = new ArrayList<>();
-
 
     public ConfigCollectorItem() {
         file.add(new File(QuickShop.getInstance().getDataFolder(), "config.yml"));
@@ -27,7 +25,10 @@ public class ConfigCollectorItem implements SubPasteItem {
         // 1.19 and up paper configuration
         File newConfigFolder = new File("config");
         if (newConfigFolder.exists() && newConfigFolder.isDirectory()) {
-            File[] filesInsideConfig = newConfigFolder.listFiles((dir, name) -> name.endsWith(".yml") || name.endsWith(".yaml") || name.endsWith(".json") || name.endsWith(".toml"));
+            File[] filesInsideConfig = newConfigFolder.listFiles((dir, name) -> name.endsWith(".yml")
+                    || name.endsWith(".yaml")
+                    || name.endsWith(".json")
+                    || name.endsWith(".toml"));
             if (filesInsideConfig != null) {
                 Collections.addAll(file, filesInsideConfig);
             }
@@ -66,14 +67,15 @@ public class ConfigCollectorItem implements SubPasteItem {
         if (!file.exists()) {
             return null;
         }
-        return "<h5>" + file.getName() + "</h5>" +
-                "<textarea readonly=\"true\" name=\"" + StringEscapeUtils.escapeHtml4(file.getName()) + "\" style=\"height: 300px; width: 100%;\">" +
-                StringEscapeUtils.escapeHtml4(censor(readFile(file))) +
-                "</textarea><br />";
+        return "<h5>" + file.getName() + "</h5>" + "<textarea readonly=\"true\" name=\""
+                + StringEscapeUtils.escapeHtml4(file.getName()) + "\" style=\"height: 300px; width: 100%;\">"
+                + StringEscapeUtils.escapeHtml4(censor(readFile(file)))
+                + "</textarea><br />";
     }
 
     private String censor(@NotNull String string) {
-        String seedList = """
+        String seedList =
+                """
                 patch_red_mushroom
                 fossil_diamonds
                 seagrass_slightly_less_short
@@ -315,13 +317,15 @@ public class ConfigCollectorItem implements SubPasteItem {
                 mineshaft
                                 """;
         String[] paperSeedTypes = seedList.trim().split("\n");
-        List<String> seedType = Arrays.stream(paperSeedTypes).sorted((o1, o2) -> {
-            int i = Integer.compare(o2.length(), o1.length());
-            if (i == 0) {
-                return o2.compareTo(o1);
-            }
-            return i;
-        }).toList();
+        List<String> seedType = Arrays.stream(paperSeedTypes)
+                .sorted((o1, o2) -> {
+                    int i = Integer.compare(o2.length(), o1.length());
+                    if (i == 0) {
+                        return o2.compareTo(o1);
+                    }
+                    return i;
+                })
+                .toList();
         string = string.replaceAll("secret:.*", "secret: ******")
                 .replaceAll("user:.*", "user: ******")
                 .replaceAll("username:.*", "username: ******")
@@ -342,8 +346,6 @@ public class ConfigCollectorItem implements SubPasteItem {
             string = string.replaceAll(paperSeedType + ":.*", "seed-protected: ******");
         }
         return string;
-
-
     }
 
     @NotNull

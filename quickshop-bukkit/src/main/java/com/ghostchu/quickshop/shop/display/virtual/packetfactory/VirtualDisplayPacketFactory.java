@@ -23,7 +23,9 @@ public interface VirtualDisplayPacketFactory {
     @NotNull
     PacketContainer createFakeItemDestroyPacket(int entityID);
 
-    @NotNull PacketAdapter getChunkSendPacketAdapter();
+    @NotNull
+    PacketAdapter getChunkSendPacketAdapter();
 
-    @NotNull PacketAdapter getChunkUnloadPacketAdapter();
+    @NotNull
+    PacketAdapter getChunkUnloadPacketAdapter();
 }

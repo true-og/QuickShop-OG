@@ -5,12 +5,11 @@ import com.ghostchu.quickshop.api.command.CommandContainer;
 import com.ghostchu.quickshop.api.command.CommandHandler;
 import com.ghostchu.quickshop.api.command.CommandParser;
 import com.ghostchu.quickshop.util.MsgUtil;
+import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class SubCommand_Help implements CommandHandler<CommandSender> {
 
@@ -21,11 +20,9 @@ public class SubCommand_Help implements CommandHandler<CommandSender> {
     }
 
     @Override
-    public void onCommand(
-            @NotNull CommandSender sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+    public void onCommand(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
         sendHelp(sender, commandLabel);
     }
-
 
     private void sendHelp(@NotNull CommandSender s, @NotNull String commandLabel) {
         plugin.text().of(s, "command.description.title").send();
@@ -37,7 +34,7 @@ public class SubCommand_Help implements CommandHandler<CommandSender> {
         for (CommandContainer container : plugin.getCommandManager().getRegisteredCommands()) {
             if (!container.isHidden()) {
                 boolean passed = false;
-                //selectivePermissions
+                // selectivePermissions
                 final List<String> selectivePermissions = container.getSelectivePermissions();
                 if (selectivePermissions != null && !selectivePermissions.isEmpty()) {
                     for (String selectivePermission : container.getSelectivePermissions()) {
@@ -49,11 +46,13 @@ public class SubCommand_Help implements CommandHandler<CommandSender> {
                         }
                     }
                 }
-                //requirePermissions
+                // requirePermissions
                 final List<String> requirePermissions = container.getPermissions();
                 if (requirePermissions != null && !requirePermissions.isEmpty()) {
                     for (String requirePermission : requirePermissions) {
-                        if (requirePermission != null && !requirePermission.isEmpty() && !plugin.perm().hasPermission(s, requirePermission)) {
+                        if (requirePermission != null
+                                && !requirePermission.isEmpty()
+                                && !plugin.perm().hasPermission(s, requirePermission)) {
                             continue commandPrintingLoop;
                         }
                     }
@@ -62,22 +61,36 @@ public class SubCommand_Help implements CommandHandler<CommandSender> {
                 if (!passed) {
                     continue;
                 }
-                Component commandDesc = plugin.text().of(s, "command.description." + container.getPrefix()).forLocale();
+                Component commandDesc = plugin.text()
+                        .of(s, "command.description." + container.getPrefix())
+                        .forLocale();
                 if (container.getDescription() != null) {
                     commandDesc = container.getDescription().apply(locale);
                     if (commandDesc == null) {
-                        commandDesc = Component.text("Error: Subcommand " + container.getPrefix() + " # " + container.getClass().getCanonicalName() + " doesn't register the correct help description.");
+                        commandDesc = Component.text("Error: Subcommand " + container.getPrefix() + " # "
+                                + container.getClass().getCanonicalName()
+                                + " doesn't register the correct help description.");
                     }
                 }
-                if (container.isDisabled() || (container.getDisabledSupplier() != null && container.getDisabledSupplier().get())) {
+                if (container.isDisabled()
+                        || (container.getDisabledSupplier() != null
+                                && container.getDisabledSupplier().get())) {
                     if (plugin.perm().hasPermission(s, "quickshop.showdisabled")) {
-                        plugin.text().of(s, "command.format-disabled", commandLabel, container.getPrefix(), container.getDisableText(s)).send();
+                        plugin.text()
+                                .of(
+                                        s,
+                                        "command.format-disabled",
+                                        commandLabel,
+                                        container.getPrefix(),
+                                        container.getDisableText(s))
+                                .send();
                     }
                 } else {
-                    plugin.text().of(s, "command.format", commandLabel, container.getPrefix(), commandDesc).send();
+                    plugin.text()
+                            .of(s, "command.format", commandLabel, container.getPrefix(), commandDesc)
+                            .send();
                 }
             }
         }
     }
-
 }

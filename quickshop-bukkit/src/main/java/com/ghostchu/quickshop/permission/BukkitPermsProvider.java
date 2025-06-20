@@ -43,5 +43,4 @@ public class BukkitPermsProvider implements PermissionProvider {
         }
         return player.hasPermission(permission);
     }
-
 }

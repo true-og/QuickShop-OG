@@ -1,4 +1,4 @@
-///*
+/// *
 // *  This file is a part of project QuickShop, the name is PastebinPaster.java
 // *  Copyright (C) Ghost_chu and contributors
 // *
@@ -17,15 +17,15 @@
 // *
 // */
 //
-//package com.ghostchu.quickshop.util.paste;
+// package com.ghostchu.quickshop.util.paste;
 //
-//import kong.unirest.HttpResponse;
-//import kong.unirest.Unirest;
-//import org.jetbrains.annotations.NotNull;
+// import kong.unirest.HttpResponse;
+// import kong.unirest.Unirest;
+// import org.jetbrains.annotations.NotNull;
 //
-//import java.io.IOException;
+// import java.io.IOException;
 //
-//public class PastebinPaster implements PasteInterface {
+// public class PastebinPaster implements PasteInterface {
 //    private final static String DEVELOPER_KEY = "kYoezdaN6Gg9c2VnY78NcpylWRwdzQdk";
 //
 //    @Override
@@ -48,4 +48,4 @@
 //    public String pasteTheTextDirect(@NotNull String text) throws Exception {
 //        return null;
 //    }
-//}
+// }

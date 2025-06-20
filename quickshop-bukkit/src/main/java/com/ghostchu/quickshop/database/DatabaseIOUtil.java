@@ -5,10 +5,6 @@ import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.common.util.CommonUtil;
 import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.logger.Log;
-import lombok.Data;
-import org.jetbrains.annotations.NotNull;
-import org.relique.jdbc.csv.CsvDriver;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,6 +14,9 @@ import java.sql.*;
 import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import lombok.Data;
+import org.jetbrains.annotations.NotNull;
+import org.relique.jdbc.csv.CsvDriver;
 
 @Data
 public class DatabaseIOUtil {
@@ -95,13 +94,13 @@ public class DatabaseIOUtil {
         }
     }
 
-    public void importFromCSV(@NotNull File zipFile, @NotNull DataTables table) throws SQLException, ClassNotFoundException {
+    public void importFromCSV(@NotNull File zipFile, @NotNull DataTables table)
+            throws SQLException, ClassNotFoundException {
         Log.debug("Loading CsvDriver...");
         Class.forName("org.relique.jdbc.csv.CsvDriver");
         try (Connection conn = DriverManager.getConnection("jdbc:relique:csv:zip:" + zipFile);
-             Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
-                     ResultSet.CONCUR_READ_ONLY);
-             ResultSet results = stmt.executeQuery("SELECT * FROM " + table.getName())) {
+                Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                ResultSet results = stmt.executeQuery("SELECT * FROM " + table.getName())) {
             ResultSetMetaData metaData = results.getMetaData();
             String[] columns = new String[metaData.getColumnCount()];
             for (int i = 0; i < columns.length; i++) {
@@ -114,11 +113,10 @@ public class DatabaseIOUtil {
                     Log.debug("Copying column: " + columns[i]);
                     values[i] = results.getObject(columns[i]);
                 }
-                Log.debug("Inserting row: " + CommonUtil.array2String(Arrays.stream(values).map(Object::toString).toArray(String[]::new)));
-                table.createInsert()
-                        .setColumnNames(columns)
-                        .setParams(values)
-                        .execute();
+                Log.debug("Inserting row: "
+                        + CommonUtil.array2String(
+                                Arrays.stream(values).map(Object::toString).toArray(String[]::new)));
+                table.createInsert().setColumnNames(columns).setParams(values).execute();
             }
         }
     }
@@ -135,5 +133,4 @@ public class DatabaseIOUtil {
             CsvDriver.writeToCsv(set, stream, true);
         }
     }
-
 }

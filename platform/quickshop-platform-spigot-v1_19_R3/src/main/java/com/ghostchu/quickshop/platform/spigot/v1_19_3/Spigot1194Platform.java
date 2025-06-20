@@ -35,10 +35,12 @@ public class Spigot1194Platform extends AbstractSpigotPlatform implements Platfo
         Key key = Key.key(namespacedKey.toString());
         BinaryTagHolder holder;
         if (Util.methodExists(BinaryTagHolder.class, "binaryTagHolder")) {
-            holder = BinaryTagHolder.binaryTagHolder(CraftItemStack.asNMSCopy(stack).save(new CompoundTag()).toString());
+            holder = BinaryTagHolder.binaryTagHolder(
+                    CraftItemStack.asNMSCopy(stack).save(new CompoundTag()).toString());
         } else {
             //noinspection UnstableApiUsage
-            holder = BinaryTagHolder.of(CraftItemStack.asNMSCopy(stack).save(new CompoundTag()).toString());
+            holder = BinaryTagHolder.of(
+                    CraftItemStack.asNMSCopy(stack).save(new CompoundTag()).toString());
         }
         return HoverEvent.showItem(key, stack.getAmount(), holder);
     }
@@ -78,7 +80,7 @@ public class Spigot1194Platform extends AbstractSpigotPlatform implements Platfo
 
     @Override
     public @NotNull String getTranslationKey(@NotNull PotionEffectType potionEffectType) {
-        if(potionEffectType instanceof PotionEffectTypeWrapper wrapper){
+        if (potionEffectType instanceof PotionEffectTypeWrapper wrapper) {
             potionEffectType = wrapper.getType();
         }
         CraftPotionEffectType craftPotionEffectType = (CraftPotionEffectType) potionEffectType;
@@ -90,6 +92,7 @@ public class Spigot1194Platform extends AbstractSpigotPlatform implements Platfo
         CraftEnchantment craftEnchantment = (CraftEnchantment) enchantment;
         return postProcessingTranslationKey(craftEnchantment.getHandle().getDescriptionId());
     }
+
     @Override
     public @NotNull String getTranslationKey(@NotNull ItemStack stack) {
         return postProcessingTranslationKey(stack.getTranslationKey());

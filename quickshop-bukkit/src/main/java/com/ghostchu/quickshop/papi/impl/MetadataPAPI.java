@@ -31,5 +31,4 @@ public class MetadataPAPI implements PAPISubHandler {
             default -> null;
         };
     }
-
 }

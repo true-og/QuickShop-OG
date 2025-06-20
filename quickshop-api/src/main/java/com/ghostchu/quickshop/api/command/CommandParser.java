@@ -1,8 +1,7 @@
 package com.ghostchu.quickshop.api.command;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * CommandParser is a utility class for parsing command arguments.

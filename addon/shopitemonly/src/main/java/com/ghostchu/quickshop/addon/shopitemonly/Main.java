@@ -2,6 +2,8 @@ package com.ghostchu.quickshop.addon.shopitemonly;
 
 import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.api.shop.Shop;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,9 +17,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public final class Main extends JavaPlugin implements Listener {
     static Main instance;
@@ -39,7 +38,6 @@ public final class Main extends JavaPlugin implements Listener {
         plugin = QuickShop.getInstance();
         Bukkit.getPluginManager().registerEvents(this, this);
     }
-
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void invClose(InventoryCloseEvent event) {
@@ -75,19 +73,21 @@ public final class Main extends JavaPlugin implements Listener {
             inventory.remove(item);
             invLocation.getWorld().dropItemNaturally(invLocation.add(0, 1, 0), item);
         }
-        plugin.text().of(event.getPlayer(), "addon.shopitemonly.message", pendingForRemoval.size()).send();
+        plugin.text()
+                .of(event.getPlayer(), "addon.shopitemonly.message", pendingForRemoval.size())
+                .send();
     }
-
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void invMove(InventoryMoveItemEvent event) {
-        if (event.getDestination() == null) { //Stupid CMIGUI plugin
+        if (event.getDestination() == null) { // Stupid CMIGUI plugin
             return;
         }
         if (event.getDestination().getLocation() == null) {
             return;
         }
-        Shop shop = plugin.getShopManager().getShopIncludeAttached(event.getDestination().getLocation());
+        Shop shop = plugin.getShopManager()
+                .getShopIncludeAttached(event.getDestination().getLocation());
         if (shop == null) {
             return;
         }

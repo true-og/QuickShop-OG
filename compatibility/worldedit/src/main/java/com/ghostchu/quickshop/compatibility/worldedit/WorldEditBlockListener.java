@@ -36,7 +36,8 @@ public class WorldEditBlockListener extends AbstractDelegateExtent {
     }
 
     @Override
-    public <T extends BlockStateHolder<T>> boolean setBlock(final BlockVector3 position, final T block) throws WorldEditException {
+    public <T extends BlockStateHolder<T>> boolean setBlock(final BlockVector3 position, final T block)
+            throws WorldEditException {
         if (!(this.world instanceof BukkitWorld)) {
             return super.setBlock(position, block);
         }
@@ -48,11 +49,19 @@ public class WorldEditBlockListener extends AbstractDelegateExtent {
 
         if (extent.setBlock(position, block)) {
             // Block Changed
-            if (oldBlock.getBlockType().getMaterial().hasContainer() && !newBlock.getBlockType().getMaterial().hasContainer()) {
-                Shop shop = api.getShopManager().getShop(location, true); // Because WorldEdit can only remove half of shop, so we can keep another half as shop if it is doublechest shop.
+            if (oldBlock.getBlockType().getMaterial().hasContainer()
+                    && !newBlock.getBlockType().getMaterial().hasContainer()) {
+                Shop shop = api.getShopManager()
+                        .getShop(
+                                location,
+                                true); // Because WorldEdit can only remove half of shop, so we can keep another half as
+                // shop if it is doublechest shop.
                 if (shop != null) {
                     Util.mainThreadRun(() -> {
-                        api.logEvent(new ShopRemoveLog(QUserImpl.createFullFilled(CommonUtil.getNilUniqueId(), "WorldEdit", false), "WorldEdit", shop.saveToInfoStorage()));
+                        api.logEvent(new ShopRemoveLog(
+                                QUserImpl.createFullFilled(CommonUtil.getNilUniqueId(), "WorldEdit", false),
+                                "WorldEdit",
+                                shop.saveToInfoStorage()));
                         api.getShopManager().deleteShop(shop);
                     });
                 }

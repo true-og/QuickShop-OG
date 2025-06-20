@@ -2,9 +2,8 @@ package com.ghostchu.quickshop.api.shop.permission;
 
 import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.shop.ShopPermissionAudience;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Locale;
+import org.jetbrains.annotations.NotNull;
 
 public enum BuiltInShopPermission implements ShopPermissionAudience {
     PURCHASE("purchase", "purchase"),

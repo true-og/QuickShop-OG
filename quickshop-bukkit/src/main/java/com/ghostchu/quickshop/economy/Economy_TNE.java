@@ -4,6 +4,9 @@ import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.api.economy.AbstractEconomy;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.ReloadStatus;
+import java.math.BigDecimal;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -25,10 +28,6 @@ import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.math.BigDecimal;
-import java.util.Optional;
-import java.util.UUID;
 
 @ToString
 public class Economy_TNE extends AbstractEconomy {
@@ -69,21 +68,25 @@ public class Economy_TNE extends AbstractEconomy {
         return TNECore.eco().currency().getDefaultCurrency(world.getName());
     }
 
-    private boolean runTransaction(final Account account, final Currency currency, final String world, final BigDecimal amount, final String type, final boolean counter) {
+    private boolean runTransaction(
+            final Account account,
+            final Currency currency,
+            final String world,
+            final BigDecimal amount,
+            final String type,
+            final boolean counter) {
 
-        //Set up our holdings' modifier.
-        final HoldingsModifier modifier = new HoldingsModifier(world,
-                currency.getUid(),
-                amount);
+        // Set up our holdings' modifier.
+        final HoldingsModifier modifier = new HoldingsModifier(world, currency.getUid(), amount);
 
-        //Setup our transaction.
+        // Setup our transaction.
         final Transaction transaction = new Transaction(type)
                 .to(account, ((counter) ? modifier.counter() : modifier))
                 .processor(EconomyManager.baseProcessor())
                 .source(new PluginSource("QuickShop"));
         try {
 
-            //Process our transaction.
+            // Process our transaction.
             final TransactionResult result = transaction.process();
             if (result.isSuccessful()) {
                 return true;
@@ -113,7 +116,8 @@ public class Economy_TNE extends AbstractEconomy {
 
         if (account.isPresent() && currencyOpt.isPresent()) {
 
-            return runTransaction(account.get(), currencyOpt.get(), world.getName(), BigDecimal.valueOf(amount), "give", false);
+            return runTransaction(
+                    account.get(), currencyOpt.get(), world.getName(), BigDecimal.valueOf(amount), "give", false);
         }
         return false;
     }
@@ -141,14 +145,15 @@ public class Economy_TNE extends AbstractEconomy {
      * @return True if success (Should be almost always)
      */
     @Override
-    public boolean deposit(@NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency) {
+    public boolean deposit(
+            @NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency) {
         if (!isValid()) {
             return false;
         }
-        //We should forward this method to the UUID one instead of doing another OfflinePlayer lookup here just to send it to the TNE UUID method.
+        // We should forward this method to the UUID one instead of doing another OfflinePlayer lookup here just to send
+        // it to the TNE UUID method.
         return deposit(trader.getUniqueId(), amount, world, currency);
     }
-
 
     /**
      * Formats the given number... E.g. 50.5 becomes $50.5 Dollars, or 50 Dollars 5 Cents
@@ -169,8 +174,13 @@ public class Economy_TNE extends AbstractEconomy {
             return "Error";
         }
 
-        return CurrencyFormatter.format(null, new HoldingsEntry(TNECore.eco().region().defaultRegion(),
-                currencyObj.getUid(), BigDecimal.valueOf(balance), EconomyManager.NORMAL));
+        return CurrencyFormatter.format(
+                null,
+                new HoldingsEntry(
+                        TNECore.eco().region().defaultRegion(),
+                        currencyObj.getUid(),
+                        BigDecimal.valueOf(balance),
+                        EconomyManager.NORMAL));
     }
 
     @Override
@@ -182,11 +192,12 @@ public class Economy_TNE extends AbstractEconomy {
         final Optional<Currency> currencyOpt = TNECore.eco().currency().findCurrency(currency);
 
         if (account.isPresent() && currencyOpt.isPresent()) {
-            return account.get().getHoldingsTotal(world.getName(), currencyOpt.get().getUid()).doubleValue();
+            return account.get()
+                    .getHoldingsTotal(world.getName(), currencyOpt.get().getUid())
+                    .doubleValue();
         }
         return 0.0;
     }
-
 
     /**
      * Fetches the balance of the given account {@link UUID unique identifier}.
@@ -272,7 +283,8 @@ public class Economy_TNE extends AbstractEconomy {
 
         if (account.isPresent() && currencyOpt.isPresent()) {
 
-            return runTransaction(account.get(), currencyOpt.get(), world.getName(), BigDecimal.valueOf(amount), "take", true);
+            return runTransaction(
+                    account.get(), currencyOpt.get(), world.getName(), BigDecimal.valueOf(amount), "take", true);
         }
         return false;
     }
@@ -299,7 +311,8 @@ public class Economy_TNE extends AbstractEconomy {
      * @return True if success, false if they didn't have enough cash
      */
     @Override
-    public boolean withdraw(@NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency) {
+    public boolean withdraw(
+            @NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency) {
         return withdraw(trader.getUniqueId().toString(), amount, world, currency);
     }
 

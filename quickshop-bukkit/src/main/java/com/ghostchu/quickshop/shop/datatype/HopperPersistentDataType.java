@@ -3,16 +3,16 @@ package com.ghostchu.quickshop.shop.datatype;
 import com.ghostchu.quickshop.util.MsgUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.util.UUID;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
 public class HopperPersistentDataType implements PersistentDataType<String, HopperPersistentData> {
     public static final HopperPersistentDataType INSTANCE = new HopperPersistentDataType();
 
-    private static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+    private static final Gson GSON =
+            new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
     @Override
     public @NotNull Class<String> getPrimitiveType() {

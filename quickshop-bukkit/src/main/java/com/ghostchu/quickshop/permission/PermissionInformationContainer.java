@@ -20,7 +20,11 @@ public class PermissionInformationContainer {
     @Nullable
     private String otherInfos;
 
-    public PermissionInformationContainer(@NotNull CommandSender sender, @NotNull String permission, @Nullable String groupName, @Nullable String otherInfos) {
+    public PermissionInformationContainer(
+            @NotNull CommandSender sender,
+            @NotNull String permission,
+            @Nullable String groupName,
+            @Nullable String otherInfos) {
         this.sender = sender;
         this.permission = permission;
         this.groupName = groupName;
@@ -35,5 +39,4 @@ public class PermissionInformationContainer {
     public boolean isConsole() {
         return sender instanceof Server;
     }
-
 }

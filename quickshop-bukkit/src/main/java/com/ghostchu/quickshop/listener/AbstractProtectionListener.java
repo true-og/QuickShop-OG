@@ -29,7 +29,9 @@ public abstract class AbstractProtectionListener extends AbstractQSListener {
      */
     @Nullable
     public Shop getShopNature(@NotNull Location location, boolean includeAttached) {
-        return includeAttached ? plugin.getShopManager().getShopIncludeAttached(location) : plugin.getShopManager().getShop(location);
+        return includeAttached
+                ? plugin.getShopManager().getShopIncludeAttached(location)
+                : plugin.getShopManager().getShop(location);
     }
 
     /**
@@ -41,7 +43,9 @@ public abstract class AbstractProtectionListener extends AbstractQSListener {
      */
     @Nullable
     public Shop getShopPlayer(@NotNull Location location, boolean includeAttached) {
-        return includeAttached ? plugin.getShopManager().getShopIncludeAttached(location) : plugin.getShopManager().getShop(location);
+        return includeAttached
+                ? plugin.getShopManager().getShopIncludeAttached(location)
+                : plugin.getShopManager().getShop(location);
     }
 
     /**
@@ -58,7 +62,5 @@ public abstract class AbstractProtectionListener extends AbstractQSListener {
         } else {
             return plugin.getShopManager().getShopViaCache(location);
         }
-
     }
-
 }

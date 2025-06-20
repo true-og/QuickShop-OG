@@ -5,13 +5,12 @@ import com.ghostchu.quickshop.api.command.CommandHandler;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.common.util.CommonUtil;
 import com.ghostchu.quickshop.shop.inventory.BukkitInventoryWrapper;
+import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class OpenInvCommand implements CommandHandler<Player> {
     private final Main plugin;
@@ -34,16 +33,27 @@ public class OpenInvCommand implements CommandHandler<Player> {
             plugin.getApi().getTextManager().of(sender, "not-looking-at-shop").send();
             return;
         }
-        if (!sender.getUniqueId().equals(shop.getOwner().getUniqueId()) && !QuickShop.getPermissionManager().hasPermission(sender, "quickshop.admin")) {
+        if (!sender.getUniqueId().equals(shop.getOwner().getUniqueId())
+                && !QuickShop.getPermissionManager().hasPermission(sender, "quickshop.admin")) {
             plugin.getApi().getTextManager().of(sender, "no-permission").send();
             return;
         }
         if (shop.getInventory() instanceof EnderChestWrapper) {
-            shop.setInventory(new BukkitInventoryWrapper((((InventoryHolder) shop.getLocation().getBlock().getState()).getInventory())), plugin.getApi().getInventoryWrapperRegistry().get("QuickShop-Hikari"));
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.to-chest")));
+            shop.setInventory(
+                    new BukkitInventoryWrapper(
+                            (((InventoryHolder) shop.getLocation().getBlock().getState()).getInventory())),
+                    plugin.getApi().getInventoryWrapperRegistry().get("QuickShop-Hikari"));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes(
+                    '&', plugin.getConfig().getString("messages.to-chest")));
         } else {
-            shop.setInventory(new EnderChestWrapper(shop.getOwner().getUniqueIdIfRealPlayer().orElse(CommonUtil.getNilUniqueId()), plugin.getOpenInv(), plugin), plugin.getManager());
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.to-echest")));
+            shop.setInventory(
+                    new EnderChestWrapper(
+                            shop.getOwner().getUniqueIdIfRealPlayer().orElse(CommonUtil.getNilUniqueId()),
+                            plugin.getOpenInv(),
+                            plugin),
+                    plugin.getManager());
+            sender.sendMessage(ChatColor.translateAlternateColorCodes(
+                    '&', plugin.getConfig().getString("messages.to-echest")));
         }
     }
 
@@ -56,7 +66,8 @@ public class OpenInvCommand implements CommandHandler<Player> {
      * @return Candidate list
      */
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Player sender, @NotNull String commandLabel, @NotNull String[] cmdArg) {
+    public @Nullable List<String> onTabComplete(
+            @NotNull Player sender, @NotNull String commandLabel, @NotNull String[] cmdArg) {
         return CommandHandler.super.onTabComplete(sender, commandLabel, cmdArg);
     }
 }

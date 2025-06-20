@@ -18,5 +18,7 @@ public interface PriceLimiter {
      * @param price    the price
      * @return the result
      */
-    @NotNull PriceLimiterCheckResult check(@NotNull CommandSender sender, @NotNull ItemStack stack, @Nullable String currency, double price);
+    @NotNull
+    PriceLimiterCheckResult check(
+            @NotNull CommandSender sender, @NotNull ItemStack stack, @Nullable String currency, double price);
 }

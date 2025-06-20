@@ -12,8 +12,7 @@ public final class CalculateUtil {
 
     private static final MathContext MATH_CONTEXT = MathContext.DECIMAL32;
 
-    private CalculateUtil() {
-    }
+    private CalculateUtil() {}
 
     public static double add(double number1, double number2) {
         return (BigDecimal.valueOf(number1).add(BigDecimal.valueOf(number2), MATH_CONTEXT)).doubleValue();
@@ -30,6 +29,4 @@ public final class CalculateUtil {
     public static double subtract(double number1, double number2) {
         return (BigDecimal.valueOf(number1).subtract(BigDecimal.valueOf(number2), MATH_CONTEXT)).doubleValue();
     }
-
-
 }

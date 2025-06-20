@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 public class ProxiedLocale {
     @Nullable
     private String origin;
+
     private String relative;
 
     public ProxiedLocale(@Nullable String origin, String relative) {

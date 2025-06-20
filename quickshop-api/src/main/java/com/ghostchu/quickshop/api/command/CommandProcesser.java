@@ -1,13 +1,12 @@
 package com.ghostchu.quickshop.api.command;
 
+import java.util.Collections;
+import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.List;
-
-//Preserved for backward compatibility
+// Preserved for backward compatibility
 @Deprecated
 public interface CommandProcesser extends CommandHandler<CommandSender> {
 
@@ -20,5 +19,4 @@ public interface CommandProcesser extends CommandHandler<CommandSender> {
             @NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] cmdArg) {
         return Collections.emptyList();
     }
-
 }

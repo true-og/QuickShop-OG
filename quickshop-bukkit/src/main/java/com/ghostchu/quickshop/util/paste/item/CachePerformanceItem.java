@@ -4,22 +4,20 @@ import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.util.FastPlayerFinder;
 import com.ghostchu.quickshop.util.paste.GuavaCacheRender;
 import com.google.common.cache.CacheStats;
-import org.jetbrains.annotations.NotNull;
-
 import java.text.NumberFormat;
+import org.jetbrains.annotations.NotNull;
 
 public class CachePerformanceItem implements SubPasteItem {
     private final QuickShop plugin = QuickShop.getInstance();
 
     @Override
     public @NotNull String genBody() {
-        return "<h5>Player Lookup Cache</h5>" +
-                buildPlayerLookupCache();
+        return "<h5>Player Lookup Cache</h5>" + buildPlayerLookupCache();
     }
 
-
     private String buildPlayerLookupCache() {
-        CacheStats stats = ((FastPlayerFinder) plugin.getPlayerFinder()).getNameCache().stats();
+        CacheStats stats =
+                ((FastPlayerFinder) plugin.getPlayerFinder()).getNameCache().stats();
         return renderTable(stats);
     }
 

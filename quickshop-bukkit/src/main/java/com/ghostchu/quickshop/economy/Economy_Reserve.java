@@ -3,6 +3,9 @@ package com.ghostchu.quickshop.economy;
 import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.api.economy.AbstractEconomy;
 import com.ghostchu.quickshop.util.economyformatter.BuiltInEconomyFormatter;
+import java.math.BigDecimal;
+import java.util.Objects;
+import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,10 +18,6 @@ import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.math.BigDecimal;
-import java.util.Objects;
-import java.util.UUID;
 
 /**
  * @author creatorfromhell
@@ -74,9 +73,11 @@ public class Economy_Reserve extends AbstractEconomy {
      * @return true if success (Payer had enough cash, receiver was able to receive the funds)
      */
     @Override
-    public boolean transfer(@NotNull UUID from, @NotNull UUID to, double amount, @NotNull World world, @Nullable String currency) {
+    public boolean transfer(
+            @NotNull UUID from, @NotNull UUID to, double amount, @NotNull World world, @Nullable String currency) {
         try {
-            return Objects.requireNonNull(reserve).transferHoldings(from, to, BigDecimal.valueOf(amount), world.getName(), currency);
+            return Objects.requireNonNull(reserve)
+                    .transferHoldings(from, to, BigDecimal.valueOf(amount), world.getName(), currency);
         } catch (Exception throwable) {
             if (plugin.getSentryErrorReporter() != null) {
                 plugin.getSentryErrorReporter().ignoreThrow();
@@ -87,9 +88,11 @@ public class Economy_Reserve extends AbstractEconomy {
     }
 
     @Override
-    public boolean transfer(@NotNull String from, @NotNull String to, double amount, @NotNull World world, @Nullable String currency) {
+    public boolean transfer(
+            @NotNull String from, @NotNull String to, double amount, @NotNull World world, @Nullable String currency) {
         try {
-            return Objects.requireNonNull(reserve).transferHoldings(from, to, BigDecimal.valueOf(amount), world.getName(), currency);
+            return Objects.requireNonNull(reserve)
+                    .transferHoldings(from, to, BigDecimal.valueOf(amount), world.getName(), currency);
         } catch (Exception throwable) {
             if (plugin.getSentryErrorReporter() != null) {
                 plugin.getSentryErrorReporter().ignoreThrow();
@@ -120,7 +123,8 @@ public class Economy_Reserve extends AbstractEconomy {
     @Override
     public boolean deposit(@NotNull String name, double amount, @NotNull World world, @Nullable String currency) {
         try {
-            return Objects.requireNonNull(reserve).addHoldings(name, BigDecimal.valueOf(amount), world.getName(), currency);
+            return Objects.requireNonNull(reserve)
+                    .addHoldings(name, BigDecimal.valueOf(amount), world.getName(), currency);
         } catch (Exception throwable) {
             if (plugin.getSentryErrorReporter() != null) {
                 plugin.getSentryErrorReporter().ignoreThrow();
@@ -140,7 +144,8 @@ public class Economy_Reserve extends AbstractEconomy {
     @Override
     public boolean deposit(@NotNull UUID name, double amount, @NotNull World world, @Nullable String currency) {
         try {
-            return Objects.requireNonNull(reserve).addHoldings(name, BigDecimal.valueOf(amount), world.getName(), currency);
+            return Objects.requireNonNull(reserve)
+                    .addHoldings(name, BigDecimal.valueOf(amount), world.getName(), currency);
         } catch (Exception throwable) {
             if (plugin.getSentryErrorReporter() != null) {
                 plugin.getSentryErrorReporter().ignoreThrow();
@@ -150,9 +155,9 @@ public class Economy_Reserve extends AbstractEconomy {
         }
     }
 
-
     @Override
-    public boolean deposit(@NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency) {
+    public boolean deposit(
+            @NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency) {
         return deposit(trader.getUniqueId(), amount, world, currency);
     }
 
@@ -178,7 +183,9 @@ public class Economy_Reserve extends AbstractEconomy {
     @Override
     public double getBalance(@NotNull String name, @NotNull World world, @Nullable String currency) {
         try {
-            return Objects.requireNonNull(reserve).getHoldings(name, world.getName(), currency).doubleValue();
+            return Objects.requireNonNull(reserve)
+                    .getHoldings(name, world.getName(), currency)
+                    .doubleValue();
         } catch (Exception throwable) {
             if (plugin.getSentryErrorReporter() != null) {
                 plugin.getSentryErrorReporter().ignoreThrow();
@@ -205,7 +212,9 @@ public class Economy_Reserve extends AbstractEconomy {
     @Override
     public double getBalance(@NotNull UUID name, @NotNull World world, @Nullable String currency) {
         try {
-            return Objects.requireNonNull(reserve).getHoldings(name, world.getName(), currency).doubleValue();
+            return Objects.requireNonNull(reserve)
+                    .getHoldings(name, world.getName(), currency)
+                    .doubleValue();
         } catch (Exception throwable) {
             if (plugin.getSentryErrorReporter() != null) {
                 plugin.getSentryErrorReporter().ignoreThrow();
@@ -219,7 +228,6 @@ public class Economy_Reserve extends AbstractEconomy {
     public double getBalance(@NotNull OfflinePlayer player, @NotNull World world, @Nullable String currency) {
         return getBalance(player.getUniqueId(), world, currency);
     }
-
 
     /**
      * Withdraws a given amount of money from the given username and turns it to thin air.
@@ -242,10 +250,10 @@ public class Economy_Reserve extends AbstractEconomy {
     }
 
     @Override
-    public boolean withdraw(@NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency) {
+    public boolean withdraw(
+            @NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency) {
         return withdraw(trader.getUniqueId(), amount, world, currency);
     }
-
 
     /**
      * Gets the currency does exists
@@ -286,10 +294,8 @@ public class Economy_Reserve extends AbstractEconomy {
         return reserve != null;
     }
 
-
     @Override
     public @NotNull Plugin getPlugin() {
         return plugin.getJavaPlugin();
     }
-
 }

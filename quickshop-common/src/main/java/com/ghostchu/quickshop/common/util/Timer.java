@@ -3,7 +3,6 @@ package com.ghostchu.quickshop.common.util;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-
 /**
  * Simple Timer for QuickShop to calc time passed (timestamp based)
  *
@@ -13,15 +12,16 @@ import lombok.ToString;
 @ToString
 public class Timer {
     private long startTime;
+
     @EqualsAndHashCode.Exclude
     private long passedTime;
+
     private boolean isPaused = false;
 
     /**
      * Create a empty timer, use setTimer to start
      */
-    public Timer() {
-    }
+    public Timer() {}
 
     /**
      * Create a empty timer, auto start if autoStart is true
@@ -103,5 +103,4 @@ public class Timer {
         startTime = 0;
         return time;
     }
-
 }

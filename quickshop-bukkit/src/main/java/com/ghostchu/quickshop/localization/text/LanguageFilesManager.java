@@ -1,15 +1,14 @@
 package com.ghostchu.quickshop.localization.text;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 // No to-do anymore! This used for not only messages.yml! Keep the extent ability!
 public class LanguageFilesManager {
-    //distributionPath->[localeCode->OTA files]
+    // distributionPath->[localeCode->OTA files]
     private final Map<String, FileConfiguration> locale2ContentMapping = new ConcurrentHashMap<>();
 
     /**
@@ -42,7 +41,8 @@ public class LanguageFilesManager {
         }
     }
 
-    private void mergeMissing(@NotNull FileConfiguration alreadyRegistered, @NotNull FileConfiguration newConfiguration) {
+    private void mergeMissing(
+            @NotNull FileConfiguration alreadyRegistered, @NotNull FileConfiguration newConfiguration) {
         for (String key : newConfiguration.getKeys(true)) {
             if (newConfiguration.isConfigurationSection(key)) {
                 continue;
@@ -104,6 +104,4 @@ public class LanguageFilesManager {
     public void reset() {
         this.locale2ContentMapping.clear();
     }
-
-
 }

@@ -29,11 +29,11 @@ public final class Main extends JavaPlugin implements Listener {
         plugin = QuickShop.getInstance();
         getLogger().info("Registering the per shop permissions...");
         Bukkit.getPluginManager().registerEvents(this, this);
-        plugin.getCommandManager().registerCmd(
-                CommandContainer
-                        .builder()
+        plugin.getCommandManager()
+                .registerCmd(CommandContainer.builder()
                         .prefix("list")
-                        .description((locale) -> plugin.text().of("addon.list.commands.list").forLocale(locale))
+                        .description((locale) ->
+                                plugin.text().of("addon.list.commands.list").forLocale(locale))
                         .selectivePermission("quickshopaddon.list.self")
                         .selectivePermission("quickshopaddon.list.other")
                         .executor(new SubCommand_List(plugin))

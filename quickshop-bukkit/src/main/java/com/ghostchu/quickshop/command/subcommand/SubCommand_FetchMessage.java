@@ -8,13 +8,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class SubCommand_FetchMessage implements CommandHandler<Player> {
 
-    public SubCommand_FetchMessage() {
-    }
+    public SubCommand_FetchMessage() {}
 
     @Override
     public void onCommand(@NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
         MsgUtil.flush(sender);
     }
-
-
 }

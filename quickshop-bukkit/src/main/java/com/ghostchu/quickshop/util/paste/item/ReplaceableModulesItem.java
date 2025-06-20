@@ -14,17 +14,20 @@ public class ReplaceableModulesItem implements SubPasteItem {
 
     public ReplaceableModulesItem() {
         QuickShop plugin = QuickShop.getInstance();
-        itemMatcher = plugin.getItemMatcher().getName() + "@" + plugin.getItemMatcher().getPlugin().getName();
+        itemMatcher = plugin.getItemMatcher().getName() + "@"
+                + plugin.getItemMatcher().getPlugin().getName();
         if (plugin.getEconomy() == null) {
             economyCore = "undefined@unknown";
         } else {
-            economyCore = plugin.getEconomy().getName() + "@" + plugin.getEconomy().getPlugin().getName();
+            economyCore = plugin.getEconomy().getName() + "@"
+                    + plugin.getEconomy().getPlugin().getName();
         }
         DisplayProvider provider = ServiceInjector.getInjectedService(DisplayProvider.class, null);
         if (provider == null) {
             displayItem = AbstractDisplayItem.getNowUsing().name() + "@QuickShop-Hikari";
         } else {
-            displayItem = provider.getClass().getSimpleName() + "@" + provider.getProvider().getName();
+            displayItem = provider.getClass().getSimpleName() + "@"
+                    + provider.getProvider().getName();
         }
     }
 

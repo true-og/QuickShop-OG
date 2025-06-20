@@ -31,6 +31,4 @@ public class SubCommand_Empty implements CommandHandler<Player> {
             plugin.text().of(sender, "not-looking-at-shop").send();
         }
     }
-
-
 }

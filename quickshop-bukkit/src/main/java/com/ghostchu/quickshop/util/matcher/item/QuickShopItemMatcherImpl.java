@@ -7,6 +7,7 @@ import com.ghostchu.quickshop.util.logger.Log;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.ReloadStatus;
 import com.ghostchu.simplereloadlib.Reloadable;
+import java.util.*;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.ShulkerBox;
@@ -19,15 +20,12 @@ import org.bukkit.potion.PotionData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-
 public class QuickShopItemMatcherImpl implements ItemMatcher, Reloadable {
     private final QuickShop plugin;
 
     private ItemMetaMatcher itemMetaMatcher;
 
     private int workType;
-
 
     public QuickShopItemMatcherImpl(@NotNull QuickShop plugin) {
         this.plugin = plugin;
@@ -86,10 +84,12 @@ public class QuickShopItemMatcherImpl implements ItemMatcher, Reloadable {
         if (requireStack.length != givenStack.length) {
             return false;
         }
-        //For performance, we just check really equals in each index,check isn't contain or match will cost n^n time in most
+        // For performance, we just check really equals in each index,check isn't contain or match will cost n^n time in
+        // most
         for (int i = 0; i < requireStack.length; i++) {
-            if ((requireStack[i] != null) && (givenStack[i] != null) &&
-                    (requireStack[i].getAmount() != givenStack[i].getAmount())) {
+            if ((requireStack[i] != null)
+                    && (givenStack[i] != null)
+                    && (requireStack[i].getAmount() != givenStack[i].getAmount())) {
                 Log.debug("Fail: Amount mismatch!");
                 return false;
             }
@@ -118,19 +118,19 @@ public class QuickShopItemMatcherImpl implements ItemMatcher, Reloadable {
         }
 
         if (requireStack == null || givenStack == null) {
-            Log.debug(
-                    "Match failed: A stack is null: "
-                            + "requireStack["
-                            + requireStack
-                            + "] givenStack["
-                            + givenStack
-                            + "]");
+            Log.debug("Match failed: A stack is null: "
+                    + "requireStack["
+                    + requireStack
+                    + "] givenStack["
+                    + givenStack
+                    + "]");
             return false; // One of them is null (Can't be both, see above)
         }
 
         String shopIdOrigin = plugin.getPlatform().getItemShopId(requireStack);
         if (shopIdOrigin != null) {
-            Log.debug("ShopId compare -> Origin: " + shopIdOrigin + "  Given: " + plugin.getPlatform().getItemShopId(givenStack));
+            Log.debug("ShopId compare -> Origin: " + shopIdOrigin + "  Given: "
+                    + plugin.getPlatform().getItemShopId(givenStack));
             String shopIdTester = plugin.getPlatform().getItemShopId(givenStack);
             if (shopIdOrigin.equals(shopIdTester)) {
                 return true;
@@ -182,7 +182,8 @@ public class QuickShopItemMatcherImpl implements ItemMatcher, Reloadable {
 
         private final List<Matcher> matcherList = new ArrayList<>();
 
-        public ItemMetaMatcher(@NotNull ConfigurationSection itemMatcherConfig, @NotNull QuickShopItemMatcherImpl itemMatcher) {
+        public ItemMetaMatcher(
+                @NotNull ConfigurationSection itemMatcherConfig, @NotNull QuickShopItemMatcherImpl itemMatcher) {
             QuickShop plugin = QuickShop.getInstance();
             addIfEnable(itemMatcherConfig, "damage", (meta1, meta2) -> {
                 if (meta1 instanceof Damageable != meta2 instanceof Damageable) {
@@ -190,15 +191,15 @@ public class QuickShopItemMatcherImpl implements ItemMatcher, Reloadable {
                 }
                 if (meta1 instanceof Damageable damage1) {
                     Damageable damage2 = (Damageable) meta2;
-                    //Given item damaged but matching item doesn't, allow it
+                    // Given item damaged but matching item doesn't, allow it
                     if (damage1.hasDamage() && !damage2.hasDamage()) {
                         return true;
                     }
-                    //Given item NOT damaged but matching item damaged, denied it
+                    // Given item NOT damaged but matching item damaged, denied it
                     if (!damage1.hasDamage() && damage2.hasDamage()) {
                         return false;
                     }
-                    //last condition: Check them damages, if givenDamage >= requireDamage, allow it.
+                    // last condition: Check them damages, if givenDamage >= requireDamage, allow it.
                     return damage2.getDamage() <= damage1.getDamage();
                 }
                 return true;
@@ -211,22 +212,33 @@ public class QuickShopItemMatcherImpl implements ItemMatcher, Reloadable {
                     Repairable repairable2 = (Repairable) meta2;
                     boolean hasRepairCost1 = repairable1.hasRepairCost();
                     boolean hasRepairCost2 = repairable2.hasRepairCost();
-                    //Given item have repair cost but matching item doesn't, allow it
+                    // Given item have repair cost but matching item doesn't, allow it
                     if (hasRepairCost1 && !hasRepairCost2) {
                         return true;
                     }
-                    //Given item DOESN'T have repair cost but matching item have, denied it
+                    // Given item DOESN'T have repair cost but matching item have, denied it
                     if (!hasRepairCost1 && hasRepairCost2) {
                         return false;
                     }
-                    //last condition: both having repair cost, so allow items lesser than or equals given item Repair Cost
+                    // last condition: both having repair cost, so allow items lesser than or equals given item Repair
+                    // Cost
                     return repairable2.getRepairCost() <= repairable1.getRepairCost();
                 }
                 return true;
             });
-            addIfEnable(itemMatcherConfig, "displayname", ((meta1, meta2) -> Objects.equals(plugin.getPlatform().getDisplayName(meta1), plugin.getPlatform().getDisplayName(meta2))));
+            addIfEnable(
+                    itemMatcherConfig,
+                    "displayname",
+                    ((meta1, meta2) -> Objects.equals(
+                            plugin.getPlatform().getDisplayName(meta1),
+                            plugin.getPlatform().getDisplayName(meta2))));
             // We didn't touch the loresMatches because many plugin use this check item.
-            addIfEnable(itemMatcherConfig, "lores", ((meta1, meta2) -> Objects.equals(plugin.getPlatform().getLore(meta1), plugin.getPlatform().getLore(meta2))));
+            addIfEnable(
+                    itemMatcherConfig,
+                    "lores",
+                    ((meta1, meta2) -> Objects.equals(
+                            plugin.getPlatform().getLore(meta1),
+                            plugin.getPlatform().getLore(meta2))));
             addIfEnable(itemMatcherConfig, "enchs", ((meta1, meta2) -> {
                 if (meta1.hasEnchants() != meta2.hasEnchants()) {
                     return false;
@@ -262,7 +274,10 @@ public class QuickShopItemMatcherImpl implements ItemMatcher, Reloadable {
                     if (potion1.hasCustomEffects() != potion2.hasCustomEffects()) {
                         return false;
                     }
-                    if (potion1.hasCustomEffects() && !Arrays.deepEquals(potion1.getCustomEffects().toArray(), potion2.getCustomEffects().toArray())) {
+                    if (potion1.hasCustomEffects()
+                            && !Arrays.deepEquals(
+                                    potion1.getCustomEffects().toArray(),
+                                    potion2.getCustomEffects().toArray())) {
                         return false;
                     }
                     PotionData data1 = potion1.getBasePotionData();
@@ -285,19 +300,27 @@ public class QuickShopItemMatcherImpl implements ItemMatcher, Reloadable {
                     return false;
                 }
                 if (meta1.hasAttributeModifiers() && meta2.hasAttributeModifiers()) {
-                    Set<Attribute> set1 = Objects.requireNonNull(meta1.getAttributeModifiers()).keySet();
-                    Set<Attribute> set2 = Objects.requireNonNull(meta2.getAttributeModifiers()).keySet();
+                    Set<Attribute> set1 = Objects.requireNonNull(meta1.getAttributeModifiers())
+                            .keySet();
+                    Set<Attribute> set2 = Objects.requireNonNull(meta2.getAttributeModifiers())
+                            .keySet();
                     for (Attribute att : set1) {
                         if (!set2.contains(att)) {
                             return false;
-                        } else if (!meta1.getAttributeModifiers().get(att).equals(meta2.getAttributeModifiers().get(att))) {
+                        } else if (!meta1.getAttributeModifiers()
+                                .get(att)
+                                .equals(meta2.getAttributeModifiers().get(att))) {
                             return false;
                         }
                     }
                 }
                 return true;
             });
-            addIfEnable(itemMatcherConfig, "itemflags", ((meta1, meta2) -> Arrays.deepEquals(meta1.getItemFlags().toArray(), meta2.getItemFlags().toArray())));
+            addIfEnable(
+                    itemMatcherConfig,
+                    "itemflags",
+                    ((meta1, meta2) -> Arrays.deepEquals(
+                            meta1.getItemFlags().toArray(), meta2.getItemFlags().toArray())));
             addIfEnable(itemMatcherConfig, "books", ((meta1, meta2) -> {
                 if (meta1 instanceof BookMeta != meta2 instanceof BookMeta) {
                     return false;
@@ -347,8 +370,8 @@ public class QuickShopItemMatcherImpl implements ItemMatcher, Reloadable {
                     return false;
                 }
                 if (meta1 instanceof SkullMeta skullMeta1) {
-                    //getOwningPlayer will let server query playerProfile in server thread
-                    //Causing huge lag, so using String instead
+                    // getOwningPlayer will let server query playerProfile in server thread
+                    // Causing huge lag, so using String instead
                     OfflinePlayer player1 = skullMeta1.getOwningPlayer();
                     OfflinePlayer player2 = skullMeta1.getOwningPlayer();
                     return Objects.equals(player1, player2);
@@ -360,8 +383,8 @@ public class QuickShopItemMatcherImpl implements ItemMatcher, Reloadable {
                     return false;
                 }
                 if (meta1 instanceof BundleMeta bundleMeta1) {
-                    //getOwningPlayer will let server query playerProfile in server thread
-                    //Causing huge lag, so using String instead
+                    // getOwningPlayer will let server query playerProfile in server thread
+                    // Causing huge lag, so using String instead
                     BundleMeta bundleMeta2 = (BundleMeta) meta2;
                     if (bundleMeta1.hasItems() != bundleMeta2.hasItems()) {
                         return false;
@@ -381,19 +404,25 @@ public class QuickShopItemMatcherImpl implements ItemMatcher, Reloadable {
                     if (mapMeta1.hasMapView() != mapMeta2.hasMapView()) {
                         return false;
                     }
-                    if (mapMeta1.hasMapView() && mapMeta2.hasMapView() && !Objects.equals(mapMeta1.getMapView(), mapMeta2.getMapView())) {
+                    if (mapMeta1.hasMapView()
+                            && mapMeta2.hasMapView()
+                            && !Objects.equals(mapMeta1.getMapView(), mapMeta2.getMapView())) {
                         return false;
                     }
                     if (mapMeta1.hasColor() != mapMeta2.hasColor()) {
                         return false;
                     }
-                    if (mapMeta1.hasColor() && mapMeta2.hasColor() && !Objects.equals(mapMeta1.getColor(), mapMeta2.getColor())) {
+                    if (mapMeta1.hasColor()
+                            && mapMeta2.hasColor()
+                            && !Objects.equals(mapMeta1.getColor(), mapMeta2.getColor())) {
                         return false;
                     }
                     if (mapMeta1.hasLocationName() != mapMeta2.hasLocationName()) {
                         return false;
                     }
-                    return !mapMeta1.hasLocationName() || !mapMeta2.hasLocationName() || Objects.equals(mapMeta1.getLocationName(), mapMeta2.getLocationName());
+                    return !mapMeta1.hasLocationName()
+                            || !mapMeta2.hasLocationName()
+                            || Objects.equals(mapMeta1.getLocationName(), mapMeta2.getLocationName());
                 }
                 return true;
             });
@@ -433,22 +462,27 @@ public class QuickShopItemMatcherImpl implements ItemMatcher, Reloadable {
                     }
                     return !fishBucketMeta1.hasVariant()
                             || (fishBucketMeta1.getPattern() == fishBucketMeta2.getPattern()
-                            && fishBucketMeta1.getBodyColor().equals(fishBucketMeta2.getBodyColor())
-                            && fishBucketMeta1.getPatternColor().equals(fishBucketMeta2.getPatternColor()));
+                                    && fishBucketMeta1.getBodyColor().equals(fishBucketMeta2.getBodyColor())
+                                    && fishBucketMeta1.getPatternColor().equals(fishBucketMeta2.getPatternColor()));
                 }
                 return true;
             });
             addIfEnable(itemMatcherConfig, "shulkerBox", ((meta1, meta2) -> {
-                //https://www.spigotmc.org/threads/getting-the-inventory-of-a-shulker-box-itemstack.212369
+                // https://www.spigotmc.org/threads/getting-the-inventory-of-a-shulker-box-itemstack.212369
                 if ((meta1 instanceof BlockStateMeta) != (meta2 instanceof BlockStateMeta)) {
                     return false;
                 }
                 if (meta1 instanceof BlockStateMeta blockStateMeta1) {
-                    if ((blockStateMeta1.getBlockState() instanceof ShulkerBox) != ((BlockStateMeta) meta2).getBlockState() instanceof ShulkerBox) {
+                    if ((blockStateMeta1.getBlockState() instanceof ShulkerBox)
+                            != ((BlockStateMeta) meta2).getBlockState() instanceof ShulkerBox) {
                         return false;
                     }
                     if (((BlockStateMeta) meta1).getBlockState() instanceof ShulkerBox shulkerBox1) {
-                        return itemMatcher.matches(shulkerBox1.getInventory().getContents(), ((ShulkerBox) ((BlockStateMeta) meta2).getBlockState()).getInventory().getContents());
+                        return itemMatcher.matches(
+                                shulkerBox1.getInventory().getContents(),
+                                ((ShulkerBox) ((BlockStateMeta) meta2).getBlockState())
+                                        .getInventory()
+                                        .getContents());
                     }
                 }
                 return true;
@@ -472,7 +506,8 @@ public class QuickShopItemMatcherImpl implements ItemMatcher, Reloadable {
                         return false;
                     }
                     if (stewMeta1.hasCustomEffects()) {
-                        return CommonUtil.listDisorderMatches(stewMeta1.getCustomEffects(), stewMeta2.getCustomEffects());
+                        return CommonUtil.listDisorderMatches(
+                                stewMeta1.getCustomEffects(), stewMeta2.getCustomEffects());
                     }
                 }
                 return true;
@@ -491,7 +526,7 @@ public class QuickShopItemMatcherImpl implements ItemMatcher, Reloadable {
             }
             ItemMeta meta1 = requireStack.getItemMeta();
             ItemMeta meta2 = givenStack.getItemMeta();
-            //If givenStack don't have meta, try to generate one
+            // If givenStack don't have meta, try to generate one
             if (meta1 != null && meta2 != null) {
                 for (Matcher matcher : matcherList) {
                     boolean result = matcher.match(meta1, meta2);
@@ -518,7 +553,5 @@ public class QuickShopItemMatcherImpl implements ItemMatcher, Reloadable {
              */
             boolean match(ItemMeta meta1, ItemMeta meta2);
         }
-
-
     }
 }

@@ -8,6 +8,11 @@
 # IntelliJ
 out/
 
+# Eclipse
+.classpath
+.project
+.settings/
+
 # Compiled class file
 *.class
 
@@ -95,7 +100,8 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-target/
+bin/
+build/
 
 pom.xml.tag
 pom.xml.releaseBackup
@@ -113,3 +119,5 @@ buildNumber.properties
 run/
 /build-artifacts/
 /.vscode/settings.json
+/.gradle/
+/build/

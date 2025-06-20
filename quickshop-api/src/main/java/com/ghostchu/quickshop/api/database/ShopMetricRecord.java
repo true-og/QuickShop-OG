@@ -16,7 +16,8 @@ public class ShopMetricRecord {
     private String player;
 
     @Builder
-    public ShopMetricRecord(long time, long shopId, ShopOperationEnum type, double total, double tax, int amount, QUser player) {
+    public ShopMetricRecord(
+            long time, long shopId, ShopOperationEnum type, double total, double tax, int amount, QUser player) {
         this.time = time;
         this.shopId = shopId;
         this.type = type;

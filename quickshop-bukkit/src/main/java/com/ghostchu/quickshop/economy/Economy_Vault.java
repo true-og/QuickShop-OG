@@ -1,6 +1,5 @@
 package com.ghostchu.quickshop.economy;
 
-
 import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.api.economy.AbstractEconomy;
 import com.ghostchu.quickshop.common.util.CommonUtil;
@@ -8,6 +7,9 @@ import com.ghostchu.quickshop.util.economyformatter.BuiltInEconomyFormatter;
 import com.ghostchu.quickshop.util.logger.Log;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.ReloadStatus;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.logging.Level;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -24,10 +26,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-import java.util.UUID;
-import java.util.logging.Level;
-
 @SuppressWarnings("deprecation")
 @ToString
 public class Economy_Vault extends AbstractEconomy implements Listener {
@@ -37,13 +35,14 @@ public class Economy_Vault extends AbstractEconomy implements Listener {
     private final QuickShop plugin;
     private final BuiltInEconomyFormatter formatter;
     private boolean allowLoan;
+
     @Getter
     @Setter
     @Nullable
     private net.milkbowl.vault.economy.Economy vault;
+
     @Nullable
     private String lastError = null;
-
 
     public Economy_Vault(@NotNull QuickShop plugin) {
         super();
@@ -60,7 +59,8 @@ public class Economy_Vault extends AbstractEconomy implements Listener {
 
     private boolean setupEconomy() {
         if (!CommonUtil.isClassAvailable("net.milkbowl.vault.economy.Economy")) {
-            return false; // QUICKSHOP-YS I can't believe it broken almost a year and nobody found it, my sentry exploded.
+            return false; // QUICKSHOP-YS I can't believe it broken almost a year and nobody found it, my sentry
+            // exploded.
         }
         RegisteredServiceProvider<net.milkbowl.vault.economy.Economy> economyProvider;
         try {
@@ -78,15 +78,12 @@ public class Economy_Vault extends AbstractEconomy implements Listener {
         }
 
         if (this.vault.getName() == null || this.vault.getName().isEmpty()) {
-            plugin
-                    .logger()
+            plugin.logger()
                     .warn(
                             "Current economy plugin not correct process all request, this usually cause by irregular code, you should report this issue to your economy plugin author or use other economy plugin.");
-            plugin
-                    .logger()
-                    .warn(
-                            "This is technical information, please send this to economy plugin author: "
-                                    + "VaultEconomyProvider.getName() return a null or empty.");
+            plugin.logger()
+                    .warn("This is technical information, please send this to economy plugin author: "
+                            + "VaultEconomyProvider.getName() return a null or empty.");
         } else {
             plugin.logger().info("Using economy system: " + this.vault.getName());
         }
@@ -106,7 +103,8 @@ public class Economy_Vault extends AbstractEconomy implements Listener {
                 return true;
             }
             this.lastError = getProviderName() + ": " + response.type.name() + " - " + response.errorMessage;
-            Log.transaction(Level.WARNING, "Deposit player " + name + " failed, Vault response: " + response.errorMessage);
+            Log.transaction(
+                    Level.WARNING, "Deposit player " + name + " failed, Vault response: " + response.errorMessage);
             return false;
         } catch (Exception t) {
             if (plugin.getSentryErrorReporter() != null) {
@@ -124,11 +122,11 @@ public class Economy_Vault extends AbstractEconomy implements Listener {
             return false;
         }
         return deposit(Bukkit.getOfflinePlayer(name), amount, world, currency);
-
     }
 
     @Override
-    public boolean deposit(@NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency) {
+    public boolean deposit(
+            @NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency) {
         if (!isValid()) {
             return false;
         }
@@ -138,14 +136,18 @@ public class Economy_Vault extends AbstractEconomy implements Listener {
                 return true;
             }
             this.lastError = getProviderName() + ": " + response.type.name() + " - " + response.errorMessage;
-            Log.transaction(Level.WARNING, "Deposit player " + trader.getUniqueId() + " failed, Vault response: " + response.errorMessage);
+            Log.transaction(
+                    Level.WARNING,
+                    "Deposit player " + trader.getUniqueId() + " failed, Vault response: " + response.errorMessage);
             return false;
         } catch (Exception t) {
             if (plugin.getSentryErrorReporter() != null) {
                 plugin.getSentryErrorReporter().ignoreThrow();
             }
             if (trader.getName() == null) {
-                plugin.logger().warn("Deposit failed and player name is NULL, Player uuid: " + trader.getUniqueId() + ". Provider (" + getProviderName() + ")");
+                plugin.logger()
+                        .warn("Deposit failed and player name is NULL, Player uuid: " + trader.getUniqueId()
+                                + ". Provider (" + getProviderName() + ")");
                 return false;
             }
             plugin.logger().warn("Failure - deposit - " + trader + " - " + amount + " - " + world + " - " + currency);
@@ -201,7 +203,6 @@ public class Economy_Vault extends AbstractEconomy implements Listener {
             return 0.0;
         }
         return getBalance(Bukkit.getOfflinePlayer(name), world, currency);
-
     }
 
     @Override
@@ -271,7 +272,8 @@ public class Economy_Vault extends AbstractEconomy implements Listener {
                 return true;
             }
             this.lastError = getProviderName() + ": " + response.type.name() + " - " + response.errorMessage;
-            Log.transaction(Level.WARNING, "Withdraw player " + name + " failed, Vault response: " + response.errorMessage);
+            Log.transaction(
+                    Level.WARNING, "Withdraw player " + name + " failed, Vault response: " + response.errorMessage);
             return false;
         } catch (Exception t) {
             if (plugin.getSentryErrorReporter() != null) {
@@ -292,7 +294,8 @@ public class Economy_Vault extends AbstractEconomy implements Listener {
     }
 
     @Override
-    public boolean withdraw(@NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency) {
+    public boolean withdraw(
+            @NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency) {
         if (!isValid()) {
             return false;
         }
@@ -305,14 +308,19 @@ public class Economy_Vault extends AbstractEconomy implements Listener {
                 return true;
             }
             this.lastError = getProviderName() + ": " + response.type.name() + " - " + response.errorMessage;
-            Log.transaction(Level.WARNING, "Withdraw player " + trader.getUniqueId() + " failed, Vault response: " + response.errorMessage);
+            Log.transaction(
+                    Level.WARNING,
+                    "Withdraw player " + trader.getUniqueId() + " failed, Vault response: " + response.errorMessage);
             return false;
         } catch (Exception t) {
             if (plugin.getSentryErrorReporter() != null) {
                 plugin.getSentryErrorReporter().ignoreThrow();
             }
             if (trader.getName() == null) {
-                plugin.logger().warn("Withdraw failed and player name is NULL, Player uuid: {}", trader.getUniqueId() + ", Provider: " + getProviderName());
+                plugin.logger()
+                        .warn(
+                                "Withdraw failed and player name is NULL, Player uuid: {}",
+                                trader.getUniqueId() + ", Provider: " + getProviderName());
                 return false;
             }
             plugin.logger().warn("Failure - withdraw - " + trader + " - " + amount + " - " + world + " - " + currency);

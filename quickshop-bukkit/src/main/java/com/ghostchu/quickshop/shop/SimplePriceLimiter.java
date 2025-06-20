@@ -11,6 +11,15 @@ import com.ghostchu.quickshop.util.paste.item.SubPasteItem;
 import com.ghostchu.quickshop.util.paste.util.HTMLTable;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.Reloadable;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.nio.file.Files;
+import java.util.*;
+import java.util.function.Function;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.CommandSender;
@@ -21,16 +30,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.nio.file.Files;
-import java.util.*;
-import java.util.function.Function;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 public class SimplePriceLimiter implements Reloadable, PriceLimiter, SubPasteItem {
     private final QuickShop plugin;
@@ -139,7 +138,11 @@ public class SimplePriceLimiter implements Reloadable, PriceLimiter, SubPasteIte
                 Pattern pattern = Pattern.compile(currencyStr1);
                 currency.add(pattern);
             } catch (PatternSyntaxException e) {
-                plugin.logger().warn("Failed to read rule {}'s a Currency option, invalid pattern {}! Skipping...", ruleName, currencyStr1);
+                plugin.logger()
+                        .warn(
+                                "Failed to read rule {}'s a Currency option, invalid pattern {}! Skipping...",
+                                ruleName,
+                                currencyStr1);
             }
         }
         return new RuleSet(items, bypassPermission, currency, min, max);
@@ -159,7 +162,8 @@ public class SimplePriceLimiter implements Reloadable, PriceLimiter, SubPasteIte
      */
     @Override
     @NotNull
-    public PriceLimiterCheckResult check(@NotNull CommandSender sender, @NotNull ItemStack itemStack, @Nullable String currency, double price) {
+    public PriceLimiterCheckResult check(
+            @NotNull CommandSender sender, @NotNull ItemStack itemStack, @Nullable String currency, double price) {
         if (Double.isInfinite(price) || Double.isNaN(price)) {
             return new SimplePriceLimiterCheckResult(PriceLimiterStatus.NOT_VALID, undefinedMin, undefinedMax);
         }
@@ -168,7 +172,8 @@ public class SimplePriceLimiter implements Reloadable, PriceLimiter, SubPasteIte
                 BigDecimal.valueOf(price).setScale(0, RoundingMode.UNNECESSARY);
             } catch (ArithmeticException exception) {
                 Log.debug(exception.getMessage());
-                return new SimplePriceLimiterCheckResult(PriceLimiterStatus.NOT_A_WHOLE_NUMBER, undefinedMin, undefinedMax);
+                return new SimplePriceLimiterCheckResult(
+                        PriceLimiterStatus.NOT_A_WHOLE_NUMBER, undefinedMin, undefinedMax);
             }
         }
         for (RuleSet rule : rules.values()) {
@@ -214,7 +219,12 @@ public class SimplePriceLimiter implements Reloadable, PriceLimiter, SubPasteIte
             if (StringUtils.isEmpty(currencies)) {
                 currencies = "*";
             }
-            rules.insert(entry.getKey(), rule.getBypassPermission(), rule.getItems().size(), currencies, rule.getMin() + " - " + rule.getMax());
+            rules.insert(
+                    entry.getKey(),
+                    rule.getBypassPermission(),
+                    rule.getItems().size(),
+                    currencies,
+                    rule.getMin() + " - " + rule.getMax());
         }
         joiner.add(rules.render());
         return joiner.toString();
@@ -233,7 +243,12 @@ public class SimplePriceLimiter implements Reloadable, PriceLimiter, SubPasteIte
         private final double min;
         private final double max;
 
-        public RuleSet(List<Function<ItemStack, Boolean>> items, String bypassPermission, List<Pattern> currency, double min, double max) {
+        public RuleSet(
+                List<Function<ItemStack, Boolean>> items,
+                String bypassPermission,
+                List<Pattern> currency,
+                double min,
+                double max) {
             this.items = items;
             this.bypassPermission = bypassPermission;
             this.currency = currency;
@@ -270,7 +285,8 @@ public class SimplePriceLimiter implements Reloadable, PriceLimiter, SubPasteIte
                 return false;
             }
             if (currency != null) {
-                if (this.currency.stream().noneMatch(pattern -> pattern.matcher(currency).matches())) {
+                if (this.currency.stream()
+                        .noneMatch(pattern -> pattern.matcher(currency).matches())) {
                     return false;
                 }
             }

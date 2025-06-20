@@ -24,4 +24,3 @@ public class ResultContainer {
         return resultMessage;
     }
 }
-

@@ -1,11 +1,10 @@
 package com.ghostchu.quickshop.common.util;
 
+import java.lang.reflect.Constructor;
+import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.jul.JDK14LoggerAdapter;
-
-import java.lang.reflect.Constructor;
-import java.util.logging.Level;
 
 public class QuickSLF4JLogger {
 

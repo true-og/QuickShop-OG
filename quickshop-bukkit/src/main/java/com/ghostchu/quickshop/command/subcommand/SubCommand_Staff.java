@@ -9,17 +9,16 @@ import com.ghostchu.quickshop.api.shop.permission.BuiltInShopPermissionGroup;
 import com.ghostchu.quickshop.util.MsgUtil;
 import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.logger.Log;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 public class SubCommand_Staff implements CommandHandler<Player> {
 
@@ -38,28 +37,42 @@ public class SubCommand_Staff implements CommandHandler<Player> {
             final Shop shop = plugin.getShopManager().getShop(b.getLocation());
             if (shop == null
                     || (!shop.playerAuthorize(sender.getUniqueId(), BuiltInShopPermission.MANAGEMENT_PERMISSION)
-                    && !plugin.perm().hasPermission(sender, "quickshop.other.staff"))) {
+                            && !plugin.perm().hasPermission(sender, "quickshop.other.staff"))) {
                 continue;
             }
             switch (parser.getArgs().size()) {
                 case 1 -> {
                     switch (parser.getArgs().get(0)) {
                         case "clear" -> {
-                            shop.playersCanAuthorize(BuiltInShopPermissionGroup.STAFF).forEach(staff -> shop.setPlayerGroup(staff, BuiltInShopPermissionGroup.EVERYONE));
+                            shop.playersCanAuthorize(BuiltInShopPermissionGroup.STAFF)
+                                    .forEach(staff -> shop.setPlayerGroup(staff, BuiltInShopPermissionGroup.EVERYONE));
                             plugin.text().of(sender, "shop-staff-cleared").send();
                             return;
                         }
                         case "list" -> {
                             final List<UUID> staffs = shop.playersCanAuthorize(BuiltInShopPermissionGroup.STAFF);
                             if (staffs.isEmpty()) {
-                                MsgUtil.sendDirectMessage(sender, plugin.text().of(sender, "tableformat.left_begin").forLocale()
-                                        .append(plugin.text().of(sender, "shop-staff-empty").forLocale()));
+                                MsgUtil.sendDirectMessage(
+                                        sender,
+                                        plugin.text()
+                                                .of(sender, "tableformat.left_begin")
+                                                .forLocale()
+                                                .append(plugin.text()
+                                                        .of(sender, "shop-staff-empty")
+                                                        .forLocale()));
                                 return;
                             }
                             Util.asyncThreadRun(() -> {
                                 for (UUID uuid : staffs) {
-                                    MsgUtil.sendDirectMessage(sender, plugin.text().of(sender, "tableformat.left_begin").forLocale()
-                                            .append(Component.text(Optional.ofNullable(plugin.getPlayerFinder().uuid2Name(uuid)).orElse("Unknown")).color(NamedTextColor.GRAY)));
+                                    MsgUtil.sendDirectMessage(
+                                            sender,
+                                            plugin.text()
+                                                    .of(sender, "tableformat.left_begin")
+                                                    .forLocale()
+                                                    .append(Component.text(Optional.ofNullable(plugin.getPlayerFinder()
+                                                                            .uuid2Name(uuid))
+                                                                    .orElse("Unknown"))
+                                                            .color(NamedTextColor.GRAY)));
                                 }
                             });
 
@@ -73,19 +86,26 @@ public class SubCommand_Staff implements CommandHandler<Player> {
                 }
                 case 2 -> {
                     String name = parser.getArgs().get(1);
-                    plugin.getPlayerFinder().name2UuidFuture(parser.getArgs().get(1))
+                    plugin.getPlayerFinder()
+                            .name2UuidFuture(parser.getArgs().get(1))
                             .thenAccept(uuid -> {
                                 BuiltInShopPermissionGroup permissionGroup = null;
                                 switch (parser.getArgs().get(0)) {
                                     case "add" -> {
                                         permissionGroup = BuiltInShopPermissionGroup.STAFF;
-                                        plugin.text().of(sender, "shop-staff-added", name).send();
+                                        plugin.text()
+                                                .of(sender, "shop-staff-added", name)
+                                                .send();
                                     }
                                     case "del" -> {
                                         permissionGroup = BuiltInShopPermissionGroup.EVERYONE;
-                                        plugin.text().of(sender, "shop-staff-deleted", name).send();
+                                        plugin.text()
+                                                .of(sender, "shop-staff-deleted", name)
+                                                .send();
                                     }
-                                    default -> plugin.text().of(sender, "command.wrong-args").send();
+                                    default -> plugin.text()
+                                            .of(sender, "command.wrong-args")
+                                            .send();
                                 }
                                 if (permissionGroup != null) {
                                     BuiltInShopPermissionGroup finalPermissionGroup = permissionGroup;
@@ -94,7 +114,9 @@ public class SubCommand_Staff implements CommandHandler<Player> {
                             })
                             .exceptionally(throwable -> {
                                 Log.debug("Failed set the user group: " + throwable.getMessage());
-                                plugin.text().of(sender, "internal-error", throwable.getMessage()).send();
+                                plugin.text()
+                                        .of(sender, "internal-error", throwable.getMessage())
+                                        .send();
                                 return null;
                             });
                     return;
@@ -105,7 +127,7 @@ public class SubCommand_Staff implements CommandHandler<Player> {
                 }
             }
         }
-        //no match shop
+        // no match shop
         plugin.text().of(sender, "not-looking-at-shop").send();
     }
 

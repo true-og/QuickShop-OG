@@ -5,12 +5,11 @@ import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.api.shop.ShopManager;
 import com.ghostchu.quickshop.api.shop.ShopType;
 import com.ghostchu.quickshop.papi.PAPISubHandler;
+import java.util.List;
+import java.util.UUID;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.UUID;
 
 public class ShopManagerPAPI implements PAPISubHandler {
     private final QuickShop plugin;
@@ -79,14 +78,20 @@ public class ShopManagerPAPI implements PAPISubHandler {
             return null;
         }
         List<Shop> allShops = shopManager.getAllShops();
-        return String.valueOf(switch (passThroughArgsChild[0]) {
-            case "all" -> allShops.size();
-            case "selling" -> allShops.stream().filter(shop -> shop.getShopType() == ShopType.SELLING).count();
-            case "buying" -> allShops.stream().filter(shop -> shop.getShopType() == ShopType.BUYING).count();
-            case "loaded" -> shopManager.getLoadedShops().size();
-            case "unloaded" -> allShops.size() - shopManager.getLoadedShops().size();
-            default -> null;
-        });
+        return String.valueOf(
+                switch (passThroughArgsChild[0]) {
+                    case "all" -> allShops.size();
+                    case "selling" -> allShops.stream()
+                            .filter(shop -> shop.getShopType() == ShopType.SELLING)
+                            .count();
+                    case "buying" -> allShops.stream()
+                            .filter(shop -> shop.getShopType() == ShopType.BUYING)
+                            .count();
+                    case "loaded" -> shopManager.getLoadedShops().size();
+                    case "unloaded" -> allShops.size()
+                            - shopManager.getLoadedShops().size();
+                    default -> null;
+                });
     }
 
     @Nullable
@@ -95,13 +100,20 @@ public class ShopManagerPAPI implements PAPISubHandler {
             return null;
         }
         List<Shop> belongToPlayers = shopManager.getAllShops(player);
-        return String.valueOf(switch (passThroughArgsChild[0]) {
-            case "all" -> belongToPlayers.size();
-            case "selling" -> belongToPlayers.stream().filter(shop -> shop.getShopType() == ShopType.SELLING).count();
-            case "buying" -> belongToPlayers.stream().filter(shop -> shop.getShopType() == ShopType.BUYING).count();
-            case "loaded" -> shopManager.getLoadedShops().size();
-            case "unloaded" -> belongToPlayers.stream().filter(shop -> !shop.isLoaded()).count();
-            default -> null;
-        });
+        return String.valueOf(
+                switch (passThroughArgsChild[0]) {
+                    case "all" -> belongToPlayers.size();
+                    case "selling" -> belongToPlayers.stream()
+                            .filter(shop -> shop.getShopType() == ShopType.SELLING)
+                            .count();
+                    case "buying" -> belongToPlayers.stream()
+                            .filter(shop -> shop.getShopType() == ShopType.BUYING)
+                            .count();
+                    case "loaded" -> shopManager.getLoadedShops().size();
+                    case "unloaded" -> belongToPlayers.stream()
+                            .filter(shop -> !shop.isLoaded())
+                            .count();
+                    default -> null;
+                });
     }
 }

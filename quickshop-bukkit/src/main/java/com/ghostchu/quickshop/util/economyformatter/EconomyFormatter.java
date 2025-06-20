@@ -8,14 +8,13 @@ import com.ghostchu.quickshop.util.logger.Log;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.ReloadStatus;
 import com.ghostchu.simplereloadlib.Reloadable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class EconomyFormatter implements Reloadable {
     private static final Map<String, String> CURRENCY_SYMBOL_MAPPING = new HashMap<>();
@@ -68,8 +67,7 @@ public class EconomyFormatter implements Reloadable {
         try {
             String formatted = plugin.getEconomy().format(n, world, currency);
             if (StringUtils.isEmpty(formatted)) {
-                Log.debug(
-                        "Use alternate-currency-symbol to formatting, Cause economy plugin returned null");
+                Log.debug("Use alternate-currency-symbol to formatting, Cause economy plugin returned null");
                 return getInternalFormat(n, currency);
             } else {
                 return formatted;
@@ -85,7 +83,9 @@ public class EconomyFormatter implements Reloadable {
         if (StringUtils.isEmpty(currency)) {
             Log.debug("Format: Currency is null");
             String formatted = useDecimalFormat ? MsgUtil.decimalFormat(amount) : Double.toString(amount);
-            return currencySymbolOnRight ? formatted + plugin.getConfig().getString("shop.alternate-currency-symbol", "$") : plugin.getConfig().getString("shop.alternate-currency-symbol", "$") + formatted;
+            return currencySymbolOnRight
+                    ? formatted + plugin.getConfig().getString("shop.alternate-currency-symbol", "$")
+                    : plugin.getConfig().getString("shop.alternate-currency-symbol", "$") + formatted;
         } else {
             Log.debug("Format: Currency is: [" + currency + "]");
             String formatted = useDecimalFormat ? MsgUtil.decimalFormat(amount) : Double.toString(amount);

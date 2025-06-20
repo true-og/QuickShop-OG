@@ -11,14 +11,13 @@ import com.ghostchu.quickshop.economy.SimpleEconomyTransaction;
 import com.ghostchu.quickshop.util.MsgUtil;
 import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.logger.Log;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 
 public class SubCommand_Price implements CommandHandler<Player> {
 
@@ -81,17 +80,36 @@ public class SubCommand_Price implements CommandHandler<Player> {
 
         switch (checkResult.getStatus()) {
             case PRICE_RESTRICTED -> {
-                plugin.text().of(sender, "restricted-prices", Util.getItemStackName(shop.getItem()),
-                        Component.text(checkResult.getMin()),
-                        Component.text(checkResult.getMax())).send();
+                plugin.text()
+                        .of(
+                                sender,
+                                "restricted-prices",
+                                Util.getItemStackName(shop.getItem()),
+                                Component.text(checkResult.getMin()),
+                                Component.text(checkResult.getMax()))
+                        .send();
                 return;
             }
             case REACHED_PRICE_MIN_LIMIT -> {
-                plugin.text().of(sender, "price-too-cheap", (format) ? MsgUtil.decimalFormat(checkResult.getMin()) : Double.toString(checkResult.getMin())).send();
+                plugin.text()
+                        .of(
+                                sender,
+                                "price-too-cheap",
+                                (format)
+                                        ? MsgUtil.decimalFormat(checkResult.getMin())
+                                        : Double.toString(checkResult.getMin()))
+                        .send();
                 return;
             }
             case REACHED_PRICE_MAX_LIMIT -> {
-                plugin.text().of(sender, "price-too-high", (format) ? MsgUtil.decimalFormat(checkResult.getMax()) : Double.toString(checkResult.getMax())).send();
+                plugin.text()
+                        .of(
+                                sender,
+                                "price-too-high",
+                                (format)
+                                        ? MsgUtil.decimalFormat(checkResult.getMax())
+                                        : Double.toString(checkResult.getMax()))
+                        .send();
                 return;
             }
             case NOT_A_WHOLE_NUMBER -> {
@@ -109,28 +127,42 @@ public class SubCommand_Price implements CommandHandler<Player> {
                     .currency(plugin.getCurrency())
                     .build();
             if (!transaction.checkBalance()) {
-                plugin.text().of(sender, "you-cant-afford-to-change-price", plugin.getShopManager().format(fee, shop)).send();
+                plugin.text()
+                        .of(
+                                sender,
+                                "you-cant-afford-to-change-price",
+                                plugin.getShopManager().format(fee, shop))
+                        .send();
                 return;
             }
             if (!transaction.failSafeCommit()) {
-                plugin.text().of(sender, "economy-transaction-failed", transaction.getLastError()).send();
+                plugin.text()
+                        .of(sender, "economy-transaction-failed", transaction.getLastError())
+                        .send();
                 return;
             }
         }
-        plugin.text().of(sender,
-                "fee-charged-for-price-change", plugin.getShopManager().format(fee, shop)).send();
+        plugin.text()
+                .of(
+                        sender,
+                        "fee-charged-for-price-change",
+                        plugin.getShopManager().format(fee, shop))
+                .send();
         // Update the shop
         shop.setPrice(price);
         shop.setSignText(plugin.text().findRelativeLanguages(sender));
-        plugin.text().of(sender,
-                "price-is-now", plugin.getShopManager().format(shop.getPrice(), shop)).send();
+        plugin.text()
+                .of(sender, "price-is-now", plugin.getShopManager().format(shop.getPrice(), shop))
+                .send();
     }
 
     @NotNull
     @Override
     public List<String> onTabComplete(
             @NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
-        return parser.getArgs().size() == 1 ? Collections.singletonList(LegacyComponentSerializer.legacySection().serialize(plugin.text().of(sender, "tabcomplete.price").forLocale())) : Collections.emptyList();
+        return parser.getArgs().size() == 1
+                ? Collections.singletonList(LegacyComponentSerializer.legacySection()
+                        .serialize(plugin.text().of(sender, "tabcomplete.price").forLocale()))
+                : Collections.emptyList();
     }
-
 }

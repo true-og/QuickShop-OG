@@ -12,18 +12,17 @@ import com.ghostchu.quickshop.shop.display.virtual.packetfactory.VirtualDisplayP
 import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.logger.Log;
 import com.ghostchu.simplereloadlib.Reloadable;
+import java.util.*;
+import java.util.concurrent.ConcurrentSkipListSet;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentSkipListSet;
-
 public class VirtualDisplayItem extends AbstractDisplayItem implements Reloadable {
     private final int entityID;
-    //The List which store packet sender
+    // The List which store packet sender
     private final Set<UUID> packetSenders = new ConcurrentSkipListSet<>();
     private final VirtualDisplayPacketFactory virtualDisplayPacketFactory;
     private final VirtualDisplayItemManager manager;
@@ -31,19 +30,21 @@ public class VirtualDisplayItem extends AbstractDisplayItem implements Reloadabl
     private final PacketContainer fakeItemMetaPacket;
     private final PacketContainer fakeItemVelocityPacket;
     private final PacketContainer fakeItemDestroyPacket;
-    //cache chunk x and z
+    // cache chunk x and z
     private ShopChunk chunkLocation;
-    //If packet initialized
+    // If packet initialized
     private boolean isSpawned = false;
-    //packets
+    // packets
 
     VirtualDisplayItem(VirtualDisplayItemManager manager, VirtualDisplayPacketFactory packetFactory, Shop shop) {
         super(shop);
         this.entityID = manager.generateEntityId();
         this.manager = manager;
         this.virtualDisplayPacketFactory = packetFactory;
-        this.fakeItemSpawnPacket = virtualDisplayPacketFactory.createFakeItemSpawnPacket(entityID, getDisplayLocation());
-        this.fakeItemMetaPacket = virtualDisplayPacketFactory.createFakeItemMetaPacket(entityID, getOriginalItemStack().clone());
+        this.fakeItemSpawnPacket =
+                virtualDisplayPacketFactory.createFakeItemSpawnPacket(entityID, getDisplayLocation());
+        this.fakeItemMetaPacket = virtualDisplayPacketFactory.createFakeItemMetaPacket(
+                entityID, getOriginalItemStack().clone());
         this.fakeItemVelocityPacket = virtualDisplayPacketFactory.createFakeItemVelocityPacket(entityID);
         this.fakeItemDestroyPacket = virtualDisplayPacketFactory.createFakeItemDestroyPacket(entityID);
         load();
@@ -65,14 +66,10 @@ public class VirtualDisplayItem extends AbstractDisplayItem implements Reloadabl
     }
 
     @Override
-    public void fixDisplayMoved() {
-
-    }
+    public void fixDisplayMoved() {}
 
     @Override
-    public void fixDisplayNeedRegen() {
-
-    }
+    public void fixDisplayNeedRegen() {}
 
     @Override
     public @Nullable Entity getDisplay() {
@@ -114,9 +111,7 @@ public class VirtualDisplayItem extends AbstractDisplayItem implements Reloadabl
     }
 
     @Override
-    public void safeGuard(@Nullable Entity entity) {
-
-    }
+    public void safeGuard(@Nullable Entity entity) {}
 
     @Override
     public void spawn() {
@@ -142,15 +137,14 @@ public class VirtualDisplayItem extends AbstractDisplayItem implements Reloadabl
         isSpawned = true;
     }
 
-
-    //Due to the delay task in ChunkListener
-    //We must move load task to first spawn to prevent some bug and make the check lesser
+    // Due to the delay task in ChunkListener
+    // We must move load task to first spawn to prevent some bug and make the check lesser
     private void load() {
         Util.ensureThread(false);
-        //some time shop can be loaded when world isn't loaded
+        // some time shop can be loaded when world isn't loaded
         chunkLocation = SimpleShopChunk.fromLocation(shop.getLocation());
         manager.put(chunkLocation, this);
-        //Let nearby player can saw fake item
+        // Let nearby player can saw fake item
         List<Player> onlinePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
         onlinePlayers.removeIf(p -> !p.getWorld().equals(shop.getLocation().getWorld()));
         for (Player onlinePlayer : onlinePlayers) {

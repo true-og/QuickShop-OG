@@ -1,13 +1,12 @@
 package com.ghostchu.quickshop.command;
 
 import com.ghostchu.quickshop.api.command.CommandManager;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class QuickShopCommand extends BukkitCommand {
     private final CommandManager manager;
@@ -24,7 +23,8 @@ public class QuickShopCommand extends BukkitCommand {
 
     @NotNull
     @Override
-    public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws IllegalArgumentException {
+    public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args)
+            throws IllegalArgumentException {
         List<String> items = this.manager.onTabComplete(sender, this, alias, args);
         if (items == null) {
             items = Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();

@@ -1,9 +1,8 @@
 package com.ghostchu.quickshop.shop;
 
+import java.util.Map;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 /**
  * Storage the extra data that QuickShop needs or from 3rd-addon

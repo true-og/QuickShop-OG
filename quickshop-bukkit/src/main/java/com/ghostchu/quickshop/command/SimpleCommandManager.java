@@ -15,6 +15,13 @@ import com.ghostchu.quickshop.util.performance.PerfMonitor;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.Reloadable;
 import com.google.common.collect.ImmutableList;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
 import lombok.Data;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
@@ -26,19 +33,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
-
 @Data
 @SuppressWarnings("unchecked")
 public class SimpleCommandManager implements CommandManager, TabCompleter, CommandExecutor, SubPasteItem, Reloadable {
     private static final String[] EMPTY_ARGS = new String[0];
-    private final List<CommandContainer> cmds = new CopyOnWriteArrayList<>(); //Because we open to allow register, so this should be thread-safe
+    private final List<CommandContainer> cmds =
+            new CopyOnWriteArrayList<>(); // Because we open to allow register, so this should be thread-safe
     private final QuickShop plugin;
     private final CommandContainer rootContainer;
 
@@ -53,224 +53,190 @@ public class SimpleCommandManager implements CommandManager, TabCompleter, Comma
                 .permission(null)
                 .executor(new SubCommand_ROOT(plugin))
                 .build();
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("help")
-                        .permission(null)
-                        .executor(new SubCommand_Help(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("unlimited")
-                        .permission("quickshop.unlimited")
-                        .executor(new SubCommand_Unlimited(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("silentunlimited")
-                        .hidden(true)
-                        .permission("quickshop.unlimited")
-                        .executor(new SubCommand_SilentUnlimited(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("transfer")
-                        .permission("quickshop.transfer")
-                        .executor(new SubCommand_Transfer(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("setowner")
-                        .permission("quickshop.setowner")
-                        .executor(new SubCommand_SetOwner(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("owner")
-                        .hidden(true)
-                        .permission("quickshop.setowner")
-                        .executor(new SubCommand_SetOwner(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("amount")
-                        .permission(null)
-                        .executor(new SubCommand_Amount(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("buy")
-                        .permission("quickshop.create.buy")
-                        .executor(new SubCommand_Buy(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("sell")
-                        .permission("quickshop.create.sell")
-                        .executor(new SubCommand_Sell(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("silentbuy")
-                        .hidden(true)
-                        .permission("quickshop.create.buy")
-                        .executor(new SubCommand_SilentBuy(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("silentsell")
-                        .hidden(true)
-                        .permission("quickshop.create.sell")
-                        .executor(new SubCommand_SilentSell(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("price")
-                        .permission("quickshop.create.changeprice")
-                        .executor(new SubCommand_Price(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("remove")
-                        .permission(null)
-                        .executor(new SubCommand_Remove(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("silentremove")
-                        .hidden(true)
-                        .permission(null)
-                        .executor(new SubCommand_SilentRemove(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("empty")
-                        .permission("quickshop.empty")
-                        .executor(new SubCommand_Empty(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("refill")
-                        .permission("quickshop.refill")
-                        .executor(new SubCommand_Refill(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("silentempty")
-                        .hidden(true)
-                        .permission("quickshop.empty")
-                        .executor(new SubCommand_SilentEmpty(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("silentpreview")
-                        .hidden(true)
-                        .permission("quickshop.preview")
-                        .executor(new SubCommand_SilentPreview(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("silenttoggledisplay")
-                        .hidden(true)
-                        .permission("quickshop.toggledisplay")
-                        .executor(new SubCommand_SilentToggleDisplay(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("clean")
-                        .permission("quickshop.clean")
-                        .executor(new SubCommand_Clean(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("reload")
-                        .permission("quickshop.reload")
-                        .executor(new SubCommand_Reload(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("about")
-                        .permission("quickshop.about")
-                        .executor(new SubCommand_About(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("debug")
-                        .permission("quickshop.debug")
-                        .executor(new SubCommand_Debug(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("fetchmessage")
-                        .permission("quickshop.fetchmessage")
-                        .executor(new SubCommand_FetchMessage())
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("info")
-                        .permission("quickshop.info")
-                        .executor(new SubCommand_Info(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("paste")
-                        .permission("quickshop.paste")
-                        .executor(new SubCommand_Paste(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("staff")
-                        .permission("quickshop.staff")
-                        .executor(new SubCommand_Staff(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("create")
-                        .permission("quickshop.create.cmd")
-                        .permission("quickshop.create.sell")
-                        .executor(new SubCommand_Create(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("find")
-                        .permission("quickshop.find")
-                        .executor(new SubCommand_Find(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("supercreate")
-                        .permission("quickshop.create.admin")
-                        .permission("quickshop.create.sell")
-                        .executor(new SubCommand_SuperCreate(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("cleanghost")
-                        .permission("quickshop.cleanghost")
-                        .hidden(true)
-                        .executor(new SubCommand_CleanGhost(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("reset")
-                        .hidden(true)
-                        .permission("quickshop.reset")
-                        .executor(new SubCommand_Reset(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("recovery")
-                        .hidden(true)
-                        .permission("quickshop.recovery")
-                        .executor(new SubCommand_Recovery(plugin))
-                        .build());
-        registerCmd(
-                CommandContainer.builder()
-                        .prefix("export")
-                        .hidden(true)
-                        .permission("quickshop.export")
-                        .executor(new SubCommand_Export(plugin))
-                        .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("help")
+                .permission(null)
+                .executor(new SubCommand_Help(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("unlimited")
+                .permission("quickshop.unlimited")
+                .executor(new SubCommand_Unlimited(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("silentunlimited")
+                .hidden(true)
+                .permission("quickshop.unlimited")
+                .executor(new SubCommand_SilentUnlimited(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("transfer")
+                .permission("quickshop.transfer")
+                .executor(new SubCommand_Transfer(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("setowner")
+                .permission("quickshop.setowner")
+                .executor(new SubCommand_SetOwner(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("owner")
+                .hidden(true)
+                .permission("quickshop.setowner")
+                .executor(new SubCommand_SetOwner(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("amount")
+                .permission(null)
+                .executor(new SubCommand_Amount(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("buy")
+                .permission("quickshop.create.buy")
+                .executor(new SubCommand_Buy(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("sell")
+                .permission("quickshop.create.sell")
+                .executor(new SubCommand_Sell(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("silentbuy")
+                .hidden(true)
+                .permission("quickshop.create.buy")
+                .executor(new SubCommand_SilentBuy(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("silentsell")
+                .hidden(true)
+                .permission("quickshop.create.sell")
+                .executor(new SubCommand_SilentSell(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("price")
+                .permission("quickshop.create.changeprice")
+                .executor(new SubCommand_Price(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("remove")
+                .permission(null)
+                .executor(new SubCommand_Remove(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("silentremove")
+                .hidden(true)
+                .permission(null)
+                .executor(new SubCommand_SilentRemove(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("empty")
+                .permission("quickshop.empty")
+                .executor(new SubCommand_Empty(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("refill")
+                .permission("quickshop.refill")
+                .executor(new SubCommand_Refill(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("silentempty")
+                .hidden(true)
+                .permission("quickshop.empty")
+                .executor(new SubCommand_SilentEmpty(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("silentpreview")
+                .hidden(true)
+                .permission("quickshop.preview")
+                .executor(new SubCommand_SilentPreview(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("silenttoggledisplay")
+                .hidden(true)
+                .permission("quickshop.toggledisplay")
+                .executor(new SubCommand_SilentToggleDisplay(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("clean")
+                .permission("quickshop.clean")
+                .executor(new SubCommand_Clean(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("reload")
+                .permission("quickshop.reload")
+                .executor(new SubCommand_Reload(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("about")
+                .permission("quickshop.about")
+                .executor(new SubCommand_About(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("debug")
+                .permission("quickshop.debug")
+                .executor(new SubCommand_Debug(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("fetchmessage")
+                .permission("quickshop.fetchmessage")
+                .executor(new SubCommand_FetchMessage())
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("info")
+                .permission("quickshop.info")
+                .executor(new SubCommand_Info(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("paste")
+                .permission("quickshop.paste")
+                .executor(new SubCommand_Paste(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("staff")
+                .permission("quickshop.staff")
+                .executor(new SubCommand_Staff(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("create")
+                .permission("quickshop.create.cmd")
+                .permission("quickshop.create.sell")
+                .executor(new SubCommand_Create(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("find")
+                .permission("quickshop.find")
+                .executor(new SubCommand_Find(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("supercreate")
+                .permission("quickshop.create.admin")
+                .permission("quickshop.create.sell")
+                .executor(new SubCommand_SuperCreate(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("cleanghost")
+                .permission("quickshop.cleanghost")
+                .hidden(true)
+                .executor(new SubCommand_CleanGhost(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("reset")
+                .hidden(true)
+                .permission("quickshop.reset")
+                .executor(new SubCommand_Reset(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("recovery")
+                .hidden(true)
+                .permission("quickshop.recovery")
+                .executor(new SubCommand_Recovery(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("export")
+                .hidden(true)
+                .permission("quickshop.export")
+                .executor(new SubCommand_Export(plugin))
+                .build());
         registerCmd(CommandContainer.builder()
                 .prefix("size")
                 .permission("quickshop.create.stacks")
@@ -341,7 +307,6 @@ public class SimpleCommandManager implements CommandManager, TabCompleter, Comma
                 .permission("quickshop.benefit")
                 .executor(new SubCommand_Benefit(plugin))
                 .build());
-
     }
 
     /**
@@ -378,41 +343,61 @@ public class SimpleCommandManager implements CommandManager, TabCompleter, Comma
             }
         }
         if (sender instanceof Player player && playSoundOnCommand) {
-            ((Player) sender)
-                    .playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 80.0F, 1.0F);
+            ((Player) sender).playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 80.0F, 1.0F);
         }
 
         if (cmdArg.length == 0) {
-            //Handle main command
+            // Handle main command
             rootContainer.getExecutor().onCommand_Internal(capture(sender), commandLabel, EMPTY_ARGS);
         } else {
-            //Handle subcommand
+            // Handle subcommand
             String[] passThroughArgs = new String[cmdArg.length - 1];
             System.arraycopy(cmdArg, 1, passThroughArgs, 0, passThroughArgs.length);
             for (CommandContainer container : cmds) {
                 if (!container.getPrefix().equalsIgnoreCase(cmdArg[0])) {
                     continue;
                 }
-                if (container.isDisabled() || (container.getDisabledSupplier() != null && container.getDisabledSupplier().get())) {
+                if (container.isDisabled()
+                        || (container.getDisabledSupplier() != null
+                                && container.getDisabledSupplier().get())) {
                     MsgUtil.sendDirectMessage(sender, container.getDisableText(sender));
                     return true;
                 }
                 if (!isAdapt(container, sender)) {
-                    plugin.text().of(sender, "command-type-mismatch", container.getExecutorType().getSimpleName()).send();
+                    plugin.text()
+                            .of(
+                                    sender,
+                                    "command-type-mismatch",
+                                    container.getExecutorType().getSimpleName())
+                            .send();
                     return true;
                 }
                 List<String> requirePermissions = container.getPermissions();
                 List<String> selectivePermissions = container.getSelectivePermissions();
-                if (!checkPermissions(sender, commandLabel, passThroughArgs, requirePermissions, PermissionType.REQUIRE, Action.EXECUTE)) {
+                if (!checkPermissions(
+                        sender,
+                        commandLabel,
+                        passThroughArgs,
+                        requirePermissions,
+                        PermissionType.REQUIRE,
+                        Action.EXECUTE)) {
                     plugin.text().of(sender, "no-permission").send();
                     return true;
                 }
-                if (!checkPermissions(sender, commandLabel, passThroughArgs, selectivePermissions, PermissionType.SELECTIVE, Action.EXECUTE)) {
+                if (!checkPermissions(
+                        sender,
+                        commandLabel,
+                        passThroughArgs,
+                        selectivePermissions,
+                        PermissionType.SELECTIVE,
+                        Action.EXECUTE)) {
                     plugin.text().of(sender, "no-permission").send();
                     return true;
                 }
                 Log.debug("Execute container: " + container.getPrefix() + " - " + cmdArg[0]);
-                try (PerfMonitor ignored = new PerfMonitor("Execute command " + container.getPrefix() + " " + CommonUtil.array2String(passThroughArgs), Duration.of(2, ChronoUnit.SECONDS))) {
+                try (PerfMonitor ignored = new PerfMonitor(
+                        "Execute command " + container.getPrefix() + " " + CommonUtil.array2String(passThroughArgs),
+                        Duration.of(2, ChronoUnit.SECONDS))) {
                     container.getExecutor().onCommand_Internal(capture(sender), commandLabel, passThroughArgs);
                 }
                 return true;
@@ -433,7 +418,13 @@ public class SimpleCommandManager implements CommandManager, TabCompleter, Comma
         return container.getExecutorType().isInstance(sender);
     }
 
-    private boolean checkPermissions(CommandSender sender, String commandLabel, String[] cmdArg, List<String> permissionList, PermissionType permissionType, Action action) {
+    private boolean checkPermissions(
+            CommandSender sender,
+            String commandLabel,
+            String[] cmdArg,
+            List<String> permissionList,
+            PermissionType permissionType,
+            Action action) {
         if (permissionList == null || permissionList.isEmpty()) {
             return true;
         }
@@ -442,15 +433,14 @@ public class SimpleCommandManager implements CommandManager, TabCompleter, Comma
                 if (requirePermission != null
                         && !requirePermission.isEmpty()
                         && !plugin.perm().hasPermission(sender, requirePermission)) {
-                    Log.debug(
-                            "Sender "
-                                    + sender.getName()
-                                    + " trying " + action.getName() + " the command: "
-                                    + commandLabel
-                                    + " "
-                                    + CommonUtil.array2String(cmdArg)
-                                    + ", but no permission "
-                                    + requirePermission);
+                    Log.debug("Sender "
+                            + sender.getName()
+                            + " trying " + action.getName() + " the command: "
+                            + commandLabel
+                            + " "
+                            + CommonUtil.array2String(cmdArg)
+                            + ", but no permission "
+                            + requirePermission);
                     return false;
                 }
             }
@@ -464,15 +454,14 @@ public class SimpleCommandManager implements CommandManager, TabCompleter, Comma
                 }
             }
             if (Util.isDevMode()) {
-                Log.debug(
-                        "Sender "
-                                + sender.getName()
-                                + " trying " + action + " the command: "
-                                + commandLabel
-                                + " "
-                                + CommonUtil.array2String(cmdArg)
-                                + ", but does no have one of those permissions: "
-                                + permissionList);
+                Log.debug("Sender "
+                        + sender.getName()
+                        + " trying " + action + " the command: "
+                        + commandLabel
+                        + " "
+                        + CommonUtil.array2String(cmdArg)
+                        + ", but does no have one of those permissions: "
+                        + permissionList);
             }
             return false;
         }
@@ -506,17 +495,28 @@ public class SimpleCommandManager implements CommandManager, TabCompleter, Comma
                 }
                 List<String> requirePermissions = container.getPermissions();
                 List<String> selectivePermissions = container.getSelectivePermissions();
-                if (!checkPermissions(sender, commandLabel, passThroughArgs, requirePermissions, PermissionType.REQUIRE, Action.TAB_COMPLETE)) {
+                if (!checkPermissions(
+                        sender,
+                        commandLabel,
+                        passThroughArgs,
+                        requirePermissions,
+                        PermissionType.REQUIRE,
+                        Action.TAB_COMPLETE)) {
                     return Collections.emptyList();
                 }
-                if (!checkPermissions(sender, commandLabel, passThroughArgs, selectivePermissions, PermissionType.SELECTIVE, Action.TAB_COMPLETE)) {
+                if (!checkPermissions(
+                        sender,
+                        commandLabel,
+                        passThroughArgs,
+                        selectivePermissions,
+                        PermissionType.SELECTIVE,
+                        Action.TAB_COMPLETE)) {
                     return Collections.emptyList();
                 }
                 if (Util.isDevMode()) {
                     Log.debug("Tab-complete container: " + container.getPrefix());
                 }
                 return container.getExecutor().onTabComplete_Internal(capture(sender), commandLabel, passThroughArgs);
-
             }
             return Collections.emptyList();
         }
@@ -539,7 +539,11 @@ public class SimpleCommandManager implements CommandManager, TabCompleter, Comma
         cmds.removeIf(container::equals);
         cmds.add(container);
         cmds.sort(Comparator.comparing(CommandContainer::getPrefix));
-        Log.debug(Level.INFO, "Registered subcommand: " + container.getPrefix() + " - " + container.getExecutor().getClass().getName(), Log.Caller.create());
+        Log.debug(
+                Level.INFO,
+                "Registered subcommand: " + container.getPrefix() + " - "
+                        + container.getExecutor().getClass().getName(),
+                Log.Caller.create());
     }
 
     @Override
@@ -563,7 +567,12 @@ public class SimpleCommandManager implements CommandManager, TabCompleter, Comma
         HTMLTable table = new HTMLTable(2);
         table.setTableTitle("Prefix", "Permissions", "Selective Permissions", "Executor Type", "Binding");
         for (CommandContainer cmd : this.cmds) {
-            table.insert(cmd.getPrefix(), CommonUtil.list2String(cmd.getPermissions()), CommonUtil.list2String(cmd.getSelectivePermissions()), cmd.getExecutorType(), cmd.getExecutor().getClass().getName());
+            table.insert(
+                    cmd.getPrefix(),
+                    CommonUtil.list2String(cmd.getPermissions()),
+                    CommonUtil.list2String(cmd.getSelectivePermissions()),
+                    cmd.getExecutorType(),
+                    cmd.getExecutor().getClass().getName());
         }
         return table.render();
     }

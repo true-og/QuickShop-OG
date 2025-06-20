@@ -22,15 +22,14 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
+import java.util.*;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-
-import java.util.*;
-import java.util.logging.Level;
 
 public final class Main extends CompatibilityModule implements Listener {
     private StateFlag createFlag;
@@ -43,8 +42,10 @@ public final class Main extends CompatibilityModule implements Listener {
         FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
         try {
             // create a flag with the name "my-custom-flag", defaulting to true
-            StateFlag createFlag = new StateFlag("quickshophikari-create", getConfig().getBoolean("create.default-allow", false));
-            StateFlag tradeFlag = new StateFlag("quickshophikari-trade", getConfig().getBoolean("trade.default-allow", true));
+            StateFlag createFlag =
+                    new StateFlag("quickshophikari-create", getConfig().getBoolean("create.default-allow", false));
+            StateFlag tradeFlag =
+                    new StateFlag("quickshophikari-trade", getConfig().getBoolean("trade.default-allow", true));
             registry.register(createFlag);
             registry.register(tradeFlag);
             this.createFlag = createFlag;
@@ -73,7 +74,6 @@ public final class Main extends CompatibilityModule implements Listener {
         super.onLoad();
     }
 
-
     @Override
     public void init() {
         // There no init stuffs need to do
@@ -87,10 +87,12 @@ public final class Main extends CompatibilityModule implements Listener {
         if (manager == null) {
             return;
         }
-        ApplicableRegionSet set = manager.getApplicableRegions(BlockVector3.at(shopLoc.getX(), shopLoc.getY(), shopLoc.getZ()));
+        ApplicableRegionSet set =
+                manager.getApplicableRegions(BlockVector3.at(shopLoc.getX(), shopLoc.getY(), shopLoc.getZ()));
         for (ProtectedRegion region : set.getRegions()) {
             if (region.getOwners().contains(event.getAuthorizer())) {
-                if (event.getNamespace().equals(QuickShop.getInstance().getJavaPlugin()) && event.getPermission().equals(BuiltInShopPermission.DELETE.getRawNode())) {
+                if (event.getNamespace().equals(QuickShop.getInstance().getJavaPlugin())
+                        && event.getPermission().equals(BuiltInShopPermission.DELETE.getRawNode())) {
                     event.setResult(true);
                 }
             }
@@ -104,10 +106,13 @@ public final class Main extends CompatibilityModule implements Listener {
             RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
             RegionQuery query = container.createQuery();
             if (!query.testState(BukkitAdapter.adapt(event.getLocation()), localPlayer, this.createFlag)) {
-                event.setCancelled(true, getApi().getTextManager().of(event.getCreator(), "addon.worldguard.creation-flag-test-failed").forLocale());
+                event.setCancelled(
+                        true,
+                        getApi().getTextManager()
+                                .of(event.getCreator(), "addon.worldguard.creation-flag-test-failed")
+                                .forLocale());
             }
         });
-
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -117,15 +122,27 @@ public final class Main extends CompatibilityModule implements Listener {
             RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
             RegionQuery query = container.createQuery();
             if (!query.testState(BukkitAdapter.adapt(event.getShop().getLocation()), localPlayer, this.createFlag)) {
-                event.setCancelled(true, getApi().getTextManager().of(event.getCreator(), "addon.worldguard.creation-flag-test-failed").forLocale());
+                event.setCancelled(
+                        true,
+                        getApi().getTextManager()
+                                .of(event.getCreator(), "addon.worldguard.creation-flag-test-failed")
+                                .forLocale());
                 return;
             }
-            Set<ProtectedRegion> regions = container.createQuery().getApplicableRegions(BukkitAdapter.adapt(event.getShop().getLocation())).getRegions();
+            Set<ProtectedRegion> regions = container
+                    .createQuery()
+                    .getApplicableRegions(BukkitAdapter.adapt(event.getShop().getLocation()))
+                    .getRegions();
             List<Shop> shops = new ArrayList<>();
-            regions.forEach(r -> shops.addAll(getRegionShops(r, event.getShop().getLocation().getWorld()).values()));
+            regions.forEach(r -> shops.addAll(
+                    getRegionShops(r, event.getShop().getLocation().getWorld()).values()));
             if (limitPerRegion > 0) {
                 if (shops.size() + 1 > limitPerRegion) {
-                    event.setCancelled(true, getApi().getTextManager().of(event.getCreator(), "addon.worldguard.reached-per-region-amount-limit").forLocale());
+                    event.setCancelled(
+                            true,
+                            getApi().getTextManager()
+                                    .of(event.getCreator(), "addon.worldguard.reached-per-region-amount-limit")
+                                    .forLocale());
                 }
             }
         });
@@ -160,7 +177,11 @@ public final class Main extends CompatibilityModule implements Listener {
             RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
             RegionQuery query = container.createQuery();
             if (!query.testState(BukkitAdapter.adapt(event.getShop().getLocation()), localPlayer, this.tradeFlag)) {
-                event.setCancelled(true, getApi().getTextManager().of(event.getPurchaser(), "addon.worldguard.trade-flag-test-failed").forLocale());
+                event.setCancelled(
+                        true,
+                        getApi().getTextManager()
+                                .of(event.getPurchaser(), "addon.worldguard.trade-flag-test-failed")
+                                .forLocale());
             }
         });
     }

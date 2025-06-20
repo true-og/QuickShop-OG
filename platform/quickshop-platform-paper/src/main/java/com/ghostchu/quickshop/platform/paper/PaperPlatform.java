@@ -2,6 +2,7 @@ package com.ghostchu.quickshop.platform.paper;
 
 import com.ghostchu.quickshop.common.util.QuickSLF4JLogger;
 import com.ghostchu.quickshop.platform.Platform;
+import java.util.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -22,8 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
-import java.util.*;
-
 @SuppressWarnings("removal")
 public class PaperPlatform implements Platform {
 
@@ -34,9 +33,7 @@ public class PaperPlatform implements Platform {
     }
 
     @Override
-    public void shutdown() {
-
-    }
+    public void shutdown() {}
 
     @Override
     public @NotNull Component getDisplayName(@NotNull ItemStack stack) {
@@ -169,7 +166,8 @@ public class PaperPlatform implements Platform {
     }
 
     @Override
-    public void sendSignTextChange(@NotNull Player player, @NotNull Sign sign, boolean glowing, @NotNull List<Component> components) {
+    public void sendSignTextChange(
+            @NotNull Player player, @NotNull Sign sign, boolean glowing, @NotNull List<Component> components) {
         player.sendSignChange(sign.getLocation(), components);
     }
 
@@ -185,7 +183,6 @@ public class PaperPlatform implements Platform {
         stack.customName(component);
     }
 
-
     @Override
     public void setLines(@NotNull Sign sign, @NotNull List<Component> component) {
         for (int i = 0; i < Math.min(component.size(), 4); i++) {
@@ -198,7 +195,6 @@ public class PaperPlatform implements Platform {
     public void setLore(@NotNull ItemStack stack, @NotNull Collection<Component> components) {
         stack.lore(new ArrayList<>(components));
     }
-
 
     @Override
     public void updateTranslationMappingSection(@NotNull Map<String, String> mapping) {

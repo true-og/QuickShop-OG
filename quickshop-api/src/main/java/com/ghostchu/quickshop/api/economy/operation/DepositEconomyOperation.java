@@ -18,7 +18,12 @@ public class DepositEconomyOperation implements Operation {
     private boolean committed = false;
     private boolean rollback = false;
 
-    public DepositEconomyOperation(@NotNull Object account, double amount, @NotNull World world, @Nullable String currency, @NotNull EconomyCore economyCore) {
+    public DepositEconomyOperation(
+            @NotNull Object account,
+            double amount,
+            @NotNull World world,
+            @Nullable String currency,
+            @NotNull EconomyCore economyCore) {
         this.account = account;
         this.amount = amount;
         this.world = world;

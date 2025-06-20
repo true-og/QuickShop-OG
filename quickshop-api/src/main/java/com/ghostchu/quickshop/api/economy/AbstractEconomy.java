@@ -4,20 +4,18 @@ import com.ghostchu.quickshop.api.obj.QUser;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.ReloadStatus;
 import com.ghostchu.simplereloadlib.Reloadable;
+import java.util.UUID;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.UUID;
 
 /**
  * Abstract Economy Core
  */
 public abstract class AbstractEconomy implements EconomyCore, Reloadable {
 
-    protected AbstractEconomy() {
-    }
+    protected AbstractEconomy() {}
 
     @Override
     public @NotNull String getName() {
@@ -50,11 +48,12 @@ public abstract class AbstractEconomy implements EconomyCore, Reloadable {
         } else if (obj instanceof OfflinePlayer offlinePlayer) {
             return withdraw(offlinePlayer, amount, world, currency);
         }
-        throw new IllegalArgumentException("The obj argument can only accept one of those type: " +
-                "QUser = player quickshop user object, " +
-                "UUID = player uuid, String = player username, " +
-                "OfflinePlayer = player bukkit offline player object." +
-                " Your given: " + obj.getClass());
+        throw new IllegalArgumentException(
+                "The obj argument can only accept one of those type: " + "QUser = player quickshop user object, "
+                        + "UUID = player uuid, String = player username, "
+                        + "OfflinePlayer = player bukkit offline player object."
+                        + " Your given: "
+                        + obj.getClass());
     }
 
     @Override
@@ -82,11 +81,12 @@ public abstract class AbstractEconomy implements EconomyCore, Reloadable {
         } else if (obj instanceof OfflinePlayer offlinePlayer) {
             return deposit(offlinePlayer, amount, world, currency);
         }
-        throw new IllegalArgumentException("The obj argument can only accept one of those type: " +
-                "QUser = player quickshop user object, " +
-                "UUID = player uuid, String = player username, " +
-                "OfflinePlayer = player bukkit offline player object." +
-                " Your given: " + obj.getClass());
+        throw new IllegalArgumentException(
+                "The obj argument can only accept one of those type: " + "QUser = player quickshop user object, "
+                        + "UUID = player uuid, String = player username, "
+                        + "OfflinePlayer = player bukkit offline player object."
+                        + " Your given: "
+                        + obj.getClass());
     }
 
     @Override
@@ -115,15 +115,17 @@ public abstract class AbstractEconomy implements EconomyCore, Reloadable {
         } else if (obj instanceof OfflinePlayer offlinePlayer) {
             return getBalance(offlinePlayer, world, currency);
         }
-        throw new IllegalArgumentException("The obj argument can only accept one of those type: " +
-                "QUser = player quickshop user object, " +
-                "UUID = player uuid, String = player username, " +
-                "OfflinePlayer = player bukkit offline player object." +
-                " Your given: " + obj.getClass());
+        throw new IllegalArgumentException(
+                "The obj argument can only accept one of those type: " + "QUser = player quickshop user object, "
+                        + "UUID = player uuid, String = player username, "
+                        + "OfflinePlayer = player bukkit offline player object."
+                        + " Your given: "
+                        + obj.getClass());
     }
 
     @Override
-    public boolean transfer(@NotNull Object from, @NotNull Object to, double amount, @NotNull World world, @Nullable String currency) {
+    public boolean transfer(
+            @NotNull Object from, @NotNull Object to, double amount, @NotNull World world, @Nullable String currency) {
         if (!isValid()) {
             return false;
         }
@@ -152,7 +154,8 @@ public abstract class AbstractEconomy implements EconomyCore, Reloadable {
      * @return successed
      */
     @Override
-    public boolean transfer(@NotNull UUID from, @NotNull UUID to, double amount, @NotNull World world, @Nullable String currency) {
+    public boolean transfer(
+            @NotNull UUID from, @NotNull UUID to, double amount, @NotNull World world, @Nullable String currency) {
         if (!isValid()) {
             return false;
         }
@@ -170,7 +173,8 @@ public abstract class AbstractEconomy implements EconomyCore, Reloadable {
     }
 
     @Override
-    public boolean transfer(@NotNull String from, @NotNull String to, double amount, @NotNull World world, @Nullable String currency) {
+    public boolean transfer(
+            @NotNull String from, @NotNull String to, double amount, @NotNull World world, @Nullable String currency) {
         if (!isValid()) {
             return false;
         }

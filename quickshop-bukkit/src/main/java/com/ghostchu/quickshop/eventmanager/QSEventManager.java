@@ -6,6 +6,10 @@ import com.ghostchu.quickshop.util.logger.Log;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.ReloadStatus;
 import com.ghostchu.simplereloadlib.Reloadable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.logging.Level;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.*;
@@ -17,11 +21,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.logging.Level;
 
 public class QSEventManager implements QuickEventManager, Listener, Reloadable {
     private final QuickShop plugin;
@@ -35,23 +34,21 @@ public class QSEventManager implements QuickEventManager, Listener, Reloadable {
 
     private synchronized void rescan() {
         this.ignoredListener.clear();
-        plugin
-                .getConfig()
+        plugin.getConfig()
                 .getStringList("shop.protection-checking-listener-blacklist")
-                .forEach(
-                        input -> {
-                            if (StringUtils.isEmpty(input)) {
-                                return;
-                            }
-                            try {
-                                Class<?> clazz = Class.forName(input);
-                                this.ignoredListener.add(new ListenerContainer(clazz, input));
-                                Log.debug("Successfully added blacklist: [BINDING] " + clazz.getName());
-                            } catch (Exception ignored) {
-                                this.ignoredListener.add(new ListenerContainer(null, input));
-                                Log.debug("Successfully added blacklist: [DYNAMIC] " + input);
-                            }
-                        });
+                .forEach(input -> {
+                    if (StringUtils.isEmpty(input)) {
+                        return;
+                    }
+                    try {
+                        Class<?> clazz = Class.forName(input);
+                        this.ignoredListener.add(new ListenerContainer(clazz, input));
+                        Log.debug("Successfully added blacklist: [BINDING] " + clazz.getName());
+                    } catch (Exception ignored) {
+                        this.ignoredListener.add(new ListenerContainer(null, input));
+                        Log.debug("Successfully added blacklist: [DYNAMIC] " + input);
+                    }
+                });
     }
 
     @Override
@@ -59,13 +56,11 @@ public class QSEventManager implements QuickEventManager, Listener, Reloadable {
         if (event.isAsynchronous()) {
             if (Thread.holdsLock(Bukkit.getPluginManager())) {
                 throw new IllegalStateException(
-                        event.getEventName()
-                                + " cannot be triggered asynchronously from inside synchronized code.");
+                        event.getEventName() + " cannot be triggered asynchronously from inside synchronized code.");
             }
             if (Bukkit.getServer().isPrimaryThread()) {
                 throw new IllegalStateException(
-                        event.getEventName()
-                                + " cannot be triggered asynchronously from primary server thread.");
+                        event.getEventName() + " cannot be triggered asynchronously from primary server thread.");
             }
         } else {
             if (!Bukkit.getServer().isPrimaryThread()) {
@@ -75,8 +70,7 @@ public class QSEventManager implements QuickEventManager, Listener, Reloadable {
         }
 
         if (callBeforePassToMonitor == null) {
-            callBeforePassToMonitor = empty -> {
-            };
+            callBeforePassToMonitor = empty -> {};
         }
 
         fireEvent(event, callBeforePassToMonitor);
@@ -124,14 +118,16 @@ public class QSEventManager implements QuickEventManager, Listener, Reloadable {
                                             ex.getMessage()));
                 }
             } catch (Throwable ex) {
-                Bukkit
-                        .getLogger()
+                Bukkit.getLogger()
                         .log(
                                 Level.SEVERE,
                                 "Could not pass event "
                                         + event.getEventName()
                                         + " to "
-                                        + registration.getPlugin().getDescription().getFullName(),
+                                        + registration
+                                                .getPlugin()
+                                                .getDescription()
+                                                .getFullName(),
                                 ex);
             }
         }
@@ -162,6 +158,7 @@ public class QSEventManager implements QuickEventManager, Listener, Reloadable {
 class ListenerContainer {
     @Nullable
     private final Class<?> clazz;
+
     @NotNull
     private final String clazzName;
 

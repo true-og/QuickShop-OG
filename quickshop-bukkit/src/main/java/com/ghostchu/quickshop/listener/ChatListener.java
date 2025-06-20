@@ -5,12 +5,11 @@ import com.ghostchu.quickshop.util.logger.Log;
 import com.ghostchu.quickshop.util.performance.PerfMonitor;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.ReloadStatus;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 
 /**
  * @author Netherfoam
@@ -24,11 +23,14 @@ public class ChatListener extends AbstractQSListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChat(AsyncPlayerChatEvent e) {
         if (e.isCancelled() && plugin.getConfig().getBoolean("shop.ignore-cancel-chat-event")) {
-            Log.debug("Ignored a chat event (Cancelled by another plugin, you can force process by turn on ignore-cancel-chat-event)");
+            Log.debug(
+                    "Ignored a chat event (Cancelled by another plugin, you can force process by turn on ignore-cancel-chat-event)");
             return;
         }
 
-        if (!plugin.getShopManager().getInteractiveManager().containsKey(e.getPlayer().getUniqueId())) {
+        if (!plugin.getShopManager()
+                .getInteractiveManager()
+                .containsKey(e.getPlayer().getUniqueId())) {
             return;
         }
         try (PerfMonitor ignored = new PerfMonitor("HandleChat", Duration.of(3, ChronoUnit.SECONDS))) {

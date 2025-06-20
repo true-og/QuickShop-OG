@@ -17,6 +17,14 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheStats;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.annotations.SerializedName;
+import java.io.File;
+import java.io.FileReader;
+import java.lang.ref.WeakReference;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -27,22 +35,14 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.FileReader;
-import java.lang.ref.WeakReference;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
 public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
     private final Cache<UUID, Optional<String>> nameCache = CacheBuilder.newBuilder()
             .expireAfterAccess(3, TimeUnit.DAYS)
             .maximumSize(5000)
             .recordStats()
             .build();
-    private final Map<WeakReference<ExecutorService>, Map<Object, CompletableFuture<?>>> handling = new ConcurrentHashMap<>();
+    private final Map<WeakReference<ExecutorService>, Map<Object, CompletableFuture<?>>> handling =
+            new ConcurrentHashMap<>();
     private final QuickShop plugin;
     private final Timer cleanupTimer;
     private final PlayerFinderResolver resolver;
@@ -52,13 +52,17 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
         this.resolver = new PlayerFinderResolver(this, plugin);
         cleanupTimer = new Timer("Failure lookup clean timer");
         plugin.getPasteManager().register(plugin.getJavaPlugin(), this);
-        cleanupTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                nameCache.asMap().entrySet().removeIf(entry -> entry.getValue().isEmpty());
-                handling.entrySet().removeIf(entry -> entry.getKey().get() == null);
-            }
-        }, 0, 1000 * 60 * 60);
+        cleanupTimer.scheduleAtFixedRate(
+                new TimerTask() {
+                    @Override
+                    public void run() {
+                        nameCache.asMap().entrySet().removeIf(entry -> entry.getValue()
+                                .isEmpty());
+                        handling.entrySet().removeIf(entry -> entry.getKey().get() == null);
+                    }
+                },
+                0,
+                1000 * 60 * 60);
     }
 
     public void bakeCaches() {
@@ -69,8 +73,8 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
         }
         Log.debug("Loading usercache.json at " + file.getAbsolutePath());
         try (FileReader reader = new FileReader(file)) {
-            List<UserCacheBean> userCacheBeans = JsonUtil.getGson().fromJson(reader, new TypeToken<List<UserCacheBean>>() {
-            }.getType());
+            List<UserCacheBean> userCacheBeans =
+                    JsonUtil.getGson().fromJson(reader, new TypeToken<List<UserCacheBean>>() {}.getType());
             List<UserCacheBean> fullCacheBeans = userCacheBeans.stream()
                     .filter(b -> b.getUuid() != null)
                     .filter(b -> b.getName() != null)
@@ -82,7 +86,6 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
         }
     }
 
-
     public void cacheInBatch(List<UserCacheBean> cacheBeans) {
         cacheBeans.forEach(b -> nameCache.put(b.getUuid(), Optional.of(b.getName())));
         if (PackageUtil.parsePackageProperly("disableDatabaseCacheWrite").asBoolean(false)) {
@@ -93,7 +96,8 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
         DatabaseHelper databaseHelper = plugin.getDatabaseHelper();
         if (databaseHelper != null) {
             Log.debug("Caching " + cacheBeans.size() + " usernames into database...");
-            databaseHelper.updatePlayerProfileInBatch(batchUpdate)
+            databaseHelper
+                    .updatePlayerProfileInBatch(batchUpdate)
                     .thenAccept(i -> Log.debug("Username caches update successfully, total " + i + " records updated."))
                     .exceptionally((e) -> {
                         Log.debug("Failed to bake caches: " + e.getMessage());
@@ -111,7 +115,8 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
     }
 
     @Override
-    public @Nullable String uuid2Name(@NotNull UUID uuid, boolean writeCache, @NotNull ExecutorService executorService) {
+    public @Nullable String uuid2Name(
+            @NotNull UUID uuid, boolean writeCache, @NotNull ExecutorService executorService) {
         return uuid2NameFuture(uuid, writeCache, executorService).join();
     }
 
@@ -121,7 +126,8 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
     }
 
     @Override
-    public @Nullable UUID name2Uuid(@NotNull String name, boolean writeCache, @NotNull ExecutorService executorService) {
+    public @Nullable UUID name2Uuid(
+            @NotNull String name, boolean writeCache, @NotNull ExecutorService executorService) {
         return name2UuidFuture(name, writeCache, executorService).join();
     }
 
@@ -132,7 +138,8 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
 
     @NotNull
     private Map<Object, CompletableFuture<?>> getExecutorRef(@NotNull ExecutorService executorService) {
-        for (Map.Entry<WeakReference<ExecutorService>, Map<Object, CompletableFuture<?>>> entry : this.handling.entrySet()) {
+        for (Map.Entry<WeakReference<ExecutorService>, Map<Object, CompletableFuture<?>>> entry :
+                this.handling.entrySet()) {
             ExecutorService service = entry.getKey().get();
             if (service == executorService) {
                 return entry.getValue();
@@ -145,27 +152,29 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
     }
 
     @Override
-    public @NotNull CompletableFuture<String> uuid2NameFuture(@NotNull UUID uuid, boolean writeCache, @NotNull ExecutorService executorService) {
+    public @NotNull CompletableFuture<String> uuid2NameFuture(
+            @NotNull UUID uuid, boolean writeCache, @NotNull ExecutorService executorService) {
         Optional<String> lookupName = nameCache.getIfPresent(uuid);
         if (lookupName != null && lookupName.isPresent()) {
             return CompletableFuture.completedFuture(lookupName.get());
         }
 
         Map<Object, CompletableFuture<?>> handling = getExecutorRef(executorService);
-        @SuppressWarnings("unchecked") CompletableFuture<String> inProgress = (CompletableFuture<String>) handling.get(uuid);
+        @SuppressWarnings("unchecked")
+        CompletableFuture<String> inProgress = (CompletableFuture<String>) handling.get(uuid);
         if (inProgress != null) {
-            Log.debug("Reused " + inProgress + " for uuid2Name lookup: uuid=" + uuid + ", writeCache=" + writeCache + ", executorService=" + executorService);
+            Log.debug("Reused " + inProgress + " for uuid2Name lookup: uuid=" + uuid + ", writeCache=" + writeCache
+                    + ", executorService=" + executorService);
             return inProgress;
         }
-        CompletableFuture<String> future =
-                CompletableFuture.supplyAsync(
-                        () -> resolver.uuid2Name(uuid, executorService, (name) -> {
-                            handling.remove(uuid);
-                            if (writeCache) {
-                                cache(uuid, name);
-                            }
-                        }),
-                        QuickExecutor.getPrimaryProfileIoExecutor());
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(
+                () -> resolver.uuid2Name(uuid, executorService, (name) -> {
+                    handling.remove(uuid);
+                    if (writeCache) {
+                        cache(uuid, name);
+                    }
+                }),
+                QuickExecutor.getPrimaryProfileIoExecutor());
         handling.put(uuid, future);
         return future;
     }
@@ -176,27 +185,29 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
     }
 
     @Override
-    public @NotNull CompletableFuture<UUID> name2UuidFuture(@NotNull String name, boolean writeCache, @NotNull ExecutorService executorService) {
+    public @NotNull CompletableFuture<UUID> name2UuidFuture(
+            @NotNull String name, boolean writeCache, @NotNull ExecutorService executorService) {
         for (Map.Entry<UUID, Optional<String>> entry : nameCache.asMap().entrySet()) {
             if (entry.getValue().isPresent() && entry.getValue().get().equals(name)) {
                 return CompletableFuture.completedFuture(entry.getKey());
             }
         }
         Map<Object, CompletableFuture<?>> handling = getExecutorRef(executorService);
-        @SuppressWarnings("unchecked") CompletableFuture<UUID> inProgress = (CompletableFuture<UUID>) handling.get(name);
+        @SuppressWarnings("unchecked")
+        CompletableFuture<UUID> inProgress = (CompletableFuture<UUID>) handling.get(name);
         if (inProgress != null) {
-            Log.debug("Reused " + inProgress + " for name2Uuid lookup: name=" + name + ", writeCache=" + writeCache + ", executorService=" + executorService);
+            Log.debug("Reused " + inProgress + " for name2Uuid lookup: name=" + name + ", writeCache=" + writeCache
+                    + ", executorService=" + executorService);
             return inProgress;
         }
-        CompletableFuture<UUID> future =
-                CompletableFuture.supplyAsync(
-                        () -> resolver.name2Uuid(name, executorService, (uuid) -> {
-                            handling.remove(name);
-                            if (writeCache) {
-                                cache(uuid, name);
-                            }
-                        }),
-                        QuickExecutor.getPrimaryProfileIoExecutor());
+        CompletableFuture<UUID> future = CompletableFuture.supplyAsync(
+                () -> resolver.name2Uuid(name, executorService, (uuid) -> {
+                    handling.remove(name);
+                    if (writeCache) {
+                        cache(uuid, name);
+                    }
+                }),
+                QuickExecutor.getPrimaryProfileIoExecutor());
         handling.put(name, future);
         return future;
     }
@@ -215,7 +226,6 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
             databaseHelper.updatePlayerProfile(uuid, null, name);
         }
     }
-
 
     @Override
     public boolean isCached(@NotNull UUID uuid) {
@@ -253,11 +263,18 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
         }
 
         @Nullable
-        public String uuid2Name(@NotNull UUID uuid, @NotNull ExecutorService executorService, @NotNull Consumer<String> endCallback) {
+        public String uuid2Name(
+                @NotNull UUID uuid, @NotNull ExecutorService executorService, @NotNull Consumer<String> endCallback) {
             String name = null;
             try (PerfMonitor perf = new PerfMonitor("Username Lookup - " + uuid)) {
-                GrabConcurrentTask<String> grabConcurrentTask = new GrabConcurrentTask<>(executorService, new DatabaseFindNameTask(plugin.getDatabaseHelper(), uuid), new BukkitFindNameTask(uuid), new EssentialsXFindNameTask(uuid), new PlayerDBFindNameTask(uuid));
-                name = grabConcurrentTask.invokeAll("Username Lookup - " + uuid, 10, TimeUnit.SECONDS, Objects::nonNull);
+                GrabConcurrentTask<String> grabConcurrentTask = new GrabConcurrentTask<>(
+                        executorService,
+                        new DatabaseFindNameTask(plugin.getDatabaseHelper(), uuid),
+                        new BukkitFindNameTask(uuid),
+                        new EssentialsXFindNameTask(uuid),
+                        new PlayerDBFindNameTask(uuid));
+                name = grabConcurrentTask.invokeAll(
+                        "Username Lookup - " + uuid, 10, TimeUnit.SECONDS, Objects::nonNull);
                 return name;
             } catch (InterruptedException e) {
                 return null;
@@ -267,12 +284,19 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
         }
 
         @NotNull
-        public UUID name2Uuid(@NotNull String name, @NotNull ExecutorService executorService, @NotNull Consumer<UUID> endCallback) {
+        public UUID name2Uuid(
+                @NotNull String name, @NotNull ExecutorService executorService, @NotNull Consumer<UUID> endCallback) {
             UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
             try (PerfMonitor perf = new PerfMonitor("UniqueID Lookup - " + name)) {
-                GrabConcurrentTask<UUID> grabConcurrentTask = new GrabConcurrentTask<>(executorService, new DatabaseFindUUIDTask(plugin.getDatabaseHelper(), name), new BukkitFindUUIDTask(name), new EssentialsXFindUUIDTask(name), new PlayerDBFindUUIDTask(name));
+                GrabConcurrentTask<UUID> grabConcurrentTask = new GrabConcurrentTask<>(
+                        executorService,
+                        new DatabaseFindUUIDTask(plugin.getDatabaseHelper(), name),
+                        new BukkitFindUUIDTask(name),
+                        new EssentialsXFindUUIDTask(name),
+                        new PlayerDBFindUUIDTask(name));
                 // This cannot fail.
-                UUID lookupResult = grabConcurrentTask.invokeAll("UniqueID Lookup - " + name, 15, TimeUnit.SECONDS, Objects::nonNull);
+                UUID lookupResult = grabConcurrentTask.invokeAll(
+                        "UniqueID Lookup - " + name, 15, TimeUnit.SECONDS, Objects::nonNull);
                 if (lookupResult != null) {
                     uuid = lookupResult;
                 }
@@ -316,7 +340,8 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
             if (!PackageUtil.parsePackageProperly("playerDBFindUUIDTask").asBoolean(false)) {
                 return null;
             }
-            HttpResponse<String> response = Unirest.get("https://playerdb.co/api/player/minecraft/" + name).asString();
+            HttpResponse<String> response = Unirest.get("https://playerdb.co/api/player/minecraft/" + name)
+                    .asString();
             PlayerDBResponse playerDBResponse = JsonUtil.getGson().fromJson(response.getBody(), PlayerDBResponse.class);
             if (!playerDBResponse.getSuccess()) {
                 return null;
@@ -328,10 +353,13 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
 
             @SerializedName("code")
             private String code;
+
             @SerializedName("message")
             private String message;
+
             @SerializedName("data")
             private DataDTO data;
+
             @SerializedName("success")
             private Boolean success;
 
@@ -382,14 +410,19 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
                 public static class PlayerDTO {
                     @SerializedName("meta")
                     private MetaDTO meta;
+
                     @SerializedName("username")
                     private String username;
+
                     @SerializedName("id")
                     private String id;
+
                     @SerializedName("raw_id")
                     private String rawId;
+
                     @SerializedName("avatar")
                     private String avatar;
+
                     @SerializedName("name_history")
                     private List<?> nameHistory;
 
@@ -470,7 +503,8 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
             if (!PackageUtil.parsePackageProperly("playerDBFindNameTask").asBoolean(false)) {
                 return null;
             }
-            HttpResponse<String> response = Unirest.get("https://playerdb.co/api/player/minecraft/" + uuid).asString();
+            HttpResponse<String> response = Unirest.get("https://playerdb.co/api/player/minecraft/" + uuid)
+                    .asString();
             PlayerDBResponse playerDBResponse = JsonUtil.getGson().fromJson(response.getBody(), PlayerDBResponse.class);
             if (!playerDBResponse.getSuccess()) {
                 return null;
@@ -482,10 +516,13 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
 
             @SerializedName("code")
             private String code;
+
             @SerializedName("message")
             private String message;
+
             @SerializedName("data")
             private DataDTO data;
+
             @SerializedName("success")
             private Boolean success;
 
@@ -536,14 +573,19 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
                 public static class PlayerDTO {
                     @SerializedName("meta")
                     private MetaDTO meta;
+
                     @SerializedName("username")
                     private String username;
+
                     @SerializedName("id")
                     private String id;
+
                     @SerializedName("raw_id")
                     private String rawId;
+
                     @SerializedName("avatar")
                     private String avatar;
+
                     @SerializedName("name_history")
                     private List<?> nameHistory;
 
@@ -631,7 +673,6 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
         }
     }
 
-
     static class EssentialsXFindUUIDTask implements Supplier<UUID> {
         public final String name;
 
@@ -694,7 +735,6 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
         }
     }
 
-
     static class DatabaseFindNameTask implements Supplier<String> {
         private final DatabaseHelper db;
         private final UUID uuid;
@@ -720,7 +760,8 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
                 Thread.currentThread().interrupt();
                 return null;
             } catch (ExecutionException e) {
-                Log.debug("Error: a exception created while query the database for username looking up: " + e.getMessage());
+                Log.debug("Error: a exception created while query the database for username looking up: "
+                        + e.getMessage());
                 return null;
             } catch (TimeoutException e) {
                 Log.debug("Warning, timeout when query the database for username looking up, slow connection?");
@@ -745,7 +786,7 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
             }
             if (this.db == null) {
                 return null;
-            }/**/
+            } /**/
             try {
                 UUID uuid = db.getPlayerUUID(name).get(30, TimeUnit.SECONDS);
                 Log.debug("Lookup result: " + uuid);
@@ -754,7 +795,8 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
                 Thread.currentThread().interrupt();
                 return null;
             } catch (ExecutionException e) {
-                Log.debug("Error: a exception created while query the database for unique id looking up: " + e.getMessage());
+                Log.debug("Error: a exception created while query the database for unique id looking up: "
+                        + e.getMessage());
                 return null;
             } catch (TimeoutException e) {
                 Log.debug("Warning, timeout when query the database for unique id looking up, slow connection?");

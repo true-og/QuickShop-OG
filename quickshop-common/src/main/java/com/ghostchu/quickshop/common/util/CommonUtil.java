@@ -3,12 +3,6 @@ package com.ghostchu.quickshop.common.util;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -19,10 +13,14 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CommonUtil {
-    private CommonUtil() {
-    }
+    private CommonUtil() {}
 
     /**
      * Convert strArray to String. E.g "Foo, Bar"
@@ -119,7 +117,8 @@ public class CommonUtil {
      */
     @NotNull
     public static String getClassPathRelative(@NotNull Class<?> clazz) {
-        String jarPath = clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
+        String jarPath =
+                clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
         jarPath = URLDecoder.decode(jarPath, StandardCharsets.UTF_8);
         File file = new File(jarPath);
         return getRelativePath(new File("."), file);
@@ -189,11 +188,11 @@ public class CommonUtil {
     // http://www.java2s.com/Tutorials/Java/Data_Type_How_to/Date_Convert/Convert_long_type_timestamp_to_LocalDate_and_LocalDateTime.htm
     public static @NotNull LocalDateTime getDateTimeFromTimestamp(long timestamp) {
         if (timestamp == 0) {
-            return LocalDateTime.ofInstant(Instant.ofEpochMilli(0), TimeZone
-                    .getDefault().toZoneId());
+            return LocalDateTime.ofInstant(
+                    Instant.ofEpochMilli(0), TimeZone.getDefault().toZoneId());
         }
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), TimeZone
-                .getDefault().toZoneId());
+        return LocalDateTime.ofInstant(
+                Instant.ofEpochMilli(timestamp), TimeZone.getDefault().toZoneId());
     }
 
     /**
@@ -278,7 +277,6 @@ public class CommonUtil {
         }
     }
 
-
     public static UUID fromTrimmedUUID(@NotNull String trimmedUUID) {
         StringBuilder builder = new StringBuilder(trimmedUUID.trim());
         /* Backwards adding to avoid index adjustments */
@@ -301,7 +299,6 @@ public class CommonUtil {
         }
         return processors;
     }
-
 
     public static boolean isJson(String str) {
         if (str == null || str.isBlank()) {
@@ -388,7 +385,8 @@ public class CommonUtil {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < nameParts.length; i++) {
             if (!nameParts[i].isEmpty()) {
-                sb.append(Character.toUpperCase(nameParts[i].charAt(0))).append(nameParts[i].substring(1).toLowerCase());
+                sb.append(Character.toUpperCase(nameParts[i].charAt(0)))
+                        .append(nameParts[i].substring(1).toLowerCase());
             }
             if (i + 1 != nameParts.length) {
                 sb.append(" ");
@@ -470,7 +468,8 @@ public class CommonUtil {
      */
     @NotNull
     public static String getClassPath(@NotNull Class<?> clazz) {
-        String jarPath = clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
+        String jarPath =
+                clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
         jarPath = URLDecoder.decode(jarPath, StandardCharsets.UTF_8);
         return jarPath;
     }

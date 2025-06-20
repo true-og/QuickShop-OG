@@ -7,6 +7,8 @@ import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.ReloadStatus;
 import com.google.common.cache.CacheBuilder;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -19,14 +21,10 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
 public class LockListener extends AbstractProtectionListener {
     private static final Object EMPTY_OBJECT = new Object();
-    private final com.google.common.cache.Cache<UUID, Object> lockCoolDown = CacheBuilder.newBuilder()
-            .expireAfterAccess(1, TimeUnit.SECONDS)
-            .build();
+    private final com.google.common.cache.Cache<UUID, Object> lockCoolDown =
+            CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.SECONDS).build();
 
     public LockListener(@NotNull final QuickShop plugin) {
         super(plugin);
@@ -186,5 +184,4 @@ public class LockListener extends AbstractProtectionListener {
             super.unregister();
         }
     }
-
 }

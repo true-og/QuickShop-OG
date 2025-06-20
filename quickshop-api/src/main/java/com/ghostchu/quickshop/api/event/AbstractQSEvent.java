@@ -7,9 +7,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Parent about all events.
- */
 public abstract class AbstractQSEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
@@ -22,11 +19,6 @@ public abstract class AbstractQSEvent extends Event {
         super(async);
     }
 
-    /**
-     * Call event on Bukkit event bus and check if cancelled
-     *
-     * @return Returns true if cancelled, and false if didn't cancel
-     */
     public boolean callCancellableEvent() {
         Bukkit.getPluginManager().callEvent(this);
         if (this instanceof Cancellable cancellable) {
@@ -35,21 +27,22 @@ public abstract class AbstractQSEvent extends Event {
         return false;
     }
 
-    /**
-     * Fire event on Bukkit event bus
-     */
-    public void callEvent() {
+    @Override
+    public boolean callEvent() {
         QuickShopAPI.getPluginInstance().getServer().getPluginManager().callEvent(this);
+        if (this instanceof Cancellable cancellable) {
+            return !cancellable.isCancelled();
+        }
+        return true;
     }
 
     @NotNull
     @Override
     public HandlerList getHandlers() {
-        return getHandlerList();
+        return HANDLERS;
     }
 
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }
-
 }

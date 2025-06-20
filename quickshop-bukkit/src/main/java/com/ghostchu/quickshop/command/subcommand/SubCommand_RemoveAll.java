@@ -1,5 +1,7 @@
 package com.ghostchu.quickshop.command.subcommand;
 
+import static com.ghostchu.quickshop.util.Util.getPlayerList;
+
 import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.api.command.CommandHandler;
 import com.ghostchu.quickshop.api.command.CommandParser;
@@ -8,16 +10,13 @@ import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.obj.QUserImpl;
 import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.logging.container.ShopRemoveLog;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-
-import static com.ghostchu.quickshop.util.Util.getPlayerList;
+import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SubCommand_RemoveAll implements CommandHandler<CommandSender> {
 
@@ -31,13 +30,15 @@ public class SubCommand_RemoveAll implements CommandHandler<CommandSender> {
     public void onCommand(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
         CompletableFuture<QUser> qUserFuture;
         if (parser.getArgs().size() == 1) {
-            qUserFuture = QUserImpl.createAsync(plugin.getPlayerFinder(), parser.getArgs().get(0));
+            qUserFuture = QUserImpl.createAsync(
+                    plugin.getPlayerFinder(), parser.getArgs().get(0));
         } else {
             qUserFuture = QUserImpl.createAsync(plugin.getPlayerFinder(), sender);
         }
         qUserFuture
                 .thenAccept(qUser -> {
-                    QUser executor = QUserImpl.createAsync(plugin.getPlayerFinder(), sender).join();
+                    QUser executor = QUserImpl.createAsync(plugin.getPlayerFinder(), sender)
+                            .join();
                     if (executor.equals(qUser)) {
                         if (!plugin.perm().hasPermission(sender, "quickshop.removeall.self")) {
                             plugin.text().of(sender, "no-permission").send();
@@ -58,22 +59,26 @@ public class SubCommand_RemoveAll implements CommandHandler<CommandSender> {
                     }
                     Util.mainThreadRun(() -> {
                         pendingRemoval.forEach(shop -> {
-                            plugin.logEvent(new ShopRemoveLog(qUser, "Deleting shop " + shop + " as requested by the /quickshop removeall command.", shop.saveToInfoStorage()));
+                            plugin.logEvent(new ShopRemoveLog(
+                                    qUser,
+                                    "Deleting shop " + shop + " as requested by the /quickshop removeall command.",
+                                    shop.saveToInfoStorage()));
                             plugin.getShopManager().deleteShop(shop);
                         });
-                        plugin.text().of(sender, "command.some-shops-removed", pendingRemoval.size()).send();
+                        plugin.text()
+                                .of(sender, "command.some-shops-removed", pendingRemoval.size())
+                                .send();
                     });
-
                 })
                 .exceptionally(err -> {
                     plugin.text().of(sender, "internal-error", err.getMessage()).send();
                     return null;
                 });
-
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+    public @Nullable List<String> onTabComplete(
+            @NotNull CommandSender sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
         return parser.getArgs().size() <= 1 ? getPlayerList() : Collections.emptyList();
     }
 }

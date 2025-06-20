@@ -25,8 +25,7 @@ public class RomanNumber {
         MAP.put(1, "I");
     }
 
-    private RomanNumber() {
-    }
+    private RomanNumber() {}
 
     public static String toRoman(Integer number) {
         return toRoman(number == null ? 1 : number);
@@ -42,5 +41,4 @@ public class RomanNumber {
         }
         return MAP.get(l) + toRoman(number - l);
     }
-
 }

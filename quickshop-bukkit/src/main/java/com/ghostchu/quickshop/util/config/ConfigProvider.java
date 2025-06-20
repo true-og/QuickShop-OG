@@ -1,12 +1,9 @@
 package com.ghostchu.quickshop.util.config;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.api.QuickShopInstanceHolder;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,8 +13,10 @@ import java.nio.file.Files;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 public class ConfigProvider extends QuickShopInstanceHolder {
     private final File configFile;
@@ -61,19 +60,29 @@ public class ConfigProvider extends QuickShopInstanceHolder {
             }
         } catch (IOException | InvalidConfigurationException exception) {
             if (!defaults) {
-                logger.log(Level.SEVERE, "Cannot reading the configuration " + configFile.getName() + ", doing backup configuration and use default", exception);
+                logger.log(
+                        Level.SEVERE,
+                        "Cannot reading the configuration " + configFile.getName()
+                                + ", doing backup configuration and use default",
+                        exception);
                 try {
-                    Files.copy(configFile.toPath(), plugin.getDataFolder().toPath().resolve(configFile.getName() + "-broken-" + UUID.randomUUID() + ".yml"), REPLACE_EXISTING);
+                    Files.copy(
+                            configFile.toPath(),
+                            plugin.getDataFolder()
+                                    .toPath()
+                                    .resolve(configFile.getName() + "-broken-" + UUID.randomUUID() + ".yml"),
+                            REPLACE_EXISTING);
                 } catch (IOException fatalException) {
-                    throw new IllegalStateException("Failed to backup configuration " + configFile.getName(), fatalException);
+                    throw new IllegalStateException(
+                            "Failed to backup configuration " + configFile.getName(), fatalException);
                 }
                 plugin.saveResource(configFile.getName(), true);
                 reload(true);
             } else {
-                throw new IllegalStateException("Failed to load default configuration " + configFile.getName(), exception);
+                throw new IllegalStateException(
+                        "Failed to load default configuration " + configFile.getName(), exception);
             }
         }
-
     }
 
     public void save() {

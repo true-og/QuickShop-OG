@@ -5,12 +5,15 @@ import com.ghostchu.quickshop.platform.Platform;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBTList;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.trueog.utilitiesog.UtilitiesOG;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
@@ -26,25 +29,14 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
 public abstract class AbstractSpigotPlatform implements Platform {
     protected final Logger logger = Logger.getLogger("QuickShop-Hikari");
-    private final Plugin plugin;
     protected Map<String, String> translationMapping;
-    private BukkitAudiences audience;
 
     public AbstractSpigotPlatform(@NotNull Plugin instance) {
-        this.plugin = instance;
-        //TODO use method to replace
         if (Bukkit.getPluginManager().getPlugin("NBTAPI") == null) {
             throw new IllegalStateException("Must install NBT-API if you're running on Spigot server");
         }
-        //this.translationMapping = mapping;
     }
 
     @NotNull
@@ -55,8 +47,8 @@ public abstract class AbstractSpigotPlatform implements Platform {
 
     @Override
     public @NotNull Component getDisplayName(@NotNull ItemStack stack) {
-        if (stack.getItemMeta() != null) {
-            return LegacyComponentSerializer.legacySection().deserialize(stack.getItemMeta().getDisplayName());
+        if (stack.getItemMeta() != null && stack.getItemMeta().hasDisplayName()) {
+            return stack.getItemMeta().displayName();
         }
         return Component.empty();
     }
@@ -64,33 +56,28 @@ public abstract class AbstractSpigotPlatform implements Platform {
     @Override
     public @NotNull Component getDisplayName(@NotNull ItemMeta meta) {
         if (meta.hasDisplayName()) {
-            return LegacyComponentSerializer.legacySection().deserialize(meta.getDisplayName());
+            return meta.displayName();
         }
         return Component.empty();
     }
 
     @Override
     public @NotNull Component getLine(@NotNull Sign sign, int line) {
-        return LegacyComponentSerializer.legacySection().deserialize(sign.getLine(line));
+        return UtilitiesOG.trueogColorize(sign.getLine(line));
     }
 
     @Override
     public @Nullable List<Component> getLore(@NotNull ItemStack stack) {
-        if (!stack.hasItemMeta()) {
-            return null;
-        }
-        if (!stack.getItemMeta().hasLore()) {
-            return null;
-        }
-        return stack.getItemMeta().getLore().stream().map(LegacyComponentSerializer.legacySection()::deserialize).collect(Collectors.toList());
+        if (!stack.hasItemMeta()) return null;
+        ItemMeta meta = stack.getItemMeta();
+        if (!meta.hasLore()) return null;
+        return meta.getLore().stream().map(UtilitiesOG::trueogColorize).collect(Collectors.toList());
     }
 
     @Override
     public @Nullable List<Component> getLore(@NotNull ItemMeta meta) {
-        if (!meta.hasLore()) {
-            return null;
-        }
-        return meta.getLore().stream().map(LegacyComponentSerializer.legacySection()::deserialize).collect(Collectors.toList());
+        if (!meta.hasLore()) return null;
+        return meta.getLore().stream().map(UtilitiesOG::trueogColorize).collect(Collectors.toList());
     }
 
     @Override
@@ -119,80 +106,57 @@ public abstract class AbstractSpigotPlatform implements Platform {
     }
 
     @Override
-    public @NotNull MiniMessage miniMessage() {
+    public MiniMessage miniMessage() {
         return MiniMessage.miniMessage();
     }
 
-
     @Override
     public void sendMessage(@NotNull CommandSender sender, @NotNull Component component) {
-        if (this.audience == null) {
-            this.audience = BukkitAudiences.create(this.plugin);
-        }
-        //this.audience.sender(sender).sendMessage(component);
-        sender.spigot().sendMessage(BungeeComponentSerializer.get().serialize(component));
+        sender.sendMessage(MiniMessage.miniMessage().serialize(component));
     }
 
     @Override
-    public void shutdown() {
-        if (this.audience != null) {
-            this.audience.close();
-        }
-    }
+    public void shutdown() {}
 
     @Override
-    public void sendSignTextChange(@NotNull Player player, @NotNull Sign sign, boolean glowing, @NotNull List<Component> components) {
-        //player.sendSignChange(sign.getLocation(), components.stream().map(com -> LegacyComponentSerializer.legacySection().serialize(com)).toArray(String[]::new));
-    }
+    public void sendSignTextChange(
+            @NotNull Player player, @NotNull Sign sign, boolean glowing, @NotNull List<Component> components) {}
 
     @Override
     public void setDisplayName(@NotNull ItemStack stack, @Nullable Component component) {
-        if (stack.getItemMeta() == null) {
-            return;
-        }
+        if (!stack.hasItemMeta()) return;
         ItemMeta meta = stack.getItemMeta();
-        if (component == null) {
-            meta.setDisplayName(null);
-        } else {
-            meta.setDisplayName(LegacyComponentSerializer.legacySection().serialize(component));
-        }
+        meta.displayName(component);
         stack.setItemMeta(meta);
     }
 
     @Override
     public void setDisplayName(@NotNull Item stack, @Nullable Component component) {
-        if (component == null) {
-            stack.setCustomName(null);
-        } else {
-            stack.setCustomName(LegacyComponentSerializer.legacySection().serialize(component));
-        }
+        stack.setCustomName(component == null ? null : MiniMessage.miniMessage().serialize(component));
     }
 
     @Override
     public void setLines(@NotNull Sign sign, @NotNull List<Component> component) {
-        String EMPTY_LINE_NBT = "{\"text\":\"\"}";
+        String emptyJson = "{\"text\":\"\"}";
         ReadWriteNBT root = NBT.createNBTObject();
-        ReadWriteNBT front_text = root.getOrCreateCompound("front_text"); // > 1.20
-        ReadWriteNBTList<String> messages = front_text.getStringList("messages"); // > 1.20
+        ReadWriteNBT frontText = root.getOrCreateCompound("front_text");
+        ReadWriteNBTList<String> messages = frontText.getStringList("messages");
         for (int i = 0; i < 4; i++) {
             Component com = component.get(i);
-            String json = com == null ? EMPTY_LINE_NBT : GsonComponentSerializer.gson().serialize(com);
+            String json = com == null
+                    ? emptyJson
+                    : "{\"text\":\"" + MiniMessage.miniMessage().serialize(com) + "\"}";
             root.setString("Text" + (i + 1), json);
-            messages.add(json); // > 1.20
+            messages.add(json);
         }
-        // ==== Apply the changes ====
-        NBT.modify(sign, nbt -> {
-            nbt.mergeCompound(root);
-        });
+        NBT.modify(sign, (Consumer<ReadWriteNBT>) nbt -> nbt.mergeCompound(root));
     }
 
     @Override
     public void setLore(@NotNull ItemStack stack, @NotNull Collection<Component> components) {
-        if (!stack.hasItemMeta()) {
-            return;
-        }
+        if (!stack.hasItemMeta()) return;
         ItemMeta meta = stack.getItemMeta();
-        meta.setLore(components.stream().map(LegacyComponentSerializer.legacySection()::serialize).collect(Collectors.toList()));
+        meta.lore(components.stream().collect(Collectors.toList()));
         stack.setItemMeta(meta);
     }
 

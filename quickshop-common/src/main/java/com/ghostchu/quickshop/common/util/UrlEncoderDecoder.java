@@ -11,8 +11,11 @@ import java.util.BitSet;
  */
 @SuppressWarnings("all")
 public class UrlEncoderDecoder {
-    private static final BitSet safeCharacters;   //http://www.java2s.com/Code/Java/Network-Protocol/ProvidesamethodtoencodeanystringintoaURLsafeform.htm
-    private static final char[] hexadecimal = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+    private static final BitSet
+            safeCharacters; // http://www.java2s.com/Code/Java/Network-Protocol/ProvidesamethodtoencodeanystringintoaURLsafeform.htm
+    private static final char[] hexadecimal = {
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+    };
 
     static {
         safeCharacters = new BitSet(256);
@@ -70,7 +73,6 @@ public class UrlEncoderDecoder {
         return decodePath.toString(StandardCharsets.UTF_8);
     }
 
-
     /**
      * Encode a path as required by the URL specification (<a href="http://www.ietf.org/rfc/rfc1738.txt">
      * RFC 1738</a>). This differs from <code>java.net.URLEncoder.encode()</code> which encodes according
@@ -125,7 +127,6 @@ public class UrlEncoderDecoder {
         return rewrittenPath.toString();
     }
 
-
     public static String encodeToLegalPath(String path) {
         int maxBytesPerChar = 10;
         StringBuilder rewrittenPath = new StringBuilder(path.length());
@@ -140,7 +141,7 @@ public class UrlEncoderDecoder {
 
         for (int i = 0; i < path.length(); i++) {
             int c = path.charAt(i);
-            if (safeCharacters.get(c) || (char) c == '%') { //其實只加了這一小行，讓已經被encode的值不要再被encode了
+            if (safeCharacters.get(c) || (char) c == '%') { // 其實只加了這一小行，讓已經被encode的值不要再被encode了
                 rewrittenPath.append((char) c);
             } else {
                 try {

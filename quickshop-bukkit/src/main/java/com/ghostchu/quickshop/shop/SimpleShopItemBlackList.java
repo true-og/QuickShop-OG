@@ -6,15 +6,14 @@ import com.ghostchu.quickshop.util.ItemExpression;
 import com.ghostchu.quickshop.util.paste.item.SubPasteItem;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.Reloadable;
-import org.bukkit.ChatColor;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import org.bukkit.ChatColor;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 public class SimpleShopItemBlackList implements Reloadable, ShopItemBlackList, SubPasteItem {
     private final QuickShop plugin;
@@ -86,7 +85,6 @@ public class SimpleShopItemBlackList implements Reloadable, ShopItemBlackList, S
         }
         return false;
     }
-
 
     @Override
     public ReloadResult reloadModule() throws Exception {

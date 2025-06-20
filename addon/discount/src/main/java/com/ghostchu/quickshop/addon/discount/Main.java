@@ -5,14 +5,13 @@ import com.ghostchu.quickshop.addon.discount.command.DiscountCommand;
 import com.ghostchu.quickshop.addon.discount.listener.MainListener;
 import com.ghostchu.quickshop.api.command.CommandContainer;
 import com.ghostchu.quickshop.api.shop.permission.BuiltInShopPermissionGroup;
+import java.io.IOException;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.IOException;
-import java.util.logging.Level;
 
 public final class Main extends JavaPlugin implements Listener {
     static Main instance;
@@ -43,20 +42,27 @@ public final class Main extends JavaPlugin implements Listener {
             return;
         }
         getLogger().info("Registering the per shop permissions...");
-        plugin.getShopPermissionManager().registerPermission(BuiltInShopPermissionGroup.ADMINISTRATOR.getNamespacedNode(), this, "discount_code_create");
-        plugin.getShopPermissionManager().registerPermission(BuiltInShopPermissionGroup.ADMINISTRATOR.getNamespacedNode(), this, "discount_code_use");
-        plugin.getShopPermissionManager().registerPermission(BuiltInShopPermissionGroup.EVERYONE.getNamespacedNode(), this, "discount_code_use");
-        plugin.getShopPermissionManager().registerPermission(BuiltInShopPermissionGroup.STAFF.getNamespacedNode(), this, "discount_code_use");
+        plugin.getShopPermissionManager()
+                .registerPermission(
+                        BuiltInShopPermissionGroup.ADMINISTRATOR.getNamespacedNode(), this, "discount_code_create");
+        plugin.getShopPermissionManager()
+                .registerPermission(
+                        BuiltInShopPermissionGroup.ADMINISTRATOR.getNamespacedNode(), this, "discount_code_use");
+        plugin.getShopPermissionManager()
+                .registerPermission(BuiltInShopPermissionGroup.EVERYONE.getNamespacedNode(), this, "discount_code_use");
+        plugin.getShopPermissionManager()
+                .registerPermission(BuiltInShopPermissionGroup.STAFF.getNamespacedNode(), this, "discount_code_use");
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> codeManager.cleanExpiredCodes(), 1L, 20 * 60 * 30);
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> codeManager.saveDatabase(), 1L, 20 * 60 * 15);
         getLogger().info("Registering the listeners...");
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(new MainListener(this), this);
-        plugin.getCommandManager().registerCmd(
-                CommandContainer
-                        .builder()
+        plugin.getCommandManager()
+                .registerCmd(CommandContainer.builder()
                         .prefix("discount")
-                        .description((locale) -> plugin.text().of("addon.discount.commands.discount.description").forLocale(locale))
+                        .description((locale) -> plugin.text()
+                                .of("addon.discount.commands.discount.description")
+                                .forLocale(locale))
                         .permission("quickshopaddon.discount.use")
                         .executor(new DiscountCommand(this, plugin))
                         .build());

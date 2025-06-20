@@ -6,14 +6,13 @@ import com.ghostchu.quickshop.api.database.bean.DataRecord;
 import com.ghostchu.quickshop.api.shop.Shop;
 import com.ghostchu.quickshop.common.util.CommonUtil;
 import com.google.common.html.HtmlEscapers;
+import java.text.DecimalFormat;
+import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.text.DecimalFormat;
-import java.util.UUID;
 
 public class MetricDataUtil {
 
@@ -74,7 +73,12 @@ public class MetricDataUtil {
             if (shop != null) {
                 Location location = shop.getLocation();
                 String template = "%s %s,%s,%s";
-                nameBuilder.append(String.format(template, location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ()));
+                nameBuilder.append(String.format(
+                        template,
+                        location.getWorld().getName(),
+                        location.getBlockX(),
+                        location.getBlockY(),
+                        location.getBlockZ()));
             } else {
                 nameBuilder.append("N/A");
             }
@@ -85,7 +89,12 @@ public class MetricDataUtil {
     @NotNull
     public String loc2String(@NotNull Location location) {
         String template = "%s %s,%s,%s";
-        return String.format(template, location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        return String.format(
+                template,
+                location.getWorld().getName(),
+                location.getBlockX(),
+                location.getBlockY(),
+                location.getBlockZ());
     }
 
     @NotNull

@@ -10,7 +10,6 @@ import com.ghostchu.quickshop.util.logger.Log;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-
 public class SubCommand_SilentEmpty extends SubCommand_SilentBase {
 
     public SubCommand_SilentEmpty(QuickShop plugin) {

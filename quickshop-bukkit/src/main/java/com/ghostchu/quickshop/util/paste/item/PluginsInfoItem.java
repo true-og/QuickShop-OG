@@ -3,11 +3,10 @@ package com.ghostchu.quickshop.util.paste.item;
 import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.common.util.CommonUtil;
 import com.ghostchu.quickshop.util.paste.util.HTMLTable;
+import java.util.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public class PluginsInfoItem implements SubPasteItem {
     @Override
@@ -25,7 +24,8 @@ public class PluginsInfoItem implements SubPasteItem {
         HTMLTable table = new HTMLTable(6);
         table.setTableTitle("Name", "Status", "Version", "API Version", "Addon", "Main-Class");
         for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-            table.insert(plugin.getName(),
+            table.insert(
+                    plugin.getName(),
                     CommonUtil.boolean2Status(plugin.isEnabled()),
                     plugin.getDescription().getVersion(),
                     Objects.requireNonNullElse(plugin.getDescription().getAPIVersion(), "N/A"),
@@ -37,6 +37,7 @@ public class PluginsInfoItem implements SubPasteItem {
 
     private boolean isAddon(Plugin plugin) {
         String plugName = QuickShop.getInstance().getJavaPlugin().getName();
-        return plugin.getDescription().getDepend().contains(plugName) || plugin.getDescription().getSoftDepend().contains(plugName);
+        return plugin.getDescription().getDepend().contains(plugName)
+                || plugin.getDescription().getSoftDepend().contains(plugName);
     }
 }

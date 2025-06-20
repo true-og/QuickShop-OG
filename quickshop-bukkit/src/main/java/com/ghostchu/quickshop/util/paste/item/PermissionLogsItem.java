@@ -4,19 +4,22 @@ import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.common.util.CommonUtil;
 import com.ghostchu.quickshop.util.MsgUtil;
 import com.ghostchu.quickshop.util.logger.Log;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.apache.commons.text.StringEscapeUtils;
-import org.jetbrains.annotations.NotNull;
-
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.StringJoiner;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.apache.commons.text.StringEscapeUtils;
+import org.jetbrains.annotations.NotNull;
 
 public class PermissionLogsItem implements SubPasteItem {
     private SimpleDateFormat format;
 
     public PermissionLogsItem() {
-        String timeFormat = LegacyComponentSerializer.legacySection().serialize(QuickShop.getInstance().text().of("timeunit.std-time-format").forLocale(MsgUtil.getDefaultGameLanguageCode()));
+        String timeFormat = LegacyComponentSerializer.legacySection()
+                .serialize(QuickShop.getInstance()
+                        .text()
+                        .of("timeunit.std-time-format")
+                        .forLocale(MsgUtil.getDefaultGameLanguageCode()));
         try {
             format = new SimpleDateFormat(timeFormat);
         } catch (IllegalArgumentException e) {
@@ -37,11 +40,13 @@ public class PermissionLogsItem implements SubPasteItem {
     @NotNull
     private String buildContent() {
         StringJoiner builder = new StringJoiner("\n");
-        List<String> debugLogs = Log.fetchLogs(Log.Type.PERMISSION).stream().map(recordEntry -> "[" + format.format(recordEntry.getTimestamp()) + "] " + recordEntry).toList();
+        List<String> debugLogs = Log.fetchLogs(Log.Type.PERMISSION).stream()
+                .map(recordEntry -> "[" + format.format(recordEntry.getTimestamp()) + "] " + recordEntry)
+                .toList();
         List<String> tail = CommonUtil.tail(debugLogs, 300);
         tail.forEach(builder::add);
-        return "<textarea readonly=\"true\" name=\"permissionquery\" style=\"height: 1000px; width: 100%;\">" +
-                StringEscapeUtils.escapeHtml4(builder.toString()) +
-                "</textarea><br />";
+        return "<textarea readonly=\"true\" name=\"permissionquery\" style=\"height: 1000px; width: 100%;\">"
+                + StringEscapeUtils.escapeHtml4(builder.toString())
+                + "</textarea><br />";
     }
 }

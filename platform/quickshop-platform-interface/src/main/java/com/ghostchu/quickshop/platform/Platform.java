@@ -1,6 +1,9 @@
 package com.ghostchu.quickshop.platform;
 
 import de.tr7zw.nbtapi.NBTItem;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -21,16 +24,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
 public interface Platform {
     void shutdown();
 
-    @NotNull Component getDisplayName(@NotNull ItemStack stack);
+    @NotNull
+    Component getDisplayName(@NotNull ItemStack stack);
 
-    @Nullable Component getDisplayName(@NotNull ItemMeta meta);
+    @Nullable
+    Component getDisplayName(@NotNull ItemMeta meta);
 
     @Nullable
     default String getItemShopId(@NotNull ItemStack stack) {
@@ -45,43 +46,60 @@ public interface Platform {
         return shopId;
     }
 
-    @NotNull HoverEvent<HoverEvent.ShowItem> getItemStackHoverEvent(@NotNull ItemStack stack);
+    @NotNull
+    HoverEvent<HoverEvent.ShowItem> getItemStackHoverEvent(@NotNull ItemStack stack);
 
-    @NotNull Component getLine(@NotNull Sign sign, int line);
+    @NotNull
+    Component getLine(@NotNull Sign sign, int line);
 
-    @Nullable List<Component> getLore(@NotNull ItemStack stack);
+    @Nullable
+    List<Component> getLore(@NotNull ItemStack stack);
 
-    @Nullable List<Component> getLore(@NotNull ItemMeta meta);
+    @Nullable
+    List<Component> getLore(@NotNull ItemMeta meta);
 
-    @NotNull String getMinecraftVersion();
+    @NotNull
+    String getMinecraftVersion();
 
-    @NotNull Component getTranslation(@NotNull Material material);
+    @NotNull
+    Component getTranslation(@NotNull Material material);
 
-    @NotNull Component getTranslation(@NotNull EntityType entity);
+    @NotNull
+    Component getTranslation(@NotNull EntityType entity);
 
-    @NotNull Component getTranslation(@NotNull PotionEffectType potionEffectType);
+    @NotNull
+    Component getTranslation(@NotNull PotionEffectType potionEffectType);
 
-    @NotNull Component getTranslation(@NotNull Enchantment enchantment);
+    @NotNull
+    Component getTranslation(@NotNull Enchantment enchantment);
 
-    @NotNull Component getTranslation(@NotNull ItemStack itemStack);
+    @NotNull
+    Component getTranslation(@NotNull ItemStack itemStack);
 
-    @NotNull String getTranslationKey(@NotNull Material material);
+    @NotNull
+    String getTranslationKey(@NotNull Material material);
 
-    @NotNull String getTranslationKey(@NotNull EntityType entity);
+    @NotNull
+    String getTranslationKey(@NotNull EntityType entity);
 
-    @NotNull String getTranslationKey(@NotNull PotionEffectType potionEffectType);
+    @NotNull
+    String getTranslationKey(@NotNull PotionEffectType potionEffectType);
 
-    @NotNull String getTranslationKey(@NotNull Enchantment enchantment);
+    @NotNull
+    String getTranslationKey(@NotNull Enchantment enchantment);
 
-    @NotNull String getTranslationKey(@NotNull ItemStack stack);
+    @NotNull
+    String getTranslationKey(@NotNull ItemStack stack);
 
-    @NotNull MiniMessage miniMessage();
+    @NotNull
+    MiniMessage miniMessage();
 
     void registerCommand(@NotNull String prefix, @NotNull Command command);
 
     void sendMessage(@NotNull CommandSender sender, @NotNull Component component);
 
-    void sendSignTextChange(@NotNull Player player, @NotNull Sign sign, boolean glowing, @NotNull List<Component> components);
+    void sendSignTextChange(
+            @NotNull Player player, @NotNull Sign sign, boolean glowing, @NotNull List<Component> components);
 
     void setDisplayName(@NotNull ItemStack stack, @Nullable Component component);
 
@@ -93,5 +111,6 @@ public interface Platform {
 
     void updateTranslationMappingSection(@NotNull Map<String, String> mapping);
 
-    @NotNull Logger getSlf4jLogger(@NotNull Plugin parent);
+    @NotNull
+    Logger getSlf4jLogger(@NotNull Plugin parent);
 }

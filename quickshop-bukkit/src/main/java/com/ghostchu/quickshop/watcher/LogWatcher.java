@@ -1,11 +1,6 @@
 package com.ghostchu.quickshop.watcher;
 
 import com.ghostchu.quickshop.QuickShop;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
-import org.apache.commons.compress.compressors.gzip.GzipParameters;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,10 +11,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
+import org.apache.commons.compress.compressors.gzip.GzipParameters;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 public class LogWatcher extends BukkitRunnable implements AutoCloseable {
-    private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS").withZone(ZoneId.systemDefault());
-    private static final DateTimeFormatter LOG_FILE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.systemDefault());
+    private static final DateTimeFormatter DATETIME_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS").withZone(ZoneId.systemDefault());
+    private static final DateTimeFormatter LOG_FILE_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.systemDefault());
     private final Queue<String> logs = new ConcurrentLinkedQueue<>();
 
     private PrintWriter printWriter = null;
@@ -36,17 +37,19 @@ public class LogWatcher extends BukkitRunnable implements AutoCloseable {
                 if ((log.length() / 1024f / 1024f) > plugin.getConfig().getDouble("logging.file-size")) {
                     Path logPath = plugin.getDataFolder().toPath().resolve("logs");
                     Files.createDirectories(logPath);
-                    //Find a available name
+                    // Find a available name
                     Path targetPath;
                     int i = 1;
                     do {
-                        targetPath = logPath.resolve(ZonedDateTime.now().format(LOG_FILE_FORMATTER) + "-" + i + ".log.gz");
+                        targetPath =
+                                logPath.resolve(ZonedDateTime.now().format(LOG_FILE_FORMATTER) + "-" + i + ".log.gz");
                         i++;
                     } while (Files.exists(targetPath));
                     Files.createFile(targetPath);
                     GzipParameters gzipParameters = new GzipParameters();
                     gzipParameters.setFilename(log.getName());
-                    try (GzipCompressorOutputStream archiveOutputStream = new GzipCompressorOutputStream(new BufferedOutputStream(new FileOutputStream(targetPath.toFile())), gzipParameters)) {
+                    try (GzipCompressorOutputStream archiveOutputStream = new GzipCompressorOutputStream(
+                            new BufferedOutputStream(new FileOutputStream(targetPath.toFile())), gzipParameters)) {
                         Files.copy(log.toPath(), archiveOutputStream);
                         archiveOutputStream.finish();
                         if (log.delete()) {
@@ -60,10 +63,10 @@ public class LogWatcher extends BukkitRunnable implements AutoCloseable {
             }
             FileWriter logFileWriter;
             if (deleteFailed) {
-                //If could not delete, just override it
+                // If could not delete, just override it
                 logFileWriter = new FileWriter(log, false);
             } else {
-                //Otherwise append
+                // Otherwise append
                 logFileWriter = new FileWriter(log, true);
             }
             printWriter = new PrintWriter(logFileWriter);
@@ -89,7 +92,7 @@ public class LogWatcher extends BukkitRunnable implements AutoCloseable {
     @Override
     public void run() {
         if (printWriter == null) {
-            //Waiting for init
+            // Waiting for init
             return;
         }
         Iterator<String> iterator = logs.iterator();
@@ -100,5 +103,4 @@ public class LogWatcher extends BukkitRunnable implements AutoCloseable {
         }
         printWriter.flush();
     }
-
 }

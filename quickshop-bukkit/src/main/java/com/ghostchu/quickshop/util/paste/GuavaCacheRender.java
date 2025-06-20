@@ -2,9 +2,8 @@ package com.ghostchu.quickshop.util.paste;
 
 import com.ghostchu.quickshop.util.paste.util.HTMLTable;
 import com.google.common.cache.CacheStats;
-import org.jetbrains.annotations.NotNull;
-
 import java.text.NumberFormat;
+import org.jetbrains.annotations.NotNull;
 
 public class GuavaCacheRender {
     @NotNull
@@ -33,5 +32,4 @@ public class GuavaCacheRender {
     private static String toPercentage(double n) {
         return String.format("%.000f", n * 100) + "%";
     }
-
 }

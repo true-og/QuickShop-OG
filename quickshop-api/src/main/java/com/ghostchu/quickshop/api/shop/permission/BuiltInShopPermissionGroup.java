@@ -1,28 +1,41 @@
 package com.ghostchu.quickshop.api.shop.permission;
 
+import static com.ghostchu.quickshop.api.shop.permission.BuiltInShopPermission.*;
+
 import com.ghostchu.quickshop.api.QuickShopAPI;
 import com.ghostchu.quickshop.api.shop.ShopPermissionAudience;
 import com.google.common.collect.ImmutableList;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.Locale;
-
-import static com.ghostchu.quickshop.api.shop.permission.BuiltInShopPermission.*;
+import org.jetbrains.annotations.NotNull;
 
 public enum BuiltInShopPermissionGroup implements ShopPermissionAudience {
     BLOCKED("blocked", "blocked"),
     EVERYONE("everyone", "everyone", PURCHASE, SHOW_INFORMATION, PREVIEW_SHOP, SEARCH),
-    STAFF("staff", "staff", PURCHASE, SHOW_INFORMATION, PREVIEW_SHOP, SEARCH, ACCESS_INVENTORY,
-            TOGGLE_DISPLAY, SET_SHOPTYPE, SET_PRICE, SET_ITEM, SET_STACK_AMOUNT,
-            SET_CURRENCY, RECEIVE_ALERT, SET_BENEFIT),
+    STAFF(
+            "staff",
+            "staff",
+            PURCHASE,
+            SHOW_INFORMATION,
+            PREVIEW_SHOP,
+            SEARCH,
+            ACCESS_INVENTORY,
+            TOGGLE_DISPLAY,
+            SET_SHOPTYPE,
+            SET_PRICE,
+            SET_ITEM,
+            SET_STACK_AMOUNT,
+            SET_CURRENCY,
+            RECEIVE_ALERT,
+            SET_BENEFIT),
     ADMINISTRATOR("administrator", "administrator", BuiltInShopPermission.values());
 
     private final String node;
     private final String descriptionKey;
     private final List<BuiltInShopPermission> permissions;
 
-    BuiltInShopPermissionGroup(@NotNull String node, @NotNull String descriptionKey, @NotNull BuiltInShopPermission... permissions) {
+    BuiltInShopPermissionGroup(
+            @NotNull String node, @NotNull String descriptionKey, @NotNull BuiltInShopPermission... permissions) {
         this.node = node;
         this.descriptionKey = descriptionKey;
         this.permissions = ImmutableList.copyOf(permissions);

@@ -5,11 +5,10 @@ import com.ghostchu.quickshop.api.command.CommandHandler;
 import com.ghostchu.quickshop.api.command.CommandParser;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.ReloadableContainer;
+import java.util.Map;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 public class SubCommand_Reload implements CommandHandler<CommandSender> {
 
@@ -23,7 +22,8 @@ public class SubCommand_Reload implements CommandHandler<CommandSender> {
     public void onCommand(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
         plugin.text().of(sender, "command.reloading").send();
         plugin.getJavaPlugin().reloadConfig();
-        Map<ReloadableContainer, ReloadResult> container = plugin.getReloadManager().reload();
+        Map<ReloadableContainer, ReloadResult> container =
+                plugin.getReloadManager().reload();
         sender.sendMessage(ChatColor.GOLD + "Reloaded " + container.size() + " modules.");
     }
 }

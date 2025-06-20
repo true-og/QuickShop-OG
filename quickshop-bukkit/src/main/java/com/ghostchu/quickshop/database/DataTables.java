@@ -8,15 +8,13 @@ import cc.carm.lib.easysql.api.enums.IndexType;
 import cc.carm.lib.easysql.api.function.SQLHandler;
 import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.logger.Log;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public enum DataTables {
-
     DATA("data", (table) -> {
         table.addAutoIncrementColumn("id", true); // SHOP DATA ID
         table.addColumn("owner", "VARCHAR(128) NOT NULL"); // SHOP DATA OWNER (ALL-ZERO if this is a server shop)
@@ -25,7 +23,7 @@ public enum DataTables {
         table.addColumn("name", "TEXT"); // SHOP NAME
 
         table.addColumn("type", "INT NOT NULL DEFAULT 0"); // SHOP TYPE (see ShopType enum)
-        table.addColumn("currency", "VARCHAR(64)");  // CURRENCY (NULL means use the default currency)
+        table.addColumn("currency", "VARCHAR(64)"); // CURRENCY (NULL means use the default currency)
         table.addColumn("price", "DECIMAL(32,2) NOT NULL"); // SHOP ITEM PRICE
 
         // UNLIMITED STORAGE (means the shop can sell/buy unlimited amount of items)
@@ -65,10 +63,10 @@ public enum DataTables {
         table.addColumn("shop", "INT UNSIGNED NOT NULL");
 
         table.setIndex(IndexType.PRIMARY_KEY, null, "world", "x", "y", "z");
-//        table.addForeignKey(
-//                "shop", "fk_qs_shop_map", SHOPS.getName(), "id",
-//                ForeignKeyRule.CASCADE, ForeignKeyRule.CASCADE
-//        );
+        //        table.addForeignKey(
+        //                "shop", "fk_qs_shop_map", SHOPS.getName(), "id",
+        //                ForeignKeyRule.CASCADE, ForeignKeyRule.CASCADE
+        //        );
     }),
 
     MESSAGES("message", (table) -> {
@@ -173,14 +171,13 @@ public enum DataTables {
     private String prefix;
     private SQLManager manager;
 
-    DataTables(@NotNull String name,
-               @NotNull SQLHandler<TableCreateBuilder> tableHandler) {
+    DataTables(@NotNull String name, @NotNull SQLHandler<TableCreateBuilder> tableHandler) {
         this.name = name;
         this.tableHandler = tableHandler;
     }
 
-    public static void initializeTables(@NotNull SQLManager sqlManager,
-                                        @NotNull String tablePrefix) throws SQLException {
+    public static void initializeTables(@NotNull SQLManager sqlManager, @NotNull String tablePrefix)
+            throws SQLException {
         for (DataTables value : values()) {
             value.create(sqlManager, tablePrefix);
         }
@@ -225,7 +222,8 @@ public enum DataTables {
         return this.createInsertBatch(this.manager);
     }
 
-    public @NotNull InsertBuilder<PreparedSQLUpdateBatchAction<Integer>> createInsertBatch(@NotNull SQLManager sqlManager) {
+    public @NotNull InsertBuilder<PreparedSQLUpdateBatchAction<Integer>> createInsertBatch(
+            @NotNull SQLManager sqlManager) {
         return sqlManager.createInsertBatch(this.getName());
     }
 
@@ -249,7 +247,8 @@ public enum DataTables {
         return this.createReplaceBatch(this.manager);
     }
 
-    public @NotNull ReplaceBuilder<PreparedSQLUpdateBatchAction<Integer>> createReplaceBatch(@NotNull SQLManager sqlManager) {
+    public @NotNull ReplaceBuilder<PreparedSQLUpdateBatchAction<Integer>> createReplaceBatch(
+            @NotNull SQLManager sqlManager) {
         return sqlManager.createReplaceBatch(this.getName());
     }
 
@@ -275,7 +274,8 @@ public enum DataTables {
         }
         boolean match = false;
         try {
-            try (Connection connection = manager.getConnection(); ResultSet rs = connection.getMetaData().getTables(null, null, "%", null)) {
+            try (Connection connection = manager.getConnection();
+                    ResultSet rs = connection.getMetaData().getTables(null, null, "%", null)) {
                 while (rs.next()) {
                     if (getName().equalsIgnoreCase(rs.getString("TABLE_NAME"))) {
                         match = true;
@@ -298,9 +298,7 @@ public enum DataTables {
 
     public boolean purgeTable(@NotNull SQLManager sqlManager) {
         try {
-            sqlManager.createDelete(this.getName())
-                    .addCondition("1=1")
-                    .build().execute();
+            sqlManager.createDelete(this.getName()).addCondition("1=1").build().execute();
             return true;
         } catch (SQLException e) {
             Log.debug("Failed to purge table " + this.getName() + e);

@@ -4,13 +4,12 @@ import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.api.command.CommandHandler;
 import com.ghostchu.quickshop.api.command.CommandParser;
 import com.ghostchu.quickshop.api.shop.Shop;
+import java.util.Collections;
+import java.util.List;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.List;
 
 public class SubCommand_Refill implements CommandHandler<Player> {
 
@@ -38,7 +37,9 @@ public class SubCommand_Refill implements CommandHandler<Player> {
             if (parser.getArgs().get(0).equals(plugin.getConfig().getString("shop.word-for-trade-all-items"))) {
                 add = shop.getRemainingSpace();
             } else {
-                plugin.text().of(sender, "not-a-number", parser.getArgs().get(0)).send();
+                plugin.text()
+                        .of(sender, "not-a-number", parser.getArgs().get(0))
+                        .send();
                 return;
             }
         }
@@ -49,8 +50,12 @@ public class SubCommand_Refill implements CommandHandler<Player> {
 
     @NotNull
     @Override
-    public List<String> onTabComplete(@NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
-        return parser.getArgs().size() == 1 ? Collections.singletonList(LegacyComponentSerializer.legacySection().serialize(plugin.text().of(sender, "tabcomplete.amount").forLocale())) : Collections.emptyList();
+    public List<String> onTabComplete(
+            @NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+        return parser.getArgs().size() == 1
+                ? Collections.singletonList(LegacyComponentSerializer.legacySection()
+                        .serialize(
+                                plugin.text().of(sender, "tabcomplete.amount").forLocale()))
+                : Collections.emptyList();
     }
-
 }

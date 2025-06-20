@@ -2,10 +2,9 @@ package com.ghostchu.quickshop.api.shop;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.UUID;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Contains shop's moderators infomations, owner, staffs etc.
@@ -67,7 +66,8 @@ public interface ShopModerator {
      *
      * @return Owner's UUID
      */
-    @NotNull UUID getOwner();
+    @NotNull
+    UUID getOwner();
 
     /**
      * Set moderators owner (Shop Owner)
@@ -81,7 +81,8 @@ public interface ShopModerator {
      *
      * @return Staffs
      */
-    @NotNull List<UUID> getStaffs();
+    @NotNull
+    List<UUID> getStaffs();
 
     /**
      * Set moderators staffs
@@ -115,6 +116,6 @@ public interface ShopModerator {
     boolean isStaff(@NotNull UUID player);
 
     @Override
-    @NotNull String toString();
-
+    @NotNull
+    String toString();
 }

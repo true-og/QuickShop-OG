@@ -1,4 +1,4 @@
-rootProject.name = "Quickshop-OG"
+rootProject.name = "QuickShop-OG"
 
 // Run the bootstrap at configuration time.
 val process = ProcessBuilder("sh", "bootstrap.sh").directory(rootDir).start()

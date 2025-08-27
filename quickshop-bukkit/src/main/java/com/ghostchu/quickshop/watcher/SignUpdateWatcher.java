@@ -9,23 +9,34 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 public class SignUpdateWatcher extends BukkitRunnable {
+
     private final Queue<Shop> signUpdateQueue = new LinkedList<>();
 
     @Override
     public void run() {
+
         Instant startTime = Instant.now();
         Instant endTime = startTime.plusMillis(50);
         Shop shop = signUpdateQueue.poll();
         while (shop != null && !Instant.now().isAfter(endTime)) {
+
             shop.setSignText(QuickShop.getInstance().text().findRelativeLanguages(shop.getOwner(), false));
             shop = signUpdateQueue.poll();
+
         }
+
     }
 
     public void scheduleSignUpdate(@NotNull Shop shop) {
+
         if (signUpdateQueue.contains(shop)) {
+
             return; // Ignore if schedule too frequently
+
         }
+
         signUpdateQueue.add(shop);
+
     }
+
 }

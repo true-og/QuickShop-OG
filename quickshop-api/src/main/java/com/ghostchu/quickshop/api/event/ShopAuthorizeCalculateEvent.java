@@ -25,17 +25,16 @@ public class ShopAuthorizeCalculateEvent extends AbstractQSEvent {
      *
      * @param shop The shop bought from
      */
-    public ShopAuthorizeCalculateEvent(
-            @NotNull Shop shop,
-            @NotNull UUID authorizer,
-            @NotNull Plugin namespace,
-            @NotNull String permission,
-            boolean result) {
+    public ShopAuthorizeCalculateEvent(@NotNull Shop shop, @NotNull UUID authorizer, @NotNull Plugin namespace,
+            @NotNull String permission, boolean result)
+    {
+
         this.shop = shop;
         this.authorizer = authorizer;
         this.namespace = namespace;
         this.permission = permission;
         this.result = result;
+
     }
 
     /**
@@ -45,7 +44,9 @@ public class ShopAuthorizeCalculateEvent extends AbstractQSEvent {
      */
     @NotNull
     public UUID getAuthorizer() {
+
         return authorizer;
+
     }
 
     /**
@@ -55,7 +56,9 @@ public class ShopAuthorizeCalculateEvent extends AbstractQSEvent {
      */
     @NotNull
     public Plugin getNamespace() {
+
         return namespace;
+
     }
 
     /**
@@ -65,7 +68,9 @@ public class ShopAuthorizeCalculateEvent extends AbstractQSEvent {
      */
     @NotNull
     public String getPermission() {
+
         return permission;
+
     }
 
     /**
@@ -74,7 +79,9 @@ public class ShopAuthorizeCalculateEvent extends AbstractQSEvent {
      * @return true if permission is granted, false if not
      */
     public boolean getResult() {
+
         return result;
+
     }
 
     /**
@@ -83,7 +90,9 @@ public class ShopAuthorizeCalculateEvent extends AbstractQSEvent {
      * @param result true if permission is granted, false if not
      */
     public void setResult(boolean result) {
+
         this.result = result;
+
     }
 
     /**
@@ -92,6 +101,9 @@ public class ShopAuthorizeCalculateEvent extends AbstractQSEvent {
      * @return Shop
      */
     public @NotNull Shop getShop() {
+
         return this.shop;
+
     }
+
 }

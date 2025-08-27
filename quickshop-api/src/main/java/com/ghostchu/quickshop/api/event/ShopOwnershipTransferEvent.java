@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
  * Fire when a shop ownership was transferred.
  */
 public class ShopOwnershipTransferEvent extends AbstractQSEvent implements QSCancellable {
+
     private final Shop shop;
     private final QUser oldOwner;
     private final QUser newOwner;
@@ -24,20 +25,26 @@ public class ShopOwnershipTransferEvent extends AbstractQSEvent implements QSCan
      * @param newOwner The new owner.
      */
     public ShopOwnershipTransferEvent(@NotNull Shop shop, @NotNull QUser oldOwner, @NotNull QUser newOwner) {
+
         this.shop = shop;
         this.oldOwner = oldOwner;
         this.newOwner = newOwner;
+
     }
 
     @Override
     public @Nullable Component getCancelReason() {
+
         return reason;
+
     }
 
     @Override
     public void setCancelled(boolean cancel, @Nullable Component reason) {
+
         this.cancelled = cancel;
         this.reason = reason;
+
     }
 
     /**
@@ -47,7 +54,9 @@ public class ShopOwnershipTransferEvent extends AbstractQSEvent implements QSCan
      */
     @NotNull
     public QUser getNewOwner() {
+
         return newOwner;
+
     }
 
     /**
@@ -57,7 +66,9 @@ public class ShopOwnershipTransferEvent extends AbstractQSEvent implements QSCan
      */
     @NotNull
     public QUser getOldOwner() {
+
         return oldOwner;
+
     }
 
     /**
@@ -67,11 +78,16 @@ public class ShopOwnershipTransferEvent extends AbstractQSEvent implements QSCan
      */
     @NotNull
     public Shop getShop() {
+
         return shop;
+
     }
 
     @Override
     public boolean isCancelled() {
+
         return cancelled;
+
     }
+
 }

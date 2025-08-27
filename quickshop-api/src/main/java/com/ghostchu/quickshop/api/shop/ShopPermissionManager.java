@@ -7,10 +7,11 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Shop permission manager.
- * Comment: Something in QuickShop just like Flags in other plugins.
+ * Shop permission manager. Comment: Something in QuickShop just like Flags in
+ * other plugins.
  */
 public interface ShopPermissionManager {
+
     /**
      * Gets all groups was registered.
      *
@@ -88,4 +89,5 @@ public interface ShopPermissionManager {
      * @param permission Permission name.
      */
     void unregisterPermission(@NotNull String group, @NotNull Plugin namespace, @NotNull String permission);
+
 }

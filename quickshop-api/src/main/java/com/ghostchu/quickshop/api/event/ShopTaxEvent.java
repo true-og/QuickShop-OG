@@ -8,21 +8,25 @@ import org.jetbrains.annotations.NotNull;
  * Calling when shop tax calculation
  */
 public class ShopTaxEvent extends AbstractQSEvent {
+
     private final QUser user;
     private final Shop shop;
     private double tax;
 
     /**
-     * Call when shop calc shop tax that will pay to system account and remove from shop owner/player received money
+     * Call when shop calc shop tax that will pay to system account and remove from
+     * shop owner/player received money
      *
      * @param shop The shop
      * @param tax  The tax
      * @param user The user (buyer/seller)
      */
     public ShopTaxEvent(@NotNull Shop shop, double tax, @NotNull QUser user) {
+
         this.shop = shop;
         this.tax = tax;
         this.user = user;
+
     }
 
     /**
@@ -31,7 +35,9 @@ public class ShopTaxEvent extends AbstractQSEvent {
      * @return the shop
      */
     public Shop getShop() {
+
         return this.shop;
+
     }
 
     /**
@@ -40,7 +46,9 @@ public class ShopTaxEvent extends AbstractQSEvent {
      * @return tax
      */
     public double getTax() {
+
         return this.tax;
+
     }
 
     /**
@@ -49,7 +57,9 @@ public class ShopTaxEvent extends AbstractQSEvent {
      * @param tax New tax
      */
     public void setTax(double tax) {
+
         this.tax = tax;
+
     }
 
     /**
@@ -58,6 +68,9 @@ public class ShopTaxEvent extends AbstractQSEvent {
      * @return User
      */
     public QUser getUser() {
+
         return this.user;
+
     }
+
 }

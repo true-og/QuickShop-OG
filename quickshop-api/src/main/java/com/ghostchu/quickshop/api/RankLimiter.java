@@ -16,4 +16,5 @@ public interface RankLimiter {
     Map<String, Integer> getLimits();
 
     boolean isLimit();
+
 }

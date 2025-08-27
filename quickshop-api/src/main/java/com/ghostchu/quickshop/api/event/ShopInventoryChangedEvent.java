@@ -22,8 +22,10 @@ public class ShopInventoryChangedEvent extends AbstractQSEvent {
      * @param manager InventoryWrapperManager
      */
     public ShopInventoryChangedEvent(@NotNull InventoryWrapper wrapper, @NotNull InventoryWrapperManager manager) {
+
         this.wrapper = wrapper;
         this.manager = manager;
+
     }
 
     /**
@@ -33,7 +35,9 @@ public class ShopInventoryChangedEvent extends AbstractQSEvent {
      */
     @NotNull
     public InventoryWrapperManager getInventoryManager() {
+
         return manager;
+
     }
 
     /**
@@ -43,6 +47,9 @@ public class ShopInventoryChangedEvent extends AbstractQSEvent {
      */
     @NotNull
     public InventoryWrapper getInventoryWrapper() {
+
         return wrapper;
+
     }
+
 }

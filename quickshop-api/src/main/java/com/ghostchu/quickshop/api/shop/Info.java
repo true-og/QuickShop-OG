@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
  * Shop simple info, used for shop processing and shop creation.
  */
 public interface Info {
+
     /**
      * @return ShopAction action, Get shop action.
      */
@@ -50,4 +51,5 @@ public interface Info {
      * @return Bypassed Protection Checks
      */
     boolean isBypassed();
+
 }

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface QUser {
+
     @Nullable
     String getUsername();
 
@@ -39,4 +40,5 @@ public interface QUser {
     String serialize();
 
     Optional<Player> getBukkitPlayer();
+
 }

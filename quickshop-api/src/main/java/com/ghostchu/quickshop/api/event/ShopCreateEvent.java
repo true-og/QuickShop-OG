@@ -24,22 +24,29 @@ public class ShopCreateEvent extends AbstractQSEvent implements QSCancellable {
      * Call when have a new shop was creating.
      *
      * @param shop    Target shop
-     * @param creator The player creating the shop, the player might offline/not exist if creating by a plugin.
+     * @param creator The player creating the shop, the player might offline/not
+     *                exist if creating by a plugin.
      */
     public ShopCreateEvent(@NotNull Shop shop, @NotNull QUser creator) {
+
         this.shop = shop;
         this.creator = creator;
+
     }
 
     @Override
     public @Nullable Component getCancelReason() {
+
         return this.cancelReason;
+
     }
 
     @Override
     public void setCancelled(boolean cancel, @Nullable Component reason) {
+
         this.cancelled = cancel;
         this.cancelReason = reason;
+
     }
 
     /**
@@ -48,7 +55,9 @@ public class ShopCreateEvent extends AbstractQSEvent implements QSCancellable {
      * @return The creator, may be a online/offline/virtual player
      */
     public @NotNull QUser getCreator() {
+
         return this.creator;
+
     }
 
     /**
@@ -57,11 +66,16 @@ public class ShopCreateEvent extends AbstractQSEvent implements QSCancellable {
      * @return The shop that created
      */
     public @NotNull Shop getShop() {
+
         return this.shop;
+
     }
 
     @Override
     public boolean isCancelled() {
+
         return cancelled;
+
     }
+
 }

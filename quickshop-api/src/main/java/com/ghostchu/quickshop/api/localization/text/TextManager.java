@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
  * The TextManager that allow create user's locale specified message.
  */
 public interface TextManager {
+
     @NotNull
     Component[] convert(@Nullable Object... args);
 
@@ -33,7 +34,9 @@ public interface TextManager {
      * @return the set of available Languages
      */
     default List<String> getAvailableLocales() {
+
         return getAvailableLanguages();
+
     }
 
     /**
@@ -106,7 +109,7 @@ public interface TextManager {
     TextList ofList(@NotNull String path, @Nullable Object... args);
 
     /**
-     * Getting the translation with path  with player's locale (if available)
+     * Getting the translation with path with player's locale (if available)
      *
      * @param sender The player unique id
      * @param path   The path
@@ -117,7 +120,7 @@ public interface TextManager {
     TextList ofList(@Nullable UUID sender, @NotNull String path, @Nullable Object... args);
 
     /**
-     * Getting the translation with path  with player's locale (if available)
+     * Getting the translation with path with player's locale (if available)
      *
      * @param sender The player unique id
      * @param path   The path
@@ -146,4 +149,5 @@ public interface TextManager {
      * @param text   The language text
      */
     void register(@NotNull String locale, @NotNull String path, @NotNull String text);
+
 }

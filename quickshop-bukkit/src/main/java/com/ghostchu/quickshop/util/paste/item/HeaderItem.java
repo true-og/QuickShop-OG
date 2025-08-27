@@ -7,8 +7,8 @@ import org.jetbrains.annotations.NotNull;
 
 @Data
 public class HeaderItem implements PasteItem {
-    private static final String TEMPLATE =
-            """
+
+    private static final String TEMPLATE = """
             <h1>{title}</h1>
             <blockquote>
             <p>
@@ -26,26 +26,35 @@ public class HeaderItem implements PasteItem {
     private final Map<String, String> items;
 
     public HeaderItem(long timestamp, Map<String, String> items) {
+
         this.timestamp = timestamp;
         this.items = items;
+
     }
 
     @Override
     public @NotNull String toHTML() {
-        return TEMPLATE.replace(
-                        "{title}", "QuickShop-" + QuickShop.getInstance().getFork() + " // Paste")
+
+        return TEMPLATE.replace("{title}", "QuickShop-" + QuickShop.getInstance().getFork() + " // Paste")
                 .replace("{content}", buildContent());
+
     }
 
     @NotNull
     private String buildContent() {
+
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, String> entry : items.entrySet()) {
+
             builder.append("<tr>");
             builder.append("<td>").append(entry.getKey()).append("</td>");
             builder.append("<td>").append(entry.getValue()).append("</td>");
             builder.append("</tr>");
+
         }
+
         return builder.toString();
+
     }
+
 }

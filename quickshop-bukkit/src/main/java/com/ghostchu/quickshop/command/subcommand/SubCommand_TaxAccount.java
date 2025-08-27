@@ -14,45 +14,54 @@ public class SubCommand_TaxAccount implements CommandHandler<Player> {
     private final QuickShop plugin;
 
     public SubCommand_TaxAccount(QuickShop plugin) {
+
         this.plugin = plugin;
+
     }
 
     @Override
     public void onCommand(@NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+
         final Shop shop = getLookingShop(sender);
         if (shop != null) {
+
             if (parser.getArgs().isEmpty()) {
+
                 shop.setTaxAccount(null);
                 plugin.text().of(sender, "taxaccount-unset").send();
                 return;
+
             }
-            QUserImpl.createAsync(plugin.getPlayerFinder(), parser.getArgs().get(0))
-                    .thenAccept(qUser -> {
-                        shop.setTaxAccount(qUser);
-                        plugin.text()
-                                .of(sender, "taxaccount-set", parser.getArgs().get(0))
-                                .send();
-                    })
-                    .exceptionally(throwable -> {
-                        plugin.text()
-                                .of(sender, "internal-error", throwable.getMessage())
-                                .send();
-                        plugin.logger()
-                                .warn(
-                                        "Failed to get uuid of player "
-                                                + parser.getArgs().get(0),
-                                        throwable);
-                        return null;
-                    });
+
+            QUserImpl.createAsync(plugin.getPlayerFinder(), parser.getArgs().get(0)).thenAccept(qUser -> {
+
+                shop.setTaxAccount(qUser);
+                plugin.text().of(sender, "taxaccount-set", parser.getArgs().get(0)).send();
+
+            }).exceptionally(throwable -> {
+
+                plugin.text().of(sender, "internal-error", throwable.getMessage()).send();
+                plugin.logger().warn("Failed to get uuid of player " + parser.getArgs().get(0), throwable);
+                return null;
+
+            });
+
         } else {
+
             plugin.text().of(sender, "not-looking-at-shop").send();
+
         }
+
     }
 
     @NotNull
     @Override
-    public List<String> onTabComplete(
-            @NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+    public List<String> onTabComplete(@NotNull Player sender, @NotNull String commandLabel,
+            @NotNull CommandParser parser)
+    {
+
         return null;
+
     }
+
 }

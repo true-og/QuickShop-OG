@@ -37,4 +37,5 @@ public interface TextList {
      * Send text to the player
      */
     void send();
+
 }

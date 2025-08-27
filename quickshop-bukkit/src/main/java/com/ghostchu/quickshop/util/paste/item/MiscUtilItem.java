@@ -9,9 +9,11 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 public class MiscUtilItem implements SubPasteItem {
+
     @SuppressWarnings("deprecation")
     @Override
     public @NotNull String genBody() {
+
         StringJoiner joiner = new StringJoiner("<br/>");
         joiner.add("<h5>General</h5>");
         HTMLTable general = new HTMLTable(2, true);
@@ -27,22 +29,31 @@ public class MiscUtilItem implements SubPasteItem {
         HTMLTable shopable = new HTMLTable(2);
         shopable.setTableTitle("Bukkit Material", "Minecraft NamespacedKey");
         for (Material material : Util.getShopables()) {
+
             shopable.insert(material.name(), material.getKey().toString());
+
         }
+
         joiner.add(shopable.render());
         joiner.add("<h5>Custom StackSize</h5>");
         HTMLTable customStackSize = new HTMLTable(2);
         customStackSize.setTableTitle("Bukkit Material", "Minecraft NamespacedKey", "Override StackSize");
         for (Map.Entry<Material, Integer> entry : Util.getCustomStacksize().entrySet()) {
-            customStackSize.insert(
-                    entry.getKey().name(), entry.getKey().getKey().toString(), entry.getValue());
+
+            customStackSize.insert(entry.getKey().name(), entry.getKey().getKey().toString(), entry.getValue());
+
         }
+
         joiner.add(customStackSize.render());
         return joiner.toString();
+
     }
 
     @Override
     public @NotNull String getTitle() {
+
         return "Misc Util";
+
     }
+
 }

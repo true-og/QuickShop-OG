@@ -32,9 +32,11 @@ public class ShopInfoPanelEvent extends AbstractQSEvent implements QSCancellable
      * @param purchaser The player purchasing, may offline if purchase by plugin
      */
     public ShopInfoPanelEvent(@NotNull Shop shop, @NotNull UUID purchaser) {
+
         this.shop = shop;
         this.purchaser = purchaser;
         this.player = Bukkit.getPlayer(purchaser);
+
     }
 
     /**
@@ -43,7 +45,9 @@ public class ShopInfoPanelEvent extends AbstractQSEvent implements QSCancellable
      * @return Player or null if purchaser is offline/virtual player.
      */
     public @Nullable Player getPlayer() {
+
         return this.player;
+
     }
 
     /**
@@ -52,7 +56,9 @@ public class ShopInfoPanelEvent extends AbstractQSEvent implements QSCancellable
      * @return The purchaser uuid
      */
     public @NotNull UUID getPurchaser() {
+
         return this.purchaser;
+
     }
 
     /**
@@ -61,22 +67,31 @@ public class ShopInfoPanelEvent extends AbstractQSEvent implements QSCancellable
      * @return the shop
      */
     public @NotNull Shop getShop() {
+
         return this.shop;
+
     }
 
     @Override
     public @Nullable Component getCancelReason() {
+
         return this.cancelReason;
+
     }
 
     @Override
     public void setCancelled(boolean cancel, @Nullable Component reason) {
+
         this.cancelled = cancel;
         this.cancelReason = reason;
+
     }
 
     @Override
     public boolean isCancelled() {
+
         return cancelled;
+
     }
+
 }

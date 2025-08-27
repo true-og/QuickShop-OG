@@ -12,12 +12,15 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class QSHandleChatEvent extends AbstractQSEvent {
+
     private final QUser sender;
     private String message;
 
     public QSHandleChatEvent(QUser sender, String message) {
+
         this.sender = sender;
         this.message = message;
+
     }
 
     /**
@@ -26,7 +29,9 @@ public class QSHandleChatEvent extends AbstractQSEvent {
      * @return The chat content
      */
     public String getMessage() {
+
         return message;
+
     }
 
     /**
@@ -35,7 +40,9 @@ public class QSHandleChatEvent extends AbstractQSEvent {
      * @param message The new chat content
      */
     public void setMessage(String message) {
+
         this.message = message;
+
     }
 
     /**
@@ -44,6 +51,9 @@ public class QSHandleChatEvent extends AbstractQSEvent {
      * @return The chat sender
      */
     public QUser getSender() {
+
         return sender;
+
     }
+
 }

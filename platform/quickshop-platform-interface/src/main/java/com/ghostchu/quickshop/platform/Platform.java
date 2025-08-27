@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 public interface Platform {
+
     void shutdown();
 
     @NotNull
@@ -35,15 +36,23 @@ public interface Platform {
 
     @Nullable
     default String getItemShopId(@NotNull ItemStack stack) {
+
         if (!Bukkit.getPluginManager().isPluginEnabled("NBTAPI")) {
+
             return null;
+
         }
+
         NBTItem nbtItem = new NBTItem(stack);
         String shopId = nbtItem.getString("shopId");
         if (shopId == null || shopId.isEmpty() || shopId.isBlank()) {
+
             return null;
+
         }
+
         return shopId;
+
     }
 
     @NotNull
@@ -98,8 +107,8 @@ public interface Platform {
 
     void sendMessage(@NotNull CommandSender sender, @NotNull Component component);
 
-    void sendSignTextChange(
-            @NotNull Player player, @NotNull Sign sign, boolean glowing, @NotNull List<Component> components);
+    void sendSignTextChange(@NotNull Player player, @NotNull Sign sign, boolean glowing,
+            @NotNull List<Component> components);
 
     void setDisplayName(@NotNull ItemStack stack, @Nullable Component component);
 
@@ -113,4 +122,5 @@ public interface Platform {
 
     @NotNull
     Logger getSlf4jLogger(@NotNull Plugin parent);
+
 }

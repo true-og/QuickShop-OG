@@ -26,19 +26,25 @@ public class ShopNamingEvent extends AbstractQSEvent implements QSCancellable {
      * @param shop The shop bought from
      */
     public ShopNamingEvent(@NotNull Shop shop, @NotNull String name) {
+
         this.shop = shop;
         this.name = name;
+
     }
 
     @Override
     public @Nullable Component getCancelReason() {
+
         return this.cancelReason;
+
     }
 
     @Override
     public void setCancelled(boolean cancel, @Nullable Component reason) {
+
         this.cancelled = cancel;
         this.cancelReason = reason;
+
     }
 
     /**
@@ -48,7 +54,9 @@ public class ShopNamingEvent extends AbstractQSEvent implements QSCancellable {
      */
     @Nullable
     public String getName() {
+
         return name;
+
     }
 
     /**
@@ -57,7 +65,9 @@ public class ShopNamingEvent extends AbstractQSEvent implements QSCancellable {
      * @param name Shop new name
      */
     public void setName(@Nullable String name) {
+
         this.name = name;
+
     }
 
     /**
@@ -66,11 +76,16 @@ public class ShopNamingEvent extends AbstractQSEvent implements QSCancellable {
      * @return Clicked shop
      */
     public @NotNull Shop getShop() {
+
         return this.shop;
+
     }
 
     @Override
     public boolean isCancelled() {
+
         return this.cancelled;
+
     }
+
 }

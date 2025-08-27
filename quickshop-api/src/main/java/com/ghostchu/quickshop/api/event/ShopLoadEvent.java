@@ -22,18 +22,24 @@ public class ShopLoadEvent extends AbstractQSEvent implements QSCancellable {
      * @param shop Target shop
      */
     public ShopLoadEvent(@NotNull Shop shop) {
+
         this.shop = shop;
+
     }
 
     @Override
     public @Nullable Component getCancelReason() {
+
         return this.cancelReason;
+
     }
 
     @Override
     public void setCancelled(boolean cancel, @Nullable Component reason) {
+
         this.cancelled = cancel;
         this.cancelReason = reason;
+
     }
 
     /**
@@ -42,11 +48,16 @@ public class ShopLoadEvent extends AbstractQSEvent implements QSCancellable {
      * @return the shop
      */
     public @NotNull Shop getShop() {
+
         return this.shop;
+
     }
 
     @Override
     public boolean isCancelled() {
+
         return this.cancelled;
+
     }
+
 }

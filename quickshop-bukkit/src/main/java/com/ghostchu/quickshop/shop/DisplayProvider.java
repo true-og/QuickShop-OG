@@ -7,10 +7,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Display Provider can be registered to Bukkit Services Manager
- * and replace the shop displays if user set display-type to CUSTOM
+ * Display Provider can be registered to Bukkit Services Manager and replace the
+ * shop displays if user set display-type to CUSTOM
  */
 public interface DisplayProvider {
+
     /**
      * Gets the Display Provider's plugin instance.
      *
@@ -27,4 +28,5 @@ public interface DisplayProvider {
      */
     @Nullable
     AbstractDisplayItem provide(@NotNull Shop shop);
+
 }

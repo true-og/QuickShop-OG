@@ -13,27 +13,40 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.jetbrains.annotations.NotNull;
 
 public class SubCommand_Export implements CommandHandler<ConsoleCommandSender> {
+
     private final QuickShop plugin;
 
     public SubCommand_Export(QuickShop plugin) {
+
         this.plugin = plugin;
+
     }
 
     @Override
-    public synchronized void onCommand(
-            @NotNull ConsoleCommandSender sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+    public synchronized void onCommand(@NotNull ConsoleCommandSender sender, @NotNull String commandLabel,
+            @NotNull CommandParser parser)
+    {
+
         plugin.text().of(sender, "exporting-database").send();
         File file = new File(QuickShop.getInstance().getDataFolder(), "export-" + System.currentTimeMillis() + ".zip");
 
         DatabaseIOUtil databaseIOUtil = new DatabaseIOUtil((SimpleDatabaseHelperV2) plugin.getDatabaseHelper());
         Util.asyncThreadRun(() -> {
+
             try {
+
                 databaseIOUtil.exportTables(file);
                 plugin.text().of(sender, "exported-database", file.toString()).send();
+
             } catch (SQLException | IOException e) {
+
                 plugin.logger().warn("Exporting database failed.", e);
                 plugin.text().of(sender, "exporting-failed", e.getMessage()).send();
+
             }
+
         });
+
     }
+
 }

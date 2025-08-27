@@ -3,6 +3,7 @@ package com.ghostchu.quickshop.util.paste.item;
 import org.jetbrains.annotations.NotNull;
 
 public interface SubPasteItem extends PasteItem {
+
     /**
      * Render this item to HTML sources
      *
@@ -10,7 +11,9 @@ public interface SubPasteItem extends PasteItem {
      */
     @Override
     default @NotNull String toHTML() {
+
         return genTitle() + genBody();
+
     }
 
     /**
@@ -20,7 +23,9 @@ public interface SubPasteItem extends PasteItem {
      */
     @NotNull
     default String genTitle() {
+
         return "<h3># " + getTitle() + "</h3>";
+
     }
 
     /**
@@ -38,4 +43,5 @@ public interface SubPasteItem extends PasteItem {
      */
     @NotNull
     String getTitle();
+
 }

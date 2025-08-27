@@ -19,25 +19,33 @@ public class ShopDeleteEvent extends AbstractQSEvent implements QSCancellable {
     private @Nullable Component cancelReason;
 
     /**
-     * Call the event when shop is deleting. The ShopUnloadEvent will call after ShopDeleteEvent
+     * Call the event when shop is deleting. The ShopUnloadEvent will call after
+     * ShopDeleteEvent
      *
      * @param shop       Target shop
-     * @param fromMemory Only delete from the memory? false = delete both in memory and database
+     * @param fromMemory Only delete from the memory? false = delete both in memory
+     *                   and database
      */
     public ShopDeleteEvent(@NotNull Shop shop, boolean fromMemory) {
+
         this.shop = shop;
         this.fromMemory = fromMemory;
+
     }
 
     @Override
     public @Nullable Component getCancelReason() {
+
         return this.cancelReason;
+
     }
 
     @Override
     public void setCancelled(boolean cancel, @Nullable Component reason) {
+
         this.cancelled = cancel;
         this.cancelReason = reason;
+
     }
 
     /**
@@ -46,12 +54,16 @@ public class ShopDeleteEvent extends AbstractQSEvent implements QSCancellable {
      * @return The shop
      */
     public @NotNull Shop getShop() {
+
         return this.shop;
+
     }
 
     @Override
     public boolean isCancelled() {
+
         return this.cancelled;
+
     }
 
     /**
@@ -60,6 +72,9 @@ public class ShopDeleteEvent extends AbstractQSEvent implements QSCancellable {
      * @return only from memory
      */
     public boolean isFromMemory() {
+
         return this.fromMemory;
+
     }
+
 }

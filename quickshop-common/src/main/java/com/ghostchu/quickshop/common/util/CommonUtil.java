@@ -20,7 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CommonUtil {
-    private CommonUtil() {}
+
+    private CommonUtil() {
+
+    }
 
     /**
      * Convert strArray to String. E.g "Foo, Bar"
@@ -30,29 +33,45 @@ public class CommonUtil {
      */
     @NotNull
     public static String array2String(@NotNull String[] strArray) {
+
         StringJoiner joiner = new StringJoiner(", ");
         for (String str : strArray) {
+
             joiner.add(str);
+
         }
+
         return joiner.toString();
+
     }
 
     @Nullable
     public static Date parseTime(@NotNull String time) {
+
         if (NumberUtils.isCreatable(time)) {
+
             return new Date(Long.parseLong(time) * 1000L);
+
         }
+
         return zuluTime2Date(time);
+
     }
 
     @Nullable
     public static Date zuluTime2Date(@NotNull String zuluString) {
+
         String pattern = DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.getPattern();
         try {
+
             return DateUtils.parseDate(zuluString, pattern);
+
         } catch (ParseException e) {
+
             return null;
+
         }
+
     }
 
     /**
@@ -63,11 +82,17 @@ public class CommonUtil {
      */
     @NotNull
     public static String boolean2Status(boolean bool) {
+
         if (bool) {
+
             return "Enabled";
+
         } else {
+
             return "Disabled";
+
         }
+
     }
 
     /**
@@ -79,34 +104,53 @@ public class CommonUtil {
     // https://stackoverflow.com/questions/45321050/java-string-matching-with-wildcards
     @NotNull
     public static String createRegexFromGlob(@NotNull String glob) {
+
         StringBuilder out = new StringBuilder("^");
         for (int i = 0; i < glob.length(); ++i) {
+
             final char c = glob.charAt(i);
             switch (c) {
+
                 case '*' -> out.append(".*");
                 case '?' -> out.append('.');
                 case '.' -> out.append("\\.");
                 case '\\' -> out.append("\\\\");
                 default -> out.append(c);
+
             }
+
         }
+
         out.append('$');
         return out.toString();
+
     }
 
     public static boolean deleteDirectory(@NotNull File dir) {
+
         if (dir.isDirectory()) {
+
             String[] children = dir.list();
             if (children == null) {
+
                 return false;
+
             }
+
             for (String child : children) {
+
                 if (!deleteDirectory(new File(dir, child))) {
+
                     return false;
+
                 }
+
             }
+
         }
+
         return dir.delete();
+
     }
 
     /**
@@ -117,20 +161,27 @@ public class CommonUtil {
      */
     @NotNull
     public static String getClassPathRelative(@NotNull Class<?> clazz) {
-        String jarPath =
-                clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
+
+        String jarPath = clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
         jarPath = URLDecoder.decode(jarPath, StandardCharsets.UTF_8);
         File file = new File(jarPath);
         return getRelativePath(new File("."), file);
+
     }
 
     @NotNull
     public static String getRelativePath(@NotNull File rootPath, @NotNull File targetPath) {
+
         try {
+
             return rootPath.toURI().relativize(targetPath.toURI()).getPath();
+
         } catch (Exception e) {
+
             return targetPath.getAbsolutePath();
+
         }
+
     }
 
     /**
@@ -141,9 +192,11 @@ public class CommonUtil {
      */
     @NotNull
     public static String getClassPrefix(@NotNull Class<?> c) {
+
         String callClassName = Thread.currentThread().getStackTrace()[2].getClassName();
         String customClassName = c.getSimpleName();
         return "[" + callClassName + "-" + customClassName + "] ";
+
     }
 
     /**
@@ -153,17 +206,25 @@ public class CommonUtil {
      */
     @NotNull
     public static String getClassPrefix() {
+
         String className = Thread.currentThread().getStackTrace()[2].getClassName();
         try {
+
             Class<?> c = Class.forName(className);
             className = c.getSimpleName();
             if (!c.getSimpleName().isEmpty()) {
+
                 className = c.getSimpleName();
+
             }
+
         } catch (ClassNotFoundException ignored) {
+
         }
+
         String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
         return "[" + className + "-" + methodName + "] ";
+
     }
 
     /**
@@ -175,8 +236,10 @@ public class CommonUtil {
     // http://www.java2s.com/Tutorials/Java/Data_Type_How_to/Date_Convert/Convert_long_type_timestamp_to_LocalDate_and_LocalDateTime.htm
     @Nullable
     public static LocalDate getDateFromTimestamp(long timestamp) {
+
         LocalDateTime date = getDateTimeFromTimestamp(timestamp);
         return date == null ? null : date.toLocalDate();
+
     }
 
     /**
@@ -187,12 +250,15 @@ public class CommonUtil {
      */
     // http://www.java2s.com/Tutorials/Java/Data_Type_How_to/Date_Convert/Convert_long_type_timestamp_to_LocalDate_and_LocalDateTime.htm
     public static @NotNull LocalDateTime getDateTimeFromTimestamp(long timestamp) {
+
         if (timestamp == 0) {
-            return LocalDateTime.ofInstant(
-                    Instant.ofEpochMilli(0), TimeZone.getDefault().toZoneId());
+
+            return LocalDateTime.ofInstant(Instant.ofEpochMilli(0), TimeZone.getDefault().toZoneId());
+
         }
-        return LocalDateTime.ofInstant(
-                Instant.ofEpochMilli(timestamp), TimeZone.getDefault().toZoneId());
+
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), TimeZone.getDefault().toZoneId());
+
     }
 
     /**
@@ -202,16 +268,24 @@ public class CommonUtil {
      */
     @NotNull
     public static UUID getNilUniqueId() {
+
         return new UUID(0, 0);
+
     }
 
     @NotNull
     public static String getRelativePath(@NotNull File targetPath) {
+
         try {
+
             return new File(".").toURI().relativize(targetPath.toURI()).getPath();
+
         } catch (Exception e) {
+
             return targetPath.getAbsolutePath();
+
         }
+
     }
 
     /**
@@ -221,21 +295,32 @@ public class CommonUtil {
      * @return Byte array
      */
     public static byte[] inputStream2ByteArray(@NotNull String filePath) {
+
         try (InputStream in = new FileInputStream(filePath)) {
+
             return toByteArray(in);
+
         } catch (IOException e) {
+
             return new byte[0];
+
         }
+
     }
 
     private static byte[] toByteArray(@NotNull InputStream in) throws IOException {
+
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024 * 4];
         int n;
         while ((n = in.read(buffer)) != -1) {
+
             out.write(buffer, 0, n);
+
         }
+
         return out.toByteArray();
+
     }
 
     /**
@@ -245,12 +330,18 @@ public class CommonUtil {
      * @return boolean Available
      */
     public static boolean isClassAvailable(@NotNull String qualifiedName) {
+
         try {
+
             Class.forName(qualifiedName);
             return true;
+
         } catch (ClassNotFoundException e) {
+
             return false;
+
         }
+
     }
 
     /**
@@ -260,66 +351,102 @@ public class CommonUtil {
      * @return is UUID
      */
     public static boolean isUUID(@NotNull String string) {
+
         final int length = string.length();
         if (length != 36 && length != 32) {
+
             return false;
+
         }
+
         final String[] components = string.split("-");
         return components.length == 5;
+
     }
 
     public static boolean isTrimmedUUID(@NotNull String string) {
+
         try {
+
             fromTrimmedUUID(string);
             return true;
+
         } catch (IllegalArgumentException e) {
+
             return false;
+
         }
+
     }
 
     public static UUID fromTrimmedUUID(@NotNull String trimmedUUID) {
+
         StringBuilder builder = new StringBuilder(trimmedUUID.trim());
         /* Backwards adding to avoid index adjustments */
         try {
+
             builder.insert(20, "-");
             builder.insert(16, "-");
             builder.insert(12, "-");
             builder.insert(8, "-");
+
         } catch (StringIndexOutOfBoundsException e) {
+
             throw new IllegalArgumentException();
+
         }
 
         return UUID.fromString(builder.toString());
+
     }
 
     public static int multiProcessorThreadRecommended() {
+
         int processors = Runtime.getRuntime().availableProcessors();
         if (processors >= 2) {
+
             processors--;
+
         }
+
         return processors;
+
     }
 
     public static boolean isJson(String str) {
+
         if (str == null || str.isBlank()) {
+
             return false;
+
         }
+
         try {
+
             JsonElement element = JsonParser.parseString(str);
             return element.isJsonObject() || element.isJsonArray();
+
         } catch (JsonParseException exception) {
+
             return false;
+
         }
+
     }
 
     @SafeVarargs
     @NotNull
     public static <T> List<T> linkLists(List<T>... lists) {
+
         List<T> fList = new ArrayList<>();
         for (List<T> objList : lists) {
+
             fList.addAll(objList);
+
         }
+
         return fList;
+
     }
 
     /**
@@ -330,7 +457,9 @@ public class CommonUtil {
      */
     @NotNull
     public static String list2String(@NotNull Collection<?> strList) {
+
         return String.join(", ", strList.stream().map(Object::toString).toList());
+
     }
 
     /**
@@ -341,7 +470,9 @@ public class CommonUtil {
      */
     @NotNull
     public static String list2StringBreaks(@NotNull Collection<?> strList) {
+
         return String.join("\n", strList.stream().map(Object::toString).toList());
+
     }
 
     /**
@@ -352,7 +483,9 @@ public class CommonUtil {
      * @return Lists matches or not
      */
     public static boolean listDisorderMatches(@NotNull Collection<?> list1, @NotNull Collection<?> list2) {
+
         return list1.containsAll(list2) && list2.containsAll(list1);
+
     }
 
     /**
@@ -363,11 +496,16 @@ public class CommonUtil {
      */
     @NotNull
     public static String mergeArgs(@NotNull String[] args) {
+
         StringJoiner joiner = new StringJoiner(" ", "", "");
         for (String arg : args) {
+
             joiner.add(arg);
+
         }
+
         return joiner.toString();
+
     }
 
     /**
@@ -378,22 +516,34 @@ public class CommonUtil {
      */
     @NotNull
     public static String prettifyText(@NotNull String ugly) {
+
         String[] nameParts = ugly.split("_");
         if (nameParts.length == 1) {
+
             return firstUppercase(ugly);
+
         }
+
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < nameParts.length; i++) {
+
             if (!nameParts[i].isEmpty()) {
+
                 sb.append(Character.toUpperCase(nameParts[i].charAt(0)))
                         .append(nameParts[i].substring(1).toLowerCase());
+
             }
+
             if (i + 1 != nameParts.length) {
+
                 sb.append(" ");
+
             }
+
         }
 
         return sb.toString();
+
     }
 
     /**
@@ -404,11 +554,17 @@ public class CommonUtil {
      */
     @NotNull
     public static String firstUppercase(@NotNull String string) {
+
         if (string.length() > 1) {
+
             return Character.toUpperCase(string.charAt(0)) + string.substring(1).toLowerCase();
+
         } else {
+
             return string.toUpperCase();
+
         }
+
     }
 
     /**
@@ -419,8 +575,10 @@ public class CommonUtil {
      */
     @NotNull
     public static String readToString(@NotNull String fileName) {
+
         File file = new File(fileName);
         return readToString(file);
+
     }
 
     /**
@@ -431,13 +589,20 @@ public class CommonUtil {
      */
     @NotNull
     public static String readToString(@NotNull File file) {
+
         byte[] filecontent = new byte[(int) file.length()];
         try (FileInputStream in = new FileInputStream(file)) {
+
             in.read(filecontent);
+
         } catch (IOException e) {
+
             e.printStackTrace();
+
         }
+
         return new String(filecontent, StandardCharsets.UTF_8);
+
     }
 
     /**
@@ -449,15 +614,19 @@ public class CommonUtil {
      */
     @NotNull
     public static List<String> tail(@NotNull List<String> list, int last) {
+
         return list.subList(Math.max(list.size() - last, 0), list.size());
+
     }
 
     @NotNull
     public static String getTZTimestamp(@NotNull Date date) {
+
         TimeZone tz = TimeZone.getTimeZone("UTC");
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
         df.setTimeZone(tz);
         return df.format(date);
+
     }
 
     /**
@@ -468,9 +637,11 @@ public class CommonUtil {
      */
     @NotNull
     public static String getClassPath(@NotNull Class<?> clazz) {
-        String jarPath =
-                clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
+
+        String jarPath = clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
         jarPath = URLDecoder.decode(jarPath, StandardCharsets.UTF_8);
         return jarPath;
+
     }
+
 }

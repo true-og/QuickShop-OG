@@ -21,57 +21,65 @@ public class SubCommand_SuperCreate implements CommandHandler<Player> {
     private final QuickShop plugin;
 
     public SubCommand_SuperCreate(QuickShop plugin) {
+
         this.plugin = plugin;
+
     }
 
     @Override
     public void onCommand(@NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+
         ItemStack item = sender.getInventory().getItemInMainHand();
         if (item.getType() == Material.AIR) {
+
             plugin.text().of(sender, "no-anythings-in-your-hand").send();
             return;
+
         }
 
         final BlockIterator bIt = new BlockIterator(sender, 10);
 
         while (bIt.hasNext()) {
+
             final Block b = bIt.next();
 
             if (!Util.canBeShop(b)) {
+
                 continue;
+
             }
 
             // Send creation menu.
-            final SimpleInfo info = new SimpleInfo(
-                    b.getLocation(),
-                    ShopAction.CREATE_SELL,
-                    sender.getInventory().getItemInMainHand(),
-                    b.getRelative(sender.getFacing().getOppositeFace()),
+            final SimpleInfo info = new SimpleInfo(b.getLocation(), ShopAction.CREATE_SELL,
+                    sender.getInventory().getItemInMainHand(), b.getRelative(sender.getFacing().getOppositeFace()),
                     true);
 
             plugin.getShopManager().getInteractiveManager().put(sender.getUniqueId(), info);
             plugin.text()
-                    .of(
-                            sender,
-                            "how-much-to-trade-for",
-                            Util.getItemStackName(info.getItem()),
+                    .of(sender, "how-much-to-trade-for", Util.getItemStackName(info.getItem()),
                             plugin.isAllowStack() && plugin.perm().hasPermission(sender, "quickshop.create.stacks")
                                     ? item.getAmount()
                                     : 1)
                     .send();
             return;
+
         }
+
         plugin.text().of(sender, "not-looking-at-shop").send();
+
     }
 
     @NotNull
     @Override
-    public List<String> onTabComplete(
-            @NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+    public List<String> onTabComplete(@NotNull Player sender, @NotNull String commandLabel,
+            @NotNull CommandParser parser)
+    {
+
         return parser.getArgs().size() == 1
                 ? Collections.singletonList(LegacyComponentSerializer.legacySection()
-                        .serialize(
-                                plugin.text().of(sender, "tabcomplete.amount").forLocale()))
+                        .serialize(plugin.text().of(sender, "tabcomplete.amount").forLocale()))
                 : Collections.emptyList();
+
     }
+
 }

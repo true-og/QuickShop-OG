@@ -23,9 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author Netherfoam
- * A display item, that spawns a block above the chest and cannot be interacted
- * with.
+ * @author Netherfoam A display item, that spawns a block above the chest and
+ *         cannot be interacted with.
  */
 public abstract class AbstractDisplayItem implements Reloadable {
 
@@ -40,14 +39,18 @@ public abstract class AbstractDisplayItem implements Reloadable {
     private static boolean virtualDisplayDoesntWork = false;
 
     protected AbstractDisplayItem(Shop shop) {
+
         this.shop = shop;
         this.originalItemStack = shop.getItem().clone();
         PLUGIN.getReloadManager().register(this);
         init();
+
     }
 
     public static void setVirtualDisplayDoesntWork(boolean shouldDisable) {
+
         virtualDisplayDoesntWork = shouldDisable;
+
     }
 
     /**
@@ -57,11 +60,16 @@ public abstract class AbstractDisplayItem implements Reloadable {
      */
     @NotNull
     public static DisplayType getNowUsing() {
+
         DisplayType displayType = DisplayType.fromID(PLUGIN.getConfig().getInt("shop.display-type"));
         if (displayType == DisplayType.VIRTUALITEM && virtualDisplayDoesntWork) {
+
             return DisplayType.REALITEM;
+
         }
+
         return displayType;
+
     }
 
     /**
@@ -71,57 +79,99 @@ public abstract class AbstractDisplayItem implements Reloadable {
      * @return Contains protect flag.
      */
     public static boolean checkIsGuardItemStack(@Nullable final ItemStack itemStack) {
+
         if (!PLUGIN.isDisplayEnabled()) {
+
             return false;
+
         }
+
         if (getNowUsing() == DisplayType.VIRTUALITEM) {
+
             return false;
+
         }
+
         Util.ensureThread(false);
         if (itemStack == null) {
+
             return false;
+
         }
+
         if (!itemStack.hasItemMeta()) {
+
             return false;
+
         }
+
         ItemMeta iMeta = itemStack.getItemMeta();
         if (!iMeta.hasLore()) {
+
             return false;
+
         }
+
         String defaultMark = ShopProtectionFlag.getDefaultMark();
         for (String lore : iMeta.getLore()) {
+
             try {
+
                 if (!CommonUtil.isJson(lore)) {
+
                     continue;
+
                 }
+
                 ShopProtectionFlag shopProtectionFlag = JsonUtil.getGson().fromJson(lore, ShopProtectionFlag.class);
                 if (shopProtectionFlag == null) {
+
                     continue;
+
                 }
+
                 if (defaultMark.equals(ShopProtectionFlag.getMark())) {
+
                     return true;
+
                 }
+
                 if (shopProtectionFlag.getShopLocation() != null) {
+
                     return true;
+
                 }
+
                 if (shopProtectionFlag.getItemStackString() != null) {
+
                     return true;
+
                 }
+
             } catch (JsonSyntaxException e) {
+
                 // Ignore
             }
+
         }
 
         return false;
+
     }
 
     protected void init() {
+
         if (PLUGIN.getConfig().getBoolean("shop.display-allow-stacks")) {
+
             // Prevent stack over the normal size
             originalItemStack.setAmount(Math.min(originalItemStack.getAmount(), originalItemStack.getMaxStackSize()));
+
         } else {
+
             this.originalItemStack.setAmount(1);
+
         }
+
     }
 
     /**
@@ -132,41 +182,72 @@ public abstract class AbstractDisplayItem implements Reloadable {
      * @return Is target shop's display
      */
     public static boolean checkIsTargetShopDisplay(@NotNull final ItemStack itemStack, @NotNull Shop shop) {
+
         if (!PLUGIN.isDisplayEnabled()) {
+
             return false;
+
         }
+
         if (getNowUsing() == DisplayType.VIRTUALITEM) {
+
             return false;
+
         }
+
         if (!itemStack.hasItemMeta()) {
+
             return false;
+
         }
+
         ItemMeta iMeta = itemStack.getItemMeta();
         if (!iMeta.hasLore()) {
+
             return false;
+
         }
+
         String defaultMark = ShopProtectionFlag.getDefaultMark();
         String shopLocation = shop.getLocation().toString();
         for (String lore : iMeta.getLore()) {
+
             try {
+
                 if (!CommonUtil.isJson(lore)) {
+
                     continue;
+
                 }
+
                 ShopProtectionFlag shopProtectionFlag = JsonUtil.getGson().fromJson(lore, ShopProtectionFlag.class);
                 if (shopProtectionFlag == null) {
+
                     continue;
+
                 }
+
                 if (!ShopProtectionFlag.getMark().equals(defaultMark)) {
+
                     continue;
+
                 }
+
                 if (shopProtectionFlag.getShopLocation().equals(shopLocation)) {
+
                     return true;
+
                 }
+
             } catch (JsonSyntaxException e) {
+
                 // Ignore
             }
+
         }
+
         return false;
+
     }
 
     /**
@@ -178,24 +259,35 @@ public abstract class AbstractDisplayItem implements Reloadable {
      */
     @NotNull
     public static ItemStack createGuardItemStack(@NotNull ItemStack itemStack, @NotNull Shop shop) {
+
         itemStack = itemStack.clone();
         ItemMeta iMeta = itemStack.getItemMeta();
         if (iMeta == null) {
+
             iMeta = Bukkit.getItemFactory().getItemMeta(itemStack.getType());
+
         }
+
         if (iMeta == null) {
+
             Log.debug("ItemStack " + itemStack
                     + " cannot getting or creating ItemMeta, failed to create guarded ItemStack.");
             return itemStack;
+
         }
+
         if (!PLUGIN.getConfig().getBoolean("shop.display-item-use-name")) {
+
             iMeta.setDisplayName(null);
+
         }
+
         ShopProtectionFlag shopProtectionFlag = createShopProtectionFlag(itemStack, shop);
         String protectFlag = JsonUtil.getGson().toJson(shopProtectionFlag);
         iMeta.setLore(Lists.newArrayList(protectFlag));
         itemStack.setItemMeta(iMeta);
         return itemStack;
+
     }
 
     /**
@@ -207,7 +299,9 @@ public abstract class AbstractDisplayItem implements Reloadable {
      */
     @NotNull
     public static ShopProtectionFlag createShopProtectionFlag(@NotNull ItemStack itemStack, @NotNull Shop shop) {
+
         return new ShopProtectionFlag(shop.getLocation().toString(), Util.serialize(itemStack));
+
     }
 
     /**
@@ -250,26 +344,32 @@ public abstract class AbstractDisplayItem implements Reloadable {
     public abstract Entity getDisplay();
 
     /**
-     * Gets the display location for an item. If it is a double shop and it is not the left shop,
-     * it will average the locations of the two chests comprising it to be perfectly in the middle.
-     * If it is the left shop, it will return null since the left shop does not spawn an item.
-     * Otherwise, it will give you the middle of the single chest.
+     * Gets the display location for an item. If it is a double shop and it is not
+     * the left shop, it will average the locations of the two chests comprising it
+     * to be perfectly in the middle. If it is the left shop, it will return null
+     * since the left shop does not spawn an item. Otherwise, it will give you the
+     * middle of the single chest.
      *
      * @return The Location that the item *should* be displaying at.
      */
     public @Nullable Location getDisplayLocation() {
+
         Util.ensureThread(false);
         return this.shop.getLocation().clone().add(0.5, 1.2, 0.5);
+
     }
 
     /**
-     * Gets the original ItemStack (without protection mark, should same with shop trading item.
+     * Gets the original ItemStack (without protection mark, should same with shop
+     * trading item.
      *
      * @return ItemStack
      */
     @NotNull
     public ItemStack getOriginalItemStack() {
+
         return originalItemStack;
+
     }
 
     /**
@@ -278,7 +378,9 @@ public abstract class AbstractDisplayItem implements Reloadable {
      * @return the status
      */
     public boolean isPendingRemoval() {
+
         return pendingRemoval;
+
     }
 
     /**
@@ -289,8 +391,8 @@ public abstract class AbstractDisplayItem implements Reloadable {
     public abstract boolean isSpawned();
 
     /**
-     * Check if the display should be display for the specificed player
-     * Only works with VirtualDisplayItem together as for as now.
+     * Check if the display should be display for the specificed player Only works
+     * with VirtualDisplayItem together as for as now.
      *
      * @param player Target player
      * @return Should display
@@ -301,13 +403,17 @@ public abstract class AbstractDisplayItem implements Reloadable {
      * Sets this display item should be remove
      */
     public void pendingRemoval() {
+
         pendingRemoval = true;
+
     }
 
     @Override
     public ReloadResult reloadModule() {
+
         init();
         return ReloadResult.builder().status(ReloadStatus.SUCCESS).build();
+
     }
 
     /**
@@ -328,8 +434,8 @@ public abstract class AbstractDisplayItem implements Reloadable {
     public abstract void respawn();
 
     /**
-     * Add the protect flags for entity or entity's hand item. Target entity will got protect by
-     * QuickShop
+     * Add the protect flags for entity or entity's hand item. Target entity will
+     * got protect by QuickShop
      *
      * @param entity Target entity
      */
@@ -347,10 +453,15 @@ public abstract class AbstractDisplayItem implements Reloadable {
      */
     @NotNull
     public Shop getShop() {
+
         return shop;
+
     }
 
     public static boolean isVirtualDisplayDoesntWork() {
+
         return virtualDisplayDoesntWork;
+
     }
+
 }

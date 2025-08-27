@@ -17,4 +17,5 @@ public interface ShopCache {
 
     @NotNull
     CacheStats getCacheStats(@NotNull ShopCacheNamespacedKey namespacedKey);
+
 }

@@ -7,10 +7,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The manager that managing all sub-commands that registered
- * Also performing permission checks in there.
+ * The manager that managing all sub-commands that registered Also performing
+ * permission checks in there.
  */
 public interface CommandManager {
+
     /**
      * Gets a list contains all registered commands
      *
@@ -19,21 +20,16 @@ public interface CommandManager {
     @NotNull
     List<CommandContainer> getRegisteredCommands();
 
-    boolean onCommand(
-            @NotNull CommandSender sender,
-            @NotNull Command command,
-            @NotNull String commandLabel,
+    boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String commandLabel,
             @NotNull String[] cmdArg);
 
     @Nullable
-    List<String> onTabComplete(
-            @NotNull CommandSender sender,
-            @NotNull Command command,
-            @NotNull String commandLabel,
+    List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String commandLabel,
             @NotNull String[] cmdArg);
 
     /**
-     * This is a interface to allow addons to register the subcommand into quickshop command manager.
+     * This is a interface to allow addons to register the subcommand into quickshop
+     * command manager.
      *
      * @param container The {@link CommandContainer} to register
      * @throws IllegalStateException Will throw the error if register conflict.
@@ -41,16 +37,19 @@ public interface CommandManager {
     void registerCmd(@NotNull CommandContainer container);
 
     /**
-     * This is a interface to allow addons to unregister the registered/butil-in subcommand from command manager.
+     * This is a interface to allow addons to unregister the registered/butil-in
+     * subcommand from command manager.
      *
      * @param prefix The prefix of command need to be unregistered
      */
     void unregisterCmd(@NotNull String prefix);
 
     /**
-     * This is a interface to allow addons to unregister the registered/butil-in subcommand from command manager.
+     * This is a interface to allow addons to unregister the registered/butil-in
+     * subcommand from command manager.
      *
      * @param container The {@link CommandContainer} to unregister
      */
     void unregisterCmd(@NotNull CommandContainer container);
+
 }

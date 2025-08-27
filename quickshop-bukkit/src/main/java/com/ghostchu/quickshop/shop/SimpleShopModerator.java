@@ -12,13 +12,14 @@ import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Contains shop's moderators infomations, owner, staffs etc.
- * You must save the ContainerShop after modify this
+ * Contains shop's moderators infomations, owner, staffs etc. You must save the
+ * ContainerShop after modify this
  */
 @EqualsAndHashCode
 @NoArgsConstructor
 @Deprecated
 public class SimpleShopModerator implements ShopModerator {
+
     private UUID owner;
     private List<UUID> staffs;
 
@@ -28,8 +29,10 @@ public class SimpleShopModerator implements ShopModerator {
      * @param owner The owner
      */
     public SimpleShopModerator(@NotNull UUID owner) {
+
         this.owner = owner;
         this.staffs = new ArrayList<>();
+
     }
 
     /**
@@ -39,15 +42,19 @@ public class SimpleShopModerator implements ShopModerator {
      * @param staffs The staffs
      */
     public SimpleShopModerator(@NotNull UUID owner, @NotNull List<UUID> staffs) {
+
         this.owner = owner;
         this.staffs = staffs;
+
     }
 
     @NotNull
     public static ShopModerator deserialize(@NotNull String serilized) throws JsonSyntaxException {
+
         // Use Gson deserialize data
         Gson gson = JsonUtil.regular();
         return gson.fromJson(serilized, SimpleShopModerator.class);
+
     }
 
     /**
@@ -58,11 +65,16 @@ public class SimpleShopModerator implements ShopModerator {
      */
     @Override
     public boolean addStaff(@NotNull UUID player) {
+
         if (staffs.contains(player)) {
+
             return false;
+
         }
+
         staffs.add(player);
         return true;
+
     }
 
     /**
@@ -70,7 +82,9 @@ public class SimpleShopModerator implements ShopModerator {
      */
     @Override
     public void clearStaffs() {
+
         staffs.clear();
+
     }
 
     /**
@@ -81,7 +95,9 @@ public class SimpleShopModerator implements ShopModerator {
      */
     @Override
     public boolean delStaff(@NotNull UUID player) {
+
         return staffs.remove(player);
+
     }
 
     /**
@@ -91,7 +107,9 @@ public class SimpleShopModerator implements ShopModerator {
      */
     @Override
     public @NotNull UUID getOwner() {
+
         return owner;
+
     }
 
     /**
@@ -101,7 +119,9 @@ public class SimpleShopModerator implements ShopModerator {
      */
     @Override
     public void setOwner(@NotNull UUID player) {
+
         this.owner = player;
+
     }
 
     /**
@@ -111,7 +131,9 @@ public class SimpleShopModerator implements ShopModerator {
      */
     @Override
     public @NotNull List<UUID> getStaffs() {
+
         return staffs;
+
     }
 
     /**
@@ -121,7 +143,9 @@ public class SimpleShopModerator implements ShopModerator {
      */
     @Override
     public void setStaffs(@NotNull List<UUID> players) {
+
         this.staffs = players;
+
     }
 
     /**
@@ -132,7 +156,9 @@ public class SimpleShopModerator implements ShopModerator {
      */
     @Override
     public boolean isModerator(@NotNull UUID player) {
+
         return isOwner(player) || isStaff(player);
+
     }
 
     /**
@@ -143,7 +169,9 @@ public class SimpleShopModerator implements ShopModerator {
      */
     @Override
     public boolean isOwner(@NotNull UUID player) {
+
         return player.equals(owner);
+
     }
 
     /**
@@ -154,18 +182,25 @@ public class SimpleShopModerator implements ShopModerator {
      */
     @Override
     public boolean isStaff(@NotNull UUID player) {
+
         return staffs.contains(player);
+
     }
 
     @Override
     public @NotNull String toString() {
+
         return serialize(this);
+
     }
 
     @NotNull
     public static String serialize(@NotNull ShopModerator shopModerator) {
+
         Gson gson = JsonUtil.getGson();
         SimpleShopModerator gsonWorkaround = (SimpleShopModerator) shopModerator;
         return gson.toJson(gsonWorkaround); // Use Gson serialize this class
+
     }
+
 }

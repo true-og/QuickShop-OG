@@ -5,10 +5,11 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The permission query service provider
- * QuickShop use that to perform a permission query request.
+ * The permission query service provider QuickShop use that to perform a
+ * permission query request.
  */
 public interface PermissionProvider {
+
     /**
      * Get permission provider name
      *
@@ -34,4 +35,5 @@ public interface PermissionProvider {
      * @return hasPermission
      */
     boolean hasPermission(@NotNull QUser sender, @NotNull String permission);
+
 }

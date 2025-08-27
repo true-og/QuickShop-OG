@@ -19,24 +19,34 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 public class ConfigProvider extends QuickShopInstanceHolder {
+
     private final File configFile;
     private final Logger logger = plugin.getLogger();
     private FileConfiguration config = null;
 
     public ConfigProvider(QuickShop plugin, File configFile) {
+
         super(plugin.getJavaPlugin());
         this.configFile = configFile;
+
     }
 
     public @NotNull FileConfiguration get() {
+
         if (config == null) {
+
             reload();
+
         }
+
         return config;
+
     }
 
     public void reload() {
+
         reload(false);
+
     }
 
     /**
@@ -45,51 +55,76 @@ public class ConfigProvider extends QuickShopInstanceHolder {
      * @param defaults is using default configuration
      */
     public void reload(boolean defaults) {
+
         if (!configFile.exists()) {
+
             plugin.saveDefaultConfig();
+
         }
+
         if (config == null) {
+
             config = new YamlConfiguration();
+
         }
+
         try (InputStream defaultConfigStream = plugin.getResource(configFile.getName())) {
+
             config.load(configFile);
             if (defaultConfigStream != null) {
+
                 try (InputStreamReader reader = new InputStreamReader(defaultConfigStream, StandardCharsets.UTF_8)) {
+
                     config.setDefaults(YamlConfiguration.loadConfiguration(reader));
+
                 }
+
             }
+
         } catch (IOException | InvalidConfigurationException exception) {
+
             if (!defaults) {
-                logger.log(
-                        Level.SEVERE,
-                        "Cannot reading the configuration " + configFile.getName()
-                                + ", doing backup configuration and use default",
-                        exception);
+
+                logger.log(Level.SEVERE, "Cannot reading the configuration " + configFile.getName()
+                        + ", doing backup configuration and use default", exception);
                 try {
-                    Files.copy(
-                            configFile.toPath(),
-                            plugin.getDataFolder()
-                                    .toPath()
-                                    .resolve(configFile.getName() + "-broken-" + UUID.randomUUID() + ".yml"),
-                            REPLACE_EXISTING);
+
+                    Files.copy(configFile.toPath(), plugin.getDataFolder().toPath()
+                            .resolve(configFile.getName() + "-broken-" + UUID.randomUUID() + ".yml"), REPLACE_EXISTING);
+
                 } catch (IOException fatalException) {
-                    throw new IllegalStateException(
-                            "Failed to backup configuration " + configFile.getName(), fatalException);
+
+                    throw new IllegalStateException("Failed to backup configuration " + configFile.getName(),
+                            fatalException);
+
                 }
+
                 plugin.saveResource(configFile.getName(), true);
                 reload(true);
+
             } else {
-                throw new IllegalStateException(
-                        "Failed to load default configuration " + configFile.getName(), exception);
+
+                throw new IllegalStateException("Failed to load default configuration " + configFile.getName(),
+                        exception);
+
             }
+
         }
+
     }
 
     public void save() {
+
         try {
+
             get().save(configFile);
+
         } catch (IOException e) {
+
             logger.log(Level.SEVERE, "Failed to save configuration " + configFile.getName(), e);
+
         }
+
     }
+
 }

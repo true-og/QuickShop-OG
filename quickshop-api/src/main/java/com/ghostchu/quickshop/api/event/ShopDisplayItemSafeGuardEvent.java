@@ -5,9 +5,11 @@ import org.bukkit.entity.Item;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * This event called after QuickShop safe guarded (+protection flags and attributes) a display item.
+ * This event called after QuickShop safe guarded (+protection flags and
+ * attributes) a display item.
  */
 public class ShopDisplayItemSafeGuardEvent extends AbstractQSEvent {
+
     @NotNull
     private final Shop shop;
 
@@ -15,14 +17,17 @@ public class ShopDisplayItemSafeGuardEvent extends AbstractQSEvent {
     private final Item entity;
 
     /**
-     * This event called after QuickShop safe guarded (+protection flags and attributes) a display item.
+     * This event called after QuickShop safe guarded (+protection flags and
+     * attributes) a display item.
      *
      * @param shop   the shop
      * @param entity the display item
      */
     public ShopDisplayItemSafeGuardEvent(@NotNull Shop shop, @NotNull Item entity) {
+
         this.shop = shop;
         this.entity = entity;
+
     }
 
     /**
@@ -32,7 +37,9 @@ public class ShopDisplayItemSafeGuardEvent extends AbstractQSEvent {
      */
     @NotNull
     public Item getEntity() {
+
         return entity;
+
     }
 
     /**
@@ -42,6 +49,9 @@ public class ShopDisplayItemSafeGuardEvent extends AbstractQSEvent {
      */
     @NotNull
     public Shop getShop() {
+
         return shop;
+
     }
+
 }

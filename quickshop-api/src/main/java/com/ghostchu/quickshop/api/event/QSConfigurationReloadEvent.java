@@ -15,10 +15,15 @@ public class QSConfigurationReloadEvent extends AbstractQSEvent {
      * @param instance Quickshop instance
      */
     public QSConfigurationReloadEvent(Plugin instance) {
+
         this.instance = instance;
+
     }
 
     public Plugin getInstance() {
+
         return instance;
+
     }
+
 }

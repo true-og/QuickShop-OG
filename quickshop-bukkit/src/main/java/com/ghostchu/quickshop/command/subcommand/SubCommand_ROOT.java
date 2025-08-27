@@ -17,53 +17,70 @@ public class SubCommand_ROOT implements CommandHandler<CommandSender> {
     private final QuickShop plugin;
 
     public SubCommand_ROOT(QuickShop plugin) {
+
         this.plugin = plugin;
+
     }
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+
         new SubCommand_Help(plugin).onCommand(sender, commandLabel, parser);
+
     }
 
     @NotNull
     @Override
-    public List<String> onTabComplete(
-            @NotNull CommandSender sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String commandLabel,
+            @NotNull CommandParser parser)
+    {
+
         final List<String> candidate = new ArrayList<>();
         for (CommandContainer container : plugin.getCommandManager().getRegisteredCommands()) {
-            if (!parser.getArgs().isEmpty()
-                    && !container.getPrefix().startsWith(parser.getArgs().get(0))) {
+
+            if (!parser.getArgs().isEmpty() && !container.getPrefix().startsWith(parser.getArgs().get(0))) {
+
                 continue;
+
             }
 
             final List<String> requirePermissions = container.getPermissions();
 
             if (requirePermissions != null) {
+
                 for (String requirePermission : requirePermissions) {
-                    if (requirePermission != null
-                            && !requirePermission.isEmpty()
-                            && !plugin.perm().hasPermission(sender, requirePermission)) {
+
+                    if (requirePermission != null && !requirePermission.isEmpty()
+                            && !plugin.perm().hasPermission(sender, requirePermission))
+                    {
+
                         if (Util.isDevMode()) {
-                            Log.debug("Player "
-                                    + sender.getName()
-                                    + " is trying to tab-complete the command: "
-                                    + commandLabel
-                                    + ", but doesn't have the permission: "
-                                    + requirePermission);
+
+                            Log.debug("Player " + sender.getName() + " is trying to tab-complete the command: "
+                                    + commandLabel + ", but doesn't have the permission: " + requirePermission);
+
                         }
+
                         return Collections.emptyList();
+
                     }
+
                 }
+
             }
 
-            if (!container.isHidden()
-                    && !(container.isDisabled()
-                            || (container.getDisabledSupplier() != null
-                                    && container.getDisabledSupplier().get()))) {
+            if (!container.isHidden() && !(container.isDisabled()
+                    || (container.getDisabledSupplier() != null && container.getDisabledSupplier().get())))
+            {
+
                 candidate.add(container.getPrefix());
+
             }
+
         }
 
         return candidate;
+
     }
+
 }

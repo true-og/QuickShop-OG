@@ -32,8 +32,8 @@ public interface EconomyTransaction {
     boolean commit(@NotNull TransactionCallback callback);
 
     /**
-     * Commit the transaction by the Fail-Safe way
-     * Automatic rollback when commit failed
+     * Commit the transaction by the Fail-Safe way Automatic rollback when commit
+     * failed
      *
      * @return The transaction success.
      */
@@ -98,7 +98,8 @@ public interface EconomyTransaction {
      * Rolling back the transaction
      *
      * @param continueWhenFailed Continue when some parts of the rollback fails.
-     * @return A list contains all steps executed. If "continueWhenFailed" is false, it only contains all success steps before hit the error. Else all.
+     * @return A list contains all steps executed. If "continueWhenFailed" is false,
+     *         it only contains all success steps before hit the error. Else all.
      */
     @SuppressWarnings("UnusedReturnValue")
     @NotNull
@@ -107,6 +108,7 @@ public interface EconomyTransaction {
     void setAllowLoan(boolean allowLoan);
 
     interface TransactionCallback {
+
         /**
          * Calling while Transaction commit
          *
@@ -114,32 +116,40 @@ public interface EconomyTransaction {
          * @return Does commit event has been cancelled
          */
         default boolean onCommit(@NotNull EconomyTransaction economyTransaction) {
+
             return true;
+
         }
 
         /**
-         * Calling while Transaction commit failed
-         * Use EconomyTransaction#getLastError() to getting reason
-         * Use EconomyTransaction#getSteps() to getting the fail step
+         * Calling while Transaction commit failed Use EconomyTransaction#getLastError()
+         * to getting reason Use EconomyTransaction#getSteps() to getting the fail step
          *
          * @param economyTransaction Transaction
          */
-        default void onFailed(@NotNull EconomyTransaction economyTransaction) {}
+        default void onFailed(@NotNull EconomyTransaction economyTransaction) {
+
+        }
 
         /**
          * Calling while Transaction commit successfully
          *
          * @param economyTransaction Transaction
          */
-        default void onSuccess(@NotNull EconomyTransaction economyTransaction) {}
+        default void onSuccess(@NotNull EconomyTransaction economyTransaction) {
+
+        }
 
         /**
-         * Calling while Tax processing failed
-         * Use EconomyTransaction#getLastError() to getting reason
-         * Use EconomyTransaction#getSteps() to getting the fail step
+         * Calling while Tax processing failed Use EconomyTransaction#getLastError() to
+         * getting reason Use EconomyTransaction#getSteps() to getting the fail step
          *
          * @param economyTransaction Transaction
          */
-        default void onTaxFailed(@NotNull EconomyTransaction economyTransaction) {}
+        default void onTaxFailed(@NotNull EconomyTransaction economyTransaction) {
+
+        }
+
     }
+
 }

@@ -45,6 +45,7 @@ import org.slf4j.Logger;
  * A class allow plugin load shops fast and simply.
  */
 public class ShopLoader implements SubPasteItem {
+
     private final QuickShop plugin;
     private final ExecutorService executorService;
     /* This may contains broken shop, must use null check before load it. */
@@ -56,13 +57,17 @@ public class ShopLoader implements SubPasteItem {
      * @param plugin Plugin main class
      */
     public ShopLoader(@NotNull QuickShop plugin) {
+
         this.plugin = plugin;
         this.executorService = Executors.newWorkStealingPool(PackageUtil.parsePackageProperly("parallelism")
                 .asInteger(CommonUtil.multiProcessorThreadRecommended()));
+
     }
 
     public void loadShops() {
+
         loadShops(null);
+
     }
 
     /**
@@ -71,111 +76,136 @@ public class ShopLoader implements SubPasteItem {
      * @param worldName The world name, null if load all shops
      */
     public void loadShops(@Nullable String worldName) {
+
         if (worldName != null) {
+
             if (Bukkit.getWorld(worldName) == null) {
+
                 plugin.logger().warn("World {} not exists, skip loading shops in this world.", worldName);
                 return;
+
             }
+
         }
+
         boolean deleteCorruptShops = plugin.getConfig().getBoolean("debug.delete-corrupt-shops", false);
         plugin.logger().info("Loading shops from database...");
         Timer dbFetchTimer = new Timer(true);
         List<ShopRecord> records = plugin.getDatabaseHelper().listShops(deleteCorruptShops);
-        plugin.logger()
-                .info(
-                        "Used {}ms to fetch {} shops from database.",
-                        dbFetchTimer.stopAndGetTimePassed(),
-                        records.size());
+        plugin.logger().info("Used {}ms to fetch {} shops from database.", dbFetchTimer.stopAndGetTimePassed(),
+                records.size());
         plugin.logger().info("Loading shops into memory...");
         Timer shopTotalTimer = new Timer(true);
         AtomicInteger successCounter = new AtomicInteger(0);
         AtomicInteger chunkNotLoaded = new AtomicInteger(0);
         List<Shop> shopsLoadInNextTick = new CopyOnWriteArrayList<>();
         for (ShopRecord record : records) {
-            loadShopFromShopRecord(
-                            worldName, record, deleteCorruptShops, shopsLoadInNextTick, successCounter, chunkNotLoaded)
-                    .exceptionally(e -> {
+
+            loadShopFromShopRecord(worldName, record, deleteCorruptShops, shopsLoadInNextTick, successCounter,
+                    chunkNotLoaded).exceptionally(e ->
+            {
+
                         plugin.logger().warn("Failed to load shop {}", record, e);
                         return null;
-                    })
-                    .join();
+
+                    }).join();
+
         }
+
         Util.mainThreadRun(() -> shopsLoadInNextTick.forEach(shop -> {
+
             try {
+
                 plugin.getShopManager().loadShop(shop);
+
             } catch (Throwable e) {
+
                 plugin.logger().error("Failed to load shop {}.", shop.getShopId(), e);
+
             }
+
         }));
-        plugin.logger()
-                .info(
-                        "Used {}ms to load {} shops into memory ({} shops will be loaded after chunks/world loaded).",
-                        shopTotalTimer.stopAndGetTimePassed(),
-                        successCounter.get(),
-                        chunkNotLoaded.get());
+        plugin.logger().info(
+                "Used {}ms to load {} shops into memory ({} shops will be loaded after chunks/world loaded).",
+                shopTotalTimer.stopAndGetTimePassed(), successCounter.get(), chunkNotLoaded.get());
+
     }
 
-    private CompletableFuture<Void> loadShopFromShopRecord(
-            String worldName,
-            ShopRecord shopRecord,
-            boolean deleteCorruptShops,
-            List<Shop> shopsLoadInNextTick,
-            AtomicInteger successCounter,
-            AtomicInteger chunkNotLoaded) {
-        return CompletableFuture.supplyAsync(
-                () -> {
-                    InfoRecord infoRecord = shopRecord.getInfoRecord();
-                    DataRecord dataRecord = shopRecord.getDataRecord();
-                    Timer singleShopLoadingTimer = new Timer(true);
-                    ShopLoadResult result = loadSingleShop(infoRecord, dataRecord, worldName, shopsLoadInNextTick);
-                    switch (result) {
-                        case LOADED -> successCounter.incrementAndGet();
-                        case LOAD_AFTER_CHUNK_LOADED -> chunkNotLoaded.incrementAndGet();
-                        case WORLD_NOT_MATCH_SKIPPED -> {
-                            // Do nothing
-                        }
-                        case FAILED -> {
-                            if (deleteCorruptShops) {
-                                plugin.getDatabaseHelper()
-                                        .removeShopMap(
-                                                infoRecord.getWorld(),
-                                                infoRecord.getX(),
-                                                infoRecord.getY(),
-                                                infoRecord.getZ());
-                                plugin.logger()
-                                        .warn("Shop {} is corrupted, removed from database.", infoRecord.getShopId());
-                            }
-                        }
+    private CompletableFuture<Void> loadShopFromShopRecord(String worldName, ShopRecord shopRecord,
+            boolean deleteCorruptShops, List<Shop> shopsLoadInNextTick, AtomicInteger successCounter,
+            AtomicInteger chunkNotLoaded)
+    {
+
+        return CompletableFuture.supplyAsync(() -> {
+
+            InfoRecord infoRecord = shopRecord.getInfoRecord();
+            DataRecord dataRecord = shopRecord.getDataRecord();
+            Timer singleShopLoadingTimer = new Timer(true);
+            ShopLoadResult result = loadSingleShop(infoRecord, dataRecord, worldName, shopsLoadInNextTick);
+            switch (result) {
+
+                case LOADED -> successCounter.incrementAndGet();
+                case LOAD_AFTER_CHUNK_LOADED -> chunkNotLoaded.incrementAndGet();
+                case WORLD_NOT_MATCH_SKIPPED -> {
+
+                    // Do nothing
+                }
+                case FAILED -> {
+
+                    if (deleteCorruptShops) {
+
+                        plugin.getDatabaseHelper().removeShopMap(infoRecord.getWorld(), infoRecord.getX(),
+                                infoRecord.getY(), infoRecord.getZ());
+                        plugin.logger().warn("Shop {} is corrupted, removed from database.", infoRecord.getShopId());
+
                     }
-                    Log.timing("Shop loading completed: " + result.name(), singleShopLoadingTimer);
-                    return null;
-                },
-                this.executorService);
+
+                }
+
+            }
+
+            Log.timing("Shop loading completed: " + result.name(), singleShopLoadingTimer);
+            return null;
+
+        }, this.executorService);
+
     }
 
-    private ShopLoadResult loadSingleShop(
-            InfoRecord infoRecord,
-            DataRecord dataRecord,
-            @Nullable String worldName,
-            @NotNull List<Shop> shopsLoadInNextTick) {
+    private ShopLoadResult loadSingleShop(InfoRecord infoRecord, DataRecord dataRecord, @Nullable String worldName,
+            @NotNull List<Shop> shopsLoadInNextTick)
+    {
+
         // World check
         if (worldName != null) {
+
             if (!worldName.equals(infoRecord.getWorld())) {
+
                 return ShopLoadResult.WORLD_NOT_MATCH_SKIPPED;
+
             }
+
         }
+
         if (Bukkit.getWorld(infoRecord.getWorld()) == null) {
+
             return ShopLoadResult.LOAD_AFTER_CHUNK_LOADED;
+
         }
+
         // Shop basic check
         if (dataRecord.getInventoryWrapper() == null) {
+
             return ShopLoadResult.FAILED;
+
         }
-        if (dataRecord.getInventorySymbolLink() != null
-                && !dataRecord.getInventoryWrapper().isEmpty()
-                && plugin.getInventoryWrapperRegistry().get(dataRecord.getInventoryWrapper()) == null) {
+
+        if (dataRecord.getInventorySymbolLink() != null && !dataRecord.getInventoryWrapper().isEmpty()
+                && plugin.getInventoryWrapperRegistry().get(dataRecord.getInventoryWrapper()) == null)
+        {
+
             Log.debug("InventoryWrapperProvider not exists! Shop won't be loaded!");
             return ShopLoadResult.FAILED;
+
         }
 
         int x = infoRecord.getX();
@@ -185,54 +215,63 @@ public class ShopLoader implements SubPasteItem {
         DataRawDatabaseInfo rawInfo = new DataRawDatabaseInfo(dataRecord);
         Location location = new Location(Bukkit.getWorld(infoRecord.getWorld()), x, y, z);
         try {
-            shop = new ContainerShop(
-                    plugin,
-                    infoRecord.getShopId(),
-                    location,
-                    rawInfo.getPrice(),
-                    rawInfo.getItem(),
-                    rawInfo.getOwner(),
-                    rawInfo.isUnlimited(),
-                    rawInfo.getType(),
-                    rawInfo.getExtra(),
-                    rawInfo.getCurrency(),
-                    rawInfo.isHologram(),
-                    rawInfo.getTaxAccount(),
-                    rawInfo.getInvWrapper(),
-                    rawInfo.getInvSymbolLink(),
-                    rawInfo.getName(),
-                    rawInfo.getPermissions(),
-                    rawInfo.getBenefits());
+
+            shop = new ContainerShop(plugin, infoRecord.getShopId(), location, rawInfo.getPrice(), rawInfo.getItem(),
+                    rawInfo.getOwner(), rawInfo.isUnlimited(), rawInfo.getType(), rawInfo.getExtra(),
+                    rawInfo.getCurrency(), rawInfo.isHologram(), rawInfo.getTaxAccount(), rawInfo.getInvWrapper(),
+                    rawInfo.getInvSymbolLink(), rawInfo.getName(), rawInfo.getPermissions(), rawInfo.getBenefits());
+
         } catch (Exception e) {
+
             if (e instanceof IllegalStateException) {
+
                 plugin.logger().warn("Failed to load the shop, skipping...", e);
+
             }
+
             exceptionHandler(e, location);
             return ShopLoadResult.FAILED;
+
         }
+
         // Dirty check
         if (rawInfo.isNeedUpdate()) {
+
             shop.setDirty();
+
         }
+
         // Null check
         if (shopNullCheck(shop)) {
+
             return ShopLoadResult.FAILED;
+
         }
+
         // Load to RAM
         plugin.getShopManager().registerShop(shop, false); // persist=false to load to memory (it already persisted)
         if (Util.isLoaded(location)) {
+
             // Load to World
-            // plugin.getShopManager().loadShop(shop); // Patch the shops won't load around the spawn
+            // plugin.getShopManager().loadShop(shop); // Patch the shops won't load around
+            // the spawn
             shopsLoadInNextTick.add(shop);
+
         } else {
+
             return ShopLoadResult.LOAD_AFTER_CHUNK_LOADED;
+
         }
+
         return ShopLoadResult.LOADED;
+
     }
 
     private void exceptionHandler(@NotNull Exception ex, @Nullable Location shopLocation) {
+
         errors++;
-        @NotNull Logger logger = plugin.logger();
+        @NotNull
+        Logger logger = plugin.logger();
         logger.warn("##########FAILED TO LOAD SHOP##########");
         logger.warn("  >> Error Info:");
         logger.warn(ex.getMessage());
@@ -242,70 +281,104 @@ public class ShopLoader implements SubPasteItem {
         logger.warn("Location: {}", shopLocation);
         String blockType = "N/A";
         if (shopLocation != null) {
+
             if (Util.isLoaded(shopLocation)) {
+
                 blockType = shopLocation.getBlock().getType().name();
+
             } else {
+
                 blockType = "Not loaded yet";
+
             }
+
         } else {
+
             logger.warn("Block: {}", "Location is null");
+
         }
+
         logger.warn("Block: {}", blockType);
         logger.warn("#######################################");
         if (errors > 10) {
+
             logger.error(
                     "QuickShop detected too many errors when loading shops, you should backup your shop database and ask the developer for help");
+
         }
+
     }
 
     private boolean shopNullCheck(@Nullable Shop shop) {
+
         if (shop == null) {
+
             Log.debug("Shop object is null");
             return true;
+
         }
+
         if (shop.getItem() == null) {
+
             Log.debug("Shop itemStack is null");
             return true;
+
         }
+
         if (shop.getItem().getType() == Material.AIR) {
+
             Log.debug("Shop itemStack type can't be AIR");
             return true;
+
         }
+
         if (shop.getItem().getAmount() <= 0) {
+
             Log.debug("Shop itemStack amount can't be 0");
             return true;
+
         }
+
         if (shop.getLocation() == null) {
+
             Log.debug("Shop location is null");
             return true;
+
         }
+
         if (shop.getOwner() == null) {
+
             Log.debug("Shop owner is null");
             return true;
+
         }
+
         return false;
+
     }
 
     @Override
     public @NotNull String genBody() {
+
         return "<p>Errors: " + errors + "</p>";
+
     }
 
     @Override
     public @NotNull String getTitle() {
+
         return "Shop Loader";
+
     }
 
     public enum ShopLoadResult {
-        LOADED,
-        LOAD_AFTER_CHUNK_LOADED,
-        WORLD_NOT_MATCH_SKIPPED,
-        FAILED
+        LOADED, LOAD_AFTER_CHUNK_LOADED, WORLD_NOT_MATCH_SKIPPED, FAILED
     }
 
     @Getter
     @Setter
     public static class DataRawDatabaseInfo {
+
         private QUser owner;
         private String name;
         private ShopType type;
@@ -325,6 +398,7 @@ public class ShopLoader implements SubPasteItem {
         private Benefit benefits;
 
         DataRawDatabaseInfo(@NotNull DataRecord dataRecord) {
+
             this.owner = dataRecord.getOwner();
             this.price = dataRecord.getPrice();
             this.type = ShopType.fromID(dataRecord.getType());
@@ -336,70 +410,104 @@ public class ShopLoader implements SubPasteItem {
             this.hologram = dataRecord.isHologram();
             this.taxAccount = null;
             if (dataRecord.getTaxAccount() != null) {
+
                 this.taxAccount = getTaxAccount();
+
             }
+
             this.invSymbolLink = dataRecord.getInventorySymbolLink();
             this.invWrapper = dataRecord.getInventoryWrapper();
             this.benefits = SimpleBenefit.deserialize(dataRecord.getBenefit());
             String permissionJson = dataRecord.getPermissions();
             if (!StringUtils.isEmpty(permissionJson) && CommonUtil.isJson(permissionJson)) {
-                Type typeToken = new TypeToken<Map<UUID, String>>() {}.getType();
+
+                Type typeToken = new TypeToken<Map<UUID, String>>() {
+                }.getType();
                 this.permissions = new HashMap<>(JsonUtil.getGson().fromJson(permissionJson, typeToken));
+
             } else {
+
                 this.permissions = new HashMap<>();
+
             }
+
             this.item = deserializeItem(dataRecord.getItem());
             this.extra = deserializeExtra(extraStr);
+
         }
 
         private @Nullable ItemStack deserializeItem(@NotNull String itemConfig) {
+
             try {
+
                 return Util.deserialize(itemConfig);
+
             } catch (InvalidConfigurationException e) {
-                QuickShop.getInstance()
-                        .logger()
+
+                QuickShop.getInstance().logger()
                         .warn("Failed load shop data, because target config can't deserialize the ItemStack", e);
                 Log.debug("Failed to load data to the ItemStack: " + itemConfig);
                 return null;
+
             }
+
         }
 
         private @NotNull YamlConfiguration deserializeExtra(@NotNull String extraString) {
+
             YamlConfiguration yamlConfiguration = new YamlConfiguration();
             try {
+
                 yamlConfiguration.loadFromString(extraString);
+
             } catch (InvalidConfigurationException e) {
+
                 yamlConfiguration = new YamlConfiguration();
                 needUpdate = true;
+
             }
+
             return yamlConfiguration;
+
         }
 
         @Override
         public String toString() {
+
             return JsonUtil.getGson().toJson(this);
+
         }
+
     }
 
     @Getter
     @Setter
     public static class ShopDatabaseInfo {
+
         private int shopId;
         private int dataId;
 
         ShopDatabaseInfo(ResultSet origin) {
+
             try {
+
                 this.shopId = origin.getInt("id");
                 this.dataId = origin.getInt("data");
+
             } catch (Exception ex) {
+
                 ex.printStackTrace();
+
             }
+
         }
+
     }
 
     @Getter
     @Setter
     public static class ShopMappingInfo {
+
         private int shopId;
         private String world;
         private int x;
@@ -407,15 +515,23 @@ public class ShopLoader implements SubPasteItem {
         private int z;
 
         ShopMappingInfo(ResultSet origin) {
+
             try {
+
                 this.shopId = origin.getInt("shop");
                 this.x = origin.getInt("x");
                 this.y = origin.getInt("y");
                 this.z = origin.getInt("z");
                 this.world = origin.getString("world");
+
             } catch (Exception ex) {
+
                 ex.printStackTrace();
+
             }
+
         }
+
     }
+
 }

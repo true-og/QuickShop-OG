@@ -16,30 +16,37 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class EnderChestWrapper implements InventoryWrapper {
+
     private final UUID uuid;
     private final Player player;
     private final Main plugin;
 
     public EnderChestWrapper(UUID uuid, IOpenInv iOpenInv, Main plugin) {
+
         this.plugin = plugin;
         this.uuid = uuid;
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
         this.player = iOpenInv.loadPlayer(offlinePlayer);
+
     }
 
     public UUID getUuid() {
+
         return uuid;
+
     }
 
     /**
-     * Return the iterator for this inventory
-     * It's not thread-safe, please use that in main-thread
+     * Return the iterator for this inventory It's not thread-safe, please use that
+     * in main-thread
      *
      * @return the iterator for this inventory
      */
     @Override
     public @NotNull InventoryWrapperIterator iterator() {
+
         return InventoryWrapperIterator.ofBukkitInventory(player.getEnderChest());
+
     }
 
     /**
@@ -47,12 +54,16 @@ public class EnderChestWrapper implements InventoryWrapper {
      */
     @Override
     public void clear() {
+
         player.getEnderChest().clear();
+
     }
 
     @Override
     public @NotNull ItemStack[] createSnapshot() {
+
         return player.getEnderChest().getContents();
+
     }
 
     /**
@@ -62,7 +73,9 @@ public class EnderChestWrapper implements InventoryWrapper {
      */
     @Override
     public @NotNull InventoryWrapperManager getWrapperManager() {
+
         return plugin.getManager();
+
     }
 
     /**
@@ -72,7 +85,9 @@ public class EnderChestWrapper implements InventoryWrapper {
      */
     @Override
     public @Nullable InventoryHolder getHolder() {
+
         return null;
+
     }
 
     /**
@@ -82,24 +97,31 @@ public class EnderChestWrapper implements InventoryWrapper {
      */
     @Override
     public @NotNull InventoryWrapperType getInventoryType() {
+
         return InventoryWrapperType.PLUGIN;
+
     }
 
     /**
-     * Get the location of the block or entity which corresponds to this inventory. May return null if this container
-     * was custom created or is a virtual / subcontainer.
+     * Get the location of the block or entity which corresponds to this inventory.
+     * May return null if this container was custom created or is a virtual /
+     * subcontainer.
      *
      * @return location or null if not applicable.
      */
     @Override
     public @Nullable Location getLocation() {
+
         return null;
+
     }
 
     @Override
     public boolean restoreSnapshot(@NotNull ItemStack[] snapshot) {
+
         player.getEnderChest().setContents(snapshot);
         return true;
+
     }
 
     /**
@@ -109,6 +131,9 @@ public class EnderChestWrapper implements InventoryWrapper {
      */
     @Override
     public void setContents(ItemStack[] itemStacks) {
+
         player.getEnderChest().setContents(itemStacks);
+
     }
+
 }

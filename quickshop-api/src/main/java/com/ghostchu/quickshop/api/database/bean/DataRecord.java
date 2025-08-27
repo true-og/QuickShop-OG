@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface DataRecord {
+
     @NotNull
     Date getCreateTime();
 
@@ -46,4 +47,5 @@ public interface DataRecord {
 
     @NotNull
     String getBenefit();
+
 }

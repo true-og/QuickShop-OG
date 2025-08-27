@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Data
 public class PermissionInformationContainer {
+
     @NotNull
     private CommandSender sender;
 
@@ -20,15 +21,15 @@ public class PermissionInformationContainer {
     @Nullable
     private String otherInfos;
 
-    public PermissionInformationContainer(
-            @NotNull CommandSender sender,
-            @NotNull String permission,
-            @Nullable String groupName,
-            @Nullable String otherInfos) {
+    public PermissionInformationContainer(@NotNull CommandSender sender, @NotNull String permission,
+            @Nullable String groupName, @Nullable String otherInfos)
+    {
+
         this.sender = sender;
         this.permission = permission;
         this.groupName = groupName;
         this.otherInfos = otherInfos;
+
     }
 
     /**
@@ -37,6 +38,9 @@ public class PermissionInformationContainer {
      * @return yes or no
      */
     public boolean isConsole() {
+
         return sender instanceof Server;
+
     }
+
 }

@@ -3,6 +3,7 @@ package com.ghostchu.quickshop.util.paste.item;
 import org.jetbrains.annotations.NotNull;
 
 public interface PasteItem {
+
     /**
      * Render this item to HTML sources
      *
@@ -10,4 +11,5 @@ public interface PasteItem {
      */
     @NotNull
     String toHTML();
+
 }

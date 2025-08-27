@@ -7,13 +7,14 @@ import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Contains shop's moderators infomations, owner, staffs etc.
- * You must save the ContainerShop after modify this
+ * Contains shop's moderators infomations, owner, staffs etc. You must save the
+ * ContainerShop after modify this
  *
  * @deprecated Replaced with {@link ShopPermissionManager}
  */
 @Deprecated
 public interface ShopModerator {
+
     Gson GSON = new Gson();
 
     /**
@@ -25,8 +26,10 @@ public interface ShopModerator {
      */
     @NotNull
     static ShopModerator deserialize(@NotNull String serilized) throws JsonSyntaxException {
+
         // Use Gson deserialize data
         return GSON.fromJson(serilized, ShopModerator.class);
+
     }
 
     /**
@@ -37,7 +40,9 @@ public interface ShopModerator {
      */
     @NotNull
     static String serialize(@NotNull ShopModerator shopModerator) {
+
         return GSON.toJson(shopModerator); // Use Gson serialize this class
+
     }
 
     /**
@@ -118,4 +123,5 @@ public interface ShopModerator {
     @Override
     @NotNull
     String toString();
+
 }

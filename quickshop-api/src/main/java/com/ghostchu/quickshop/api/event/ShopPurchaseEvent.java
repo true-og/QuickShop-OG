@@ -28,27 +28,27 @@ public class ShopPurchaseEvent extends AbstractQSEvent implements QSCancellable 
     private @Nullable Component cancelReason;
 
     /**
-     * Builds a new shop purchase event
-     * Will called when purchase starting
-     * For recording purchase, please listen to ShopSuccessPurchaseEvent.
+     * Builds a new shop purchase event Will called when purchase starting For
+     * recording purchase, please listen to ShopSuccessPurchaseEvent.
      *
      * @param shop               The shop bought from
-     * @param purchaser          The player buying, may offline if purchase by plugin
-     * @param purchaserInventory The purchaseing target inventory, *MAY NOT A PLAYER INVENTORY IF PLUGIN PURCHASE THIS*
+     * @param purchaser          The player buying, may offline if purchase by
+     *                           plugin
+     * @param purchaserInventory The purchaseing target inventory, *MAY NOT A PLAYER
+     *                           INVENTORY IF PLUGIN PURCHASE THIS*
      * @param amount             The amount they're buying
      * @param total              The total balance in this purchase
      */
-    public ShopPurchaseEvent(
-            @NotNull Shop shop,
-            @NotNull QUser purchaser,
-            @NotNull InventoryWrapper purchaserInventory,
-            int amount,
-            double total) {
+    public ShopPurchaseEvent(@NotNull Shop shop, @NotNull QUser purchaser, @NotNull InventoryWrapper purchaserInventory,
+            int amount, double total)
+    {
+
         this.shop = shop;
         this.purchaser = purchaser;
         this.purchaserInventory = purchaserInventory;
         this.amount = amount * shop.getItem().getAmount();
         this.total = total;
+
     }
 
     /**
@@ -57,18 +57,24 @@ public class ShopPurchaseEvent extends AbstractQSEvent implements QSCancellable 
      * @return Item stack amounts
      */
     public int getAmount() {
+
         return this.amount;
+
     }
 
     @Override
     public @Nullable Component getCancelReason() {
+
         return this.cancelReason;
+
     }
 
     @Override
     public void setCancelled(boolean cancel, @Nullable Component reason) {
+
         this.cancelled = cancel;
         this.cancelReason = reason;
+
     }
 
     /**
@@ -77,7 +83,9 @@ public class ShopPurchaseEvent extends AbstractQSEvent implements QSCancellable 
      * @return The purchaser uuid
      */
     public @NotNull QUser getPurchaser() {
+
         return this.purchaser;
+
     }
 
     /**
@@ -86,7 +94,9 @@ public class ShopPurchaseEvent extends AbstractQSEvent implements QSCancellable 
      * @return The inventory
      */
     public @NotNull InventoryWrapper getPurchaserInventory() {
+
         return this.purchaserInventory;
+
     }
 
     /**
@@ -95,7 +105,9 @@ public class ShopPurchaseEvent extends AbstractQSEvent implements QSCancellable 
      * @return the shop
      */
     public @NotNull Shop getShop() {
+
         return this.shop;
+
     }
 
     /**
@@ -104,7 +116,9 @@ public class ShopPurchaseEvent extends AbstractQSEvent implements QSCancellable 
      * @return Total money
      */
     public double getTotal() {
+
         return this.total;
+
     }
 
     /**
@@ -113,11 +127,16 @@ public class ShopPurchaseEvent extends AbstractQSEvent implements QSCancellable 
      * @param total Total money
      */
     public void setTotal(double total) {
+
         this.total = total;
+
     }
 
     @Override
     public boolean isCancelled() {
+
         return this.cancelled;
+
     }
+
 }

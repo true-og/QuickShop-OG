@@ -18,6 +18,7 @@ import org.bukkit.scheduler.BukkitTask;
  * @author Ghost_chu
  */
 public class CalendarWatcher extends BukkitRunnable {
+
     @Getter
     private final File calendarFile = new File(Util.getCacheFolder(), "calendar.cache");
 
@@ -28,19 +29,26 @@ public class CalendarWatcher extends BukkitRunnable {
     private BukkitTask task;
 
     public CalendarWatcher(QuickShop plugin) {
+
         this.plugin = plugin;
         if (!calendarFile.exists()) {
+
             try {
+
                 calendarFile.createNewFile();
+
             } catch (IOException ioException) {
-                plugin.logger()
-                        .warn(
-                                "Cannot create calendar cache file at {}, scheduled tasks may cannot or execute wrongly!",
-                                calendarFile.getAbsolutePath(),
-                                ioException);
+
+                plugin.logger().warn(
+                        "Cannot create calendar cache file at {}, scheduled tasks may cannot or execute wrongly!",
+                        calendarFile.getAbsolutePath(), ioException);
+
             }
+
         }
+
         configuration = YamlConfiguration.loadConfiguration(calendarFile);
+
     }
 
     /**
@@ -48,11 +56,14 @@ public class CalendarWatcher extends BukkitRunnable {
      */
     @Override
     public void run() {
+
         CalendarEvent.CalendarTriggerType type = getAndUpdate();
         Util.mainThreadRun(() -> new CalendarEvent(type).callEvent());
+
     }
 
     public CalendarEvent.CalendarTriggerType getAndUpdate() {
+
         Calendar c = Calendar.getInstance();
         CalendarEvent.CalendarTriggerType type = CalendarEvent.CalendarTriggerType.NOTHING_CHANGED;
         int secondRecord = configuration.getInt("second");
@@ -70,25 +81,45 @@ public class CalendarWatcher extends BukkitRunnable {
         int monthNow = c.get(Calendar.MONTH);
         int yearNow = c.get(Calendar.YEAR);
         if (secondNow != secondRecord) {
+
             type = CalendarEvent.CalendarTriggerType.SECOND;
+
         }
+
         if (minuteNow != minuteRecord) {
+
             type = CalendarEvent.CalendarTriggerType.MINUTE;
+
         }
+
         if (hourNow != hourRecord) {
+
             type = CalendarEvent.CalendarTriggerType.HOUR;
+
         }
+
         if (dayNow != dayRecord) {
+
             type = CalendarEvent.CalendarTriggerType.DAY;
+
         }
+
         if (weekNow != weekRecord) {
+
             type = CalendarEvent.CalendarTriggerType.WEEK;
+
         }
+
         if (monthNow != monthRecord) {
+
             type = CalendarEvent.CalendarTriggerType.MONTH;
+
         }
+
         if (yearNow != yearRecord) {
+
             type = CalendarEvent.CalendarTriggerType.YEAR;
+
         }
 
         configuration.set("second", secondNow);
@@ -102,36 +133,54 @@ public class CalendarWatcher extends BukkitRunnable {
         // If we need update every minute, use type.ordinal() >= MINUTE
 
         if (type.ordinal() >= CalendarEvent.CalendarTriggerType.HOUR.ordinal()) {
+
             save();
+
         }
 
         return type;
+
     }
 
     public void save() {
+
         try {
+
             configuration.save(calendarFile);
+
         } catch (IOException ioException) {
-            plugin.logger()
-                    .warn(
-                            "Cannot save calendar cache file at {}, scheduled tasks may cannot or execute wrongly!",
-                            calendarFile.getAbsolutePath(),
-                            ioException);
+
+            plugin.logger().warn(
+                    "Cannot save calendar cache file at {}, scheduled tasks may cannot or execute wrongly!",
+                    calendarFile.getAbsolutePath(), ioException);
+
         }
+
     }
 
     public void start() {
+
         task = this.runTaskTimerAsynchronously(plugin.getJavaPlugin(), 20, 20);
+
     }
 
     public void stop() {
+
         save();
         try {
+
             if (task != null && !task.isCancelled()) {
+
                 task.cancel();
+
             }
+
         } catch (IllegalStateException ex) {
+
             Log.debug("Task already cancelled " + ex.getMessage());
+
         }
+
     }
+
 }

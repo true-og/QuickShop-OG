@@ -10,12 +10,14 @@ import org.jetbrains.annotations.NotNull;
  * The shop control panel impl.
  */
 public interface ShopControlPanel {
+
     /**
      * Generate components for the shop control panel.
      *
      * @param player The player
      * @param shop   The shop
-     * @return The components, or empty list if nothing to show. Every component will be shown in a new line.
+     * @return The components, or empty list if nothing to show. Every component
+     *         will be shown in a new line.
      */
     @NotNull
     List<Component> generate(@NotNull Player player, @NotNull Shop shop);
@@ -26,13 +28,13 @@ public interface ShopControlPanel {
      * @return The internal usage priority.
      */
     default int getInternalPriority() {
+
         return getPriority().getPriority();
+
     }
 
     /**
-     * The shop control panel's priority.
-     * HIGH = Earlier shown
-     * LOW = Later shown
+     * The shop control panel's priority. HIGH = Earlier shown LOW = Later shown
      *
      * @return The priority.
      */
@@ -46,4 +48,5 @@ public interface ShopControlPanel {
      */
     @NotNull
     Plugin getPlugin();
+
 }

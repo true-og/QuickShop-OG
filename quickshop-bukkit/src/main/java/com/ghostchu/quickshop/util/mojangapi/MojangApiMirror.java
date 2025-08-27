@@ -1,6 +1,7 @@
 package com.ghostchu.quickshop.util.mojangapi;
 
 public interface MojangApiMirror {
+
     /**
      * <a href="https://launchermeta.mojang.com">https://launchermeta.mojang.com</a>
      *
@@ -16,9 +17,11 @@ public interface MojangApiMirror {
     String getLibrariesRoot();
 
     /**
-     * <a href="https://resources.download.minecraft.net">https://resources.download.minecraft.net</a>
+     * <a href=
+     * "https://resources.download.minecraft.net">https://resources.download.minecraft.net</a>
      *
      * @return The url root
      */
     String getResourcesDownloadRoot();
+
 }

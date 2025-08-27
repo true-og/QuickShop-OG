@@ -3,6 +3,7 @@ package com.ghostchu.quickshop.util.paste;
 import org.jetbrains.annotations.NotNull;
 
 public interface PasteInterface {
+
     /**
      * Paste the text to pastebin
      *
@@ -20,4 +21,5 @@ public interface PasteInterface {
      * @throws Exception IOException if paste failed
      */
     String pasteTheTextJson(@NotNull String text) throws Exception;
+
 }

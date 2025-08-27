@@ -6,10 +6,14 @@ import lombok.Getter;
 
 @Getter
 public class HopperPersistentData {
+
     @Expose
     private final UUID player;
 
     public HopperPersistentData(UUID player) {
+
         this.player = player;
+
     }
+
 }

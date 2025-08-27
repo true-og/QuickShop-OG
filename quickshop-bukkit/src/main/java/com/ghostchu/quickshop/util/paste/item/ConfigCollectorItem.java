@@ -11,9 +11,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ConfigCollectorItem implements SubPasteItem {
+
     private final List<File> file = new ArrayList<>();
 
     public ConfigCollectorItem() {
+
         file.add(new File(QuickShop.getInstance().getDataFolder(), "config.yml"));
         file.add(new File(QuickShop.getInstance().getDataFolder(), "group.yml"));
         file.add(new File(QuickShop.getInstance().getDataFolder(), "interaction.yml"));
@@ -25,57 +27,76 @@ public class ConfigCollectorItem implements SubPasteItem {
         // 1.19 and up paper configuration
         File newConfigFolder = new File("config");
         if (newConfigFolder.exists() && newConfigFolder.isDirectory()) {
+
             File[] filesInsideConfig = newConfigFolder.listFiles((dir, name) -> name.endsWith(".yml")
-                    || name.endsWith(".yaml")
-                    || name.endsWith(".json")
-                    || name.endsWith(".toml"));
+                    || name.endsWith(".yaml") || name.endsWith(".json") || name.endsWith(".toml"));
             if (filesInsideConfig != null) {
+
                 Collections.addAll(file, filesInsideConfig);
+
             }
+
         }
+
         file.add(new File("purpur.yml"));
         file.add(new File("pufferfish.yml"));
         file.add(new File("tuinity.yml"));
         file.add(new File("airplane.air"));
+
     }
 
     @Override
     public @NotNull String genBody() {
+
         return buildContent();
+
     }
 
     @Override
     public @NotNull String getTitle() {
+
         return "Configurations";
+
     }
 
     @NotNull
     private String buildContent() {
+
         StringBuilder htmlBuilder = new StringBuilder();
         for (File buildFile : file) {
+
             String fileContent = readBuildFile(buildFile);
             if (readBuildFile(buildFile) != null) // Hide the file in paste if file doesn't exist
             {
+
                 htmlBuilder.append(fileContent);
+
             }
+
         }
+
         return htmlBuilder.toString();
+
     }
 
     @Nullable
     private String readBuildFile(@NotNull File file) {
+
         if (!file.exists()) {
+
             return null;
+
         }
+
         return "<h5>" + file.getName() + "</h5>" + "<textarea readonly=\"true\" name=\""
                 + StringEscapeUtils.escapeHtml4(file.getName()) + "\" style=\"height: 300px; width: 100%;\">"
-                + StringEscapeUtils.escapeHtml4(censor(readFile(file)))
-                + "</textarea><br />";
+                + StringEscapeUtils.escapeHtml4(censor(readFile(file))) + "</textarea><br />";
+
     }
 
     private String censor(@NotNull String string) {
-        String seedList =
-                """
+
+        String seedList = """
                 patch_red_mushroom
                 fossil_diamonds
                 seagrass_slightly_less_short
@@ -317,50 +338,59 @@ public class ConfigCollectorItem implements SubPasteItem {
                 mineshaft
                                 """;
         String[] paperSeedTypes = seedList.trim().split("\n");
-        List<String> seedType = Arrays.stream(paperSeedTypes)
-                .sorted((o1, o2) -> {
-                    int i = Integer.compare(o2.length(), o1.length());
-                    if (i == 0) {
-                        return o2.compareTo(o1);
-                    }
-                    return i;
-                })
-                .toList();
-        string = string.replaceAll("secret:.*", "secret: ******")
-                .replaceAll("user:.*", "user: ******")
-                .replaceAll("username:.*", "username: ******")
-                .replaceAll("jdbc.*", "jdbc******")
-                .replaceAll("password:.*", "password: ******")
-                .replaceAll("pass:.*", "pass: ******")
-                .replaceAll("host:.*", "host: ******")
-                .replaceAll("port:.*", "port: ******")
-                .replaceAll("database:.*", "database: ******")
-                .replaceAll("seed:.*", "seed: ******")
+        List<String> seedType = Arrays.stream(paperSeedTypes).sorted((o1, o2) -> {
+
+            int i = Integer.compare(o2.length(), o1.length());
+            if (i == 0) {
+
+                return o2.compareTo(o1);
+
+            }
+
+            return i;
+
+        }).toList();
+        string = string.replaceAll("secret:.*", "secret: ******").replaceAll("user:.*", "user: ******")
+                .replaceAll("username:.*", "username: ******").replaceAll("jdbc.*", "jdbc******")
+                .replaceAll("password:.*", "password: ******").replaceAll("pass:.*", "pass: ******")
+                .replaceAll("host:.*", "host: ******").replaceAll("port:.*", "port: ******")
+                .replaceAll("database:.*", "database: ******").replaceAll("seed:.*", "seed: ******")
                 .replaceAll("seed-.*:.*", "seed-protected: ******")
-                .replaceAll("rcon\\.password=.*", "rcon.password=******")
-                .replaceAll("token:.*", "token: ******")
-                .replaceAll("key:.*", "key: ******")
-                .replaceAll("seed=.*", "seed=******")
+                .replaceAll("rcon\\.password=.*", "rcon.password=******").replaceAll("token:.*", "token: ******")
+                .replaceAll("key:.*", "key: ******").replaceAll("seed=.*", "seed=******")
                 .replaceAll("port=.*", "port=******");
         for (String paperSeedType : seedType) {
+
             string = string.replaceAll(paperSeedType + ":.*", "seed-protected: ******");
+
         }
+
         return string;
+
     }
 
     @NotNull
     private String readFile(@NotNull File file) {
+
         if (!file.exists()) {
+
             return "Fail: No such file (" + CommonUtil.getRelativePath(file) + ")";
+
         }
 
         try {
+
             List<String> lines = Files.readAllLines(file.toPath());
             StringJoiner joiner = new StringJoiner("\n");
             lines.forEach(joiner::add);
             return joiner.toString();
+
         } catch (IOException e) {
+
             return "Fail: " + e.getMessage();
+
         }
+
     }
+
 }

@@ -6,10 +6,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * QuickEventManager allow user switch between bukkit and quickshop.
- * QuickShop's EventManager can filter the Plugin listeners and skip it when calling events
+ * QuickEventManager allow user switch between bukkit and quickshop. QuickShop's
+ * EventManager can filter the Plugin listeners and skip it when calling events
  */
 public interface QuickEventManager {
+
     /**
      * Calling an event use QuickShopEventManager
      *
@@ -18,4 +19,5 @@ public interface QuickEventManager {
      */
     void callEvent(@NotNull Event event, @Nullable Consumer<Event> callBeforePassToMonitor)
             throws IllegalStateException;
+
 }

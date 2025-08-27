@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * Result of PriceLimiter check
  */
 public interface PriceLimiterCheckResult {
+
     /**
      * Getting this type of item max allowed price is
      *
@@ -27,4 +28,5 @@ public interface PriceLimiterCheckResult {
      */
     @NotNull
     PriceLimiterStatus getStatus();
+
 }

@@ -8,14 +8,17 @@ import net.kyori.adventure.text.Component;
  * Fire when quickshop processing the shop owner name
  */
 public class ShopOwnerNameGettingEvent extends AbstractQSEvent {
+
     private final Shop shop;
     private final QUser owner;
     private Component name;
 
     public ShopOwnerNameGettingEvent(Shop shop, QUser owner, Component name) {
+
         this.shop = shop;
         this.owner = owner;
         this.name = name;
+
     }
 
     /**
@@ -24,16 +27,21 @@ public class ShopOwnerNameGettingEvent extends AbstractQSEvent {
      * @return The shop owner display name
      */
     public Component getName() {
+
         return name;
+
     }
 
     /**
      * Sets the shop owner display name
      *
-     * @param name New shop owner display name, just display, won't change actual shop owner
+     * @param name New shop owner display name, just display, won't change actual
+     *             shop owner
      */
     public void setName(Component name) {
+
         this.name = name;
+
     }
 
     /**
@@ -42,7 +50,9 @@ public class ShopOwnerNameGettingEvent extends AbstractQSEvent {
      * @return The shop owner unique id
      */
     public QUser getOwner() {
+
         return owner;
+
     }
 
     /**
@@ -51,6 +61,9 @@ public class ShopOwnerNameGettingEvent extends AbstractQSEvent {
      * @return The shop
      */
     public Shop getShop() {
+
         return shop;
+
     }
+
 }

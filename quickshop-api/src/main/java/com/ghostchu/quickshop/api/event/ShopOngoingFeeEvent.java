@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
  * Fire when watcher processing the shop ongoing fee
  */
 public class ShopOngoingFeeEvent extends AbstractQSEvent implements QSCancellable {
+
     private final QUser player;
 
     private final Shop shop;
@@ -18,20 +19,26 @@ public class ShopOngoingFeeEvent extends AbstractQSEvent implements QSCancellabl
     private @Nullable Component cancelReason;
 
     public ShopOngoingFeeEvent(Shop shop, QUser player, double cost) {
+
         this.shop = shop;
         this.player = player;
         this.cost = cost;
+
     }
 
     @Override
     public @Nullable Component getCancelReason() {
+
         return this.cancelReason;
+
     }
 
     @Override
     public void setCancelled(boolean cancel, @Nullable Component reason) {
+
         this.cancelled = cancel;
         this.cancelReason = reason;
+
     }
 
     /**
@@ -40,7 +47,9 @@ public class ShopOngoingFeeEvent extends AbstractQSEvent implements QSCancellabl
      * @return The ongoing fee
      */
     public double getCost() {
+
         return cost;
+
     }
 
     /**
@@ -49,7 +58,9 @@ public class ShopOngoingFeeEvent extends AbstractQSEvent implements QSCancellabl
      * @param cost The ongoing fee
      */
     public void setCost(double cost) {
+
         this.cost = cost;
+
     }
 
     /**
@@ -58,7 +69,9 @@ public class ShopOngoingFeeEvent extends AbstractQSEvent implements QSCancellabl
      * @return The player triggered ongoing fee event
      */
     public QUser getPlayer() {
+
         return player;
+
     }
 
     /**
@@ -67,11 +80,16 @@ public class ShopOngoingFeeEvent extends AbstractQSEvent implements QSCancellabl
      * @return The shop triggered ongoing fee event
      */
     public Shop getShop() {
+
         return shop;
+
     }
 
     @Override
     public boolean isCancelled() {
+
         return cancelled;
+
     }
+
 }

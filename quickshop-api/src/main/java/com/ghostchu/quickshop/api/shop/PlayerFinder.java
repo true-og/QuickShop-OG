@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface PlayerFinder {
+
     @Nullable
     String uuid2Name(@NotNull UUID uuid);
 
@@ -23,17 +24,18 @@ public interface PlayerFinder {
     CompletableFuture<String> uuid2NameFuture(@NotNull UUID uuid);
 
     @NotNull
-    CompletableFuture<String> uuid2NameFuture(
-            @NotNull UUID uuid, boolean writeCache, @NotNull ExecutorService executorService);
+    CompletableFuture<String> uuid2NameFuture(@NotNull UUID uuid, boolean writeCache,
+            @NotNull ExecutorService executorService);
 
     @NotNull
     CompletableFuture<UUID> name2UuidFuture(@NotNull String name);
 
     @NotNull
-    CompletableFuture<UUID> name2UuidFuture(
-            @NotNull String name, boolean writeCache, @NotNull ExecutorService executorService);
+    CompletableFuture<UUID> name2UuidFuture(@NotNull String name, boolean writeCache,
+            @NotNull ExecutorService executorService);
 
     void cache(@NotNull UUID uuid, @NotNull String name);
 
     boolean isCached(@NotNull UUID uuid);
+
 }

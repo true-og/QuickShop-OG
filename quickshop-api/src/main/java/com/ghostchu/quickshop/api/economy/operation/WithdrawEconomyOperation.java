@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
  * Operation for withdraw money from economy.
  */
 public class WithdrawEconomyOperation implements Operation {
+
     private final Object account;
     private final double amount;
     private final EconomyCore economyCore;
@@ -18,44 +19,58 @@ public class WithdrawEconomyOperation implements Operation {
     private boolean committed = false;
     private boolean rollback = false;
 
-    public WithdrawEconomyOperation(
-            @NotNull Object account,
-            double amount,
-            @NotNull World world,
-            @Nullable String currency,
-            @NotNull EconomyCore economyCore) {
+    public WithdrawEconomyOperation(@NotNull Object account, double amount, @NotNull World world,
+            @Nullable String currency, @NotNull EconomyCore economyCore)
+    {
+
         this.account = account;
         this.amount = amount;
         this.world = world;
         this.currency = currency;
         this.economyCore = economyCore;
+
     }
 
     @Override
     public boolean commit() {
+
         boolean result = economyCore.withdraw(account, amount, world, currency);
         if (result) {
+
             committed = true;
+
         }
+
         return result;
+
     }
 
     @Override
     public boolean isCommitted() {
+
         return this.committed;
+
     }
 
     @Override
     public boolean isRollback() {
+
         return this.rollback;
+
     }
 
     @Override
     public boolean rollback() {
+
         boolean result = economyCore.deposit(account, amount, world, currency);
         if (result) {
+
             rollback = true;
+
         }
+
         return result;
+
     }
+
 }

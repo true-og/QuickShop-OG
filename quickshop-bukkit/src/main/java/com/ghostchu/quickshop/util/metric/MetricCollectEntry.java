@@ -7,9 +7,11 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Inherited
 public @interface MetricCollectEntry {
+
     MetricDataType dataType();
 
     String moduleName();
 
     String description();
+
 }

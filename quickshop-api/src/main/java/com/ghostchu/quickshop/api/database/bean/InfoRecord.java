@@ -1,6 +1,7 @@
 package com.ghostchu.quickshop.api.database.bean;
 
 public interface InfoRecord {
+
     long getShopId();
 
     String getWorld();
@@ -10,4 +11,5 @@ public interface InfoRecord {
     int getY();
 
     int getZ();
+
 }

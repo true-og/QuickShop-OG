@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 public class ServerInfoItem implements SubPasteItem {
+
     private final String serverName;
     private final String build;
     private final String nmsVersion;
@@ -22,6 +23,7 @@ public class ServerInfoItem implements SubPasteItem {
     private final String platform;
 
     public ServerInfoItem() {
+
         QuickShop plugin = QuickShop.getInstance();
         this.serverName = Bukkit.getServer().getName();
         this.build = Bukkit.getServer().getVersion();
@@ -29,37 +31,55 @@ public class ServerInfoItem implements SubPasteItem {
         this.dataVersion = String.valueOf(Bukkit.getServer().getUnsafe().getDataVersion());
         this.moddedServerType = "Bukkit";
         if (PaperLib.isSpigot()) {
+
             this.moddedServerType = "Spigot";
+
         }
+
         if (PaperLib.isPaper()) {
+
             this.moddedServerType = "Paper";
+
         }
+
         if (plugin.getEnvironmentChecker().isFabricBasedServer()) {
+
             this.moddedServerType = "Fabric";
+
         }
+
         if (plugin.getEnvironmentChecker().isForgeBasedServer()) {
+
             this.moddedServerType = "Forge";
+
         }
+
         this.players = Bukkit.getOnlinePlayers().size() + "/" + Bukkit.getMaxPlayers();
         this.onlineMode = CommonUtil.boolean2Status(Bukkit.getOnlineMode());
         this.bukkitVersion = Bukkit.getServer().getVersion();
         this.mcVersion = plugin.getPlatform().getMinecraftVersion();
         this.worldContainer = Bukkit.getWorldContainer().getPath();
         this.platform = plugin.getPlatform().getClass().getName();
+
     }
 
     @Override
     public @NotNull String genBody() {
+
         return buildContent();
+
     }
 
     @Override
     public @NotNull String getTitle() {
+
         return "Server Information";
+
     }
 
     @NotNull
     private String buildContent() {
+
         HTMLTable table = new HTMLTable(2, true);
         table.insert("Server Name", serverName);
         table.insert("Build", build);
@@ -73,5 +93,7 @@ public class ServerInfoItem implements SubPasteItem {
         table.insert("World Container", worldContainer);
         table.insert("Platform", platform);
         return table.render();
+
     }
+
 }

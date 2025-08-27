@@ -14,21 +14,33 @@ public class SubCommand_Empty implements CommandHandler<Player> {
     private final QuickShop plugin;
 
     public SubCommand_Empty(QuickShop plugin) {
+
         this.plugin = plugin;
+
     }
 
     @Override
     public void onCommand(@NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+
         final Shop shop = getLookingShop(sender);
         if (shop instanceof final ContainerShop cs) {
+
             final InventoryWrapper inventory = cs.getInventory();
             if (inventory == null) {
+
                 return;
+
             }
+
             cs.getInventory().clear();
             plugin.text().of(sender, "empty-success").send();
+
         } else {
+
             plugin.text().of(sender, "not-looking-at-shop").send();
+
         }
+
     }
+
 }

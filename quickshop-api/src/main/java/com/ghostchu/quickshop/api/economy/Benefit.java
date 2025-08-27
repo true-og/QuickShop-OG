@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 
 public interface Benefit {
+
     /**
      * Gets the overflowed benefit after added new benifit
      *
@@ -53,17 +54,25 @@ public interface Benefit {
     @NotNull
     String serialize();
 
-    class BenefitExistsException extends Exception {}
+    class BenefitExistsException extends Exception {
+    }
 
     class BenefitOverflowException extends Exception {
+
         private final double overflow;
 
         public BenefitOverflowException(double overflow) {
+
             this.overflow = overflow;
+
         }
 
         public double getOverflow() {
+
             return overflow;
+
         }
+
     }
+
 }

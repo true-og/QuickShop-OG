@@ -19,25 +19,36 @@ import org.jetbrains.annotations.NotNull;
 public interface QuickShopAPI {
 
     static QuickShopAPI getInstance() {
-        RegisteredServiceProvider<QuickShopProvider> provider =
-                Bukkit.getServicesManager().getRegistration(QuickShopProvider.class);
+
+        RegisteredServiceProvider<QuickShopProvider> provider = Bukkit.getServicesManager()
+                .getRegistration(QuickShopProvider.class);
         if (provider == null) {
+
             throw new IllegalStateException("QuickShop hadn't loaded at this moment.");
+
         }
+
         return provider.getProvider().getApiInstance();
+
     }
 
     static Plugin getPluginInstance() {
-        RegisteredServiceProvider<QuickShopProvider> provider =
-                Bukkit.getServicesManager().getRegistration(QuickShopProvider.class);
+
+        RegisteredServiceProvider<QuickShopProvider> provider = Bukkit.getServicesManager()
+                .getRegistration(QuickShopProvider.class);
         if (provider == null) {
+
             throw new IllegalStateException("QuickShop hadn't loaded at this moment.");
+
         }
+
         return provider.getPlugin();
+
     }
 
     /**
-     * Getting command manager that allow addon direct access QuickShop sub-command system
+     * Getting command manager that allow addon direct access QuickShop sub-command
+     * system
      *
      * @return The command manager
      */
@@ -97,7 +108,8 @@ public interface QuickShopAPI {
     ShopManager getShopManager();
 
     /**
-     * Getting text manager that allow addon to create a user language locale based message
+     * Getting text manager that allow addon to create a user language locale based
+     * message
      *
      * @return The text maanger
      */
@@ -118,8 +130,7 @@ public interface QuickShopAPI {
     boolean isDisplayEnabled();
 
     /**
-     * Getting shop limit system status
-     * false if limit system is disabled
+     * Getting shop limit system status false if limit system is disabled
      *
      * @return Limit enabled
      * @deprecated Replaced by RankLimiter
@@ -157,4 +168,5 @@ public interface QuickShopAPI {
     Semver getSemVersion();
 
     ShopItemBlackList getShopItemBlackList();
+
 }

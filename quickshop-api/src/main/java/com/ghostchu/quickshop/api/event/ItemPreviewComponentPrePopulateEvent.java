@@ -11,20 +11,29 @@ public class ItemPreviewComponentPrePopulateEvent extends AbstractQSEvent {
     private ItemStack itemStack;
 
     public ItemPreviewComponentPrePopulateEvent(@NotNull ItemStack itemStack, @Nullable Player player) {
+
         this.itemStack = itemStack;
         this.player = player;
+
     }
 
     public ItemStack getItemStack() {
+
         return itemStack;
+
     }
 
     public void setItemStack(ItemStack itemStack) {
+
         this.itemStack = itemStack;
+
     }
 
     @Nullable
     public Player getPlayer() {
+
         return player;
+
     }
+
 }

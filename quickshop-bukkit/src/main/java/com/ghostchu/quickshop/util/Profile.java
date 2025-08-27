@@ -7,6 +7,8 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class Profile {
+
     private final UUID uniqueId;
     private final String name;
+
 }

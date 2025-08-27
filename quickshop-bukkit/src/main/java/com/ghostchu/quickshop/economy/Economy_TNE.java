@@ -40,66 +40,80 @@ public class Economy_TNE extends AbstractEconomy {
     private TNEAPI api;
 
     public Economy_TNE(@NotNull QuickShop plugin) {
+
         super();
         this.plugin = plugin;
         plugin.getReloadManager().register(this);
         init();
         setupEconomy();
+
     }
 
     private void init() {
+
         this.allowLoan = plugin.getConfig().getBoolean("shop.allow-economy-loan");
+
     }
 
     private void setupEconomy() {
+
         this.api = TNECore.api();
+
     }
 
     @Nullable
     private Currency getCurrency(@NotNull World world, @Nullable String currency) {
+
         if (!isValid()) {
+
             return null;
+
         }
 
         if (currency != null) {
+
             final Optional<Currency> currencyOpt = TNECore.eco().currency().findCurrency(currency);
             return currencyOpt.orElseGet(() -> TNECore.eco().currency().getDefaultCurrency(world.getName()));
+
         }
+
         return TNECore.eco().currency().getDefaultCurrency(world.getName());
+
     }
 
-    private boolean runTransaction(
-            final Account account,
-            final Currency currency,
-            final String world,
-            final BigDecimal amount,
-            final String type,
-            final boolean counter) {
+    private boolean runTransaction(final Account account, final Currency currency, final String world,
+            final BigDecimal amount, final String type, final boolean counter)
+    {
 
         // Set up our holdings' modifier.
         final HoldingsModifier modifier = new HoldingsModifier(world, currency.getUid(), amount);
 
         // Setup our transaction.
-        final Transaction transaction = new Transaction(type)
-                .to(account, ((counter) ? modifier.counter() : modifier))
-                .processor(EconomyManager.baseProcessor())
-                .source(new PluginSource("QuickShop"));
+        final Transaction transaction = new Transaction(type).to(account, ((counter) ? modifier.counter() : modifier))
+                .processor(EconomyManager.baseProcessor()).source(new PluginSource("QuickShop"));
         try {
 
             // Process our transaction.
             final TransactionResult result = transaction.process();
             if (result.isSuccessful()) {
+
                 return true;
+
             }
 
         } catch (InvalidTransactionException ignore) {
+
             return false;
+
         }
+
         return false;
+
     }
 
     /**
-     * Deposits a given amount of money from thin air to the account with the given name.
+     * Deposits a given amount of money from thin air to the account with the given
+     * name.
      *
      * @param name     The exact (case-insensitive) username to give money to
      * @param amount   The amount to give them
@@ -108,22 +122,30 @@ public class Economy_TNE extends AbstractEconomy {
      */
     @Override
     public boolean deposit(@NotNull String name, double amount, @NotNull World world, @Nullable String currency) {
+
         if (!isValid()) {
+
             return false;
+
         }
+
         final Optional<Account> account = TNECore.api().getAccount(name);
         final Optional<Currency> currencyOpt = TNECore.eco().currency().findCurrency(currency);
 
         if (account.isPresent() && currencyOpt.isPresent()) {
 
-            return runTransaction(
-                    account.get(), currencyOpt.get(), world.getName(), BigDecimal.valueOf(amount), "give", false);
+            return runTransaction(account.get(), currencyOpt.get(), world.getName(), BigDecimal.valueOf(amount), "give",
+                    false);
+
         }
+
         return false;
+
     }
 
     /**
-     * Deposits a given amount of money from thin air to the account with the given {@link UUID unique identifier}.
+     * Deposits a given amount of money from thin air to the account with the given
+     * {@link UUID unique identifier}.
      *
      * @param name     The {@link UUID unique identifier} to give money to
      * @param amount   The amount to give them
@@ -132,12 +154,15 @@ public class Economy_TNE extends AbstractEconomy {
      */
     @Override
     public boolean deposit(@NotNull UUID name, double amount, @NotNull World world, @Nullable String currency) {
+
         deposit(Bukkit.getOfflinePlayer(name), amount, world, currency);
         return false;
+
     }
 
     /**
-     * Deposits a given amount of money from thin air to the given {@link OfflinePlayer player}.
+     * Deposits a given amount of money from thin air to the given
+     * {@link OfflinePlayer player}.
      *
      * @param trader   The {@link OfflinePlayer player} to give money to
      * @param amount   The amount to give them
@@ -145,18 +170,26 @@ public class Economy_TNE extends AbstractEconomy {
      * @return True if success (Should be almost always)
      */
     @Override
-    public boolean deposit(
-            @NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency) {
+    public boolean deposit(@NotNull OfflinePlayer trader, double amount, @NotNull World world,
+            @Nullable String currency)
+    {
+
         if (!isValid()) {
+
             return false;
+
         }
-        // We should forward this method to the UUID one instead of doing another OfflinePlayer lookup here just to send
+
+        // We should forward this method to the UUID one instead of doing another
+        // OfflinePlayer lookup here just to send
         // it to the TNE UUID method.
         return deposit(trader.getUniqueId(), amount, world, currency);
+
     }
 
     /**
-     * Formats the given number... E.g. 50.5 becomes $50.5 Dollars, or 50 Dollars 5 Cents
+     * Formats the given number... E.g. 50.5 becomes $50.5 Dollars, or 50 Dollars 5
+     * Cents
      *
      * @param balance  The given number
      * @param currency The currency name
@@ -164,39 +197,46 @@ public class Economy_TNE extends AbstractEconomy {
      */
     @Override
     public String format(double balance, @NotNull World world, @Nullable String currency) {
+
         if (!isValid()) {
+
             return "Error";
+
         }
 
         final Currency currencyObj = getCurrency(world, currency);
 
         if (currencyObj == null) {
+
             return "Error";
+
         }
 
-        return CurrencyFormatter.format(
-                null,
-                new HoldingsEntry(
-                        TNECore.eco().region().defaultRegion(),
-                        currencyObj.getUid(),
-                        BigDecimal.valueOf(balance),
-                        EconomyManager.NORMAL));
+        return CurrencyFormatter.format(null, new HoldingsEntry(TNECore.eco().region().defaultRegion(),
+                currencyObj.getUid(), BigDecimal.valueOf(balance), EconomyManager.NORMAL));
+
     }
 
     @Override
     public double getBalance(@NotNull String name, @NotNull World world, @Nullable String currency) {
+
         if (!isValid()) {
+
             return 0.0;
+
         }
+
         final Optional<Account> account = TNECore.api().getAccount(name);
         final Optional<Currency> currencyOpt = TNECore.eco().currency().findCurrency(currency);
 
         if (account.isPresent() && currencyOpt.isPresent()) {
-            return account.get()
-                    .getHoldingsTotal(world.getName(), currencyOpt.get().getUid())
-                    .doubleValue();
+
+            return account.get().getHoldingsTotal(world.getName(), currencyOpt.get().getUid()).doubleValue();
+
         }
+
         return 0.0;
+
     }
 
     /**
@@ -208,7 +248,9 @@ public class Economy_TNE extends AbstractEconomy {
      */
     @Override
     public double getBalance(@NotNull UUID name, @NotNull World world, @Nullable String currency) {
+
         return getBalance(name.toString(), world, currency);
+
     }
 
     /**
@@ -220,17 +262,23 @@ public class Economy_TNE extends AbstractEconomy {
      */
     @Override
     public double getBalance(@NotNull OfflinePlayer player, @NotNull World world, @Nullable String currency) {
+
         return getBalance(player.getUniqueId().toString(), world, currency);
+
     }
 
     @Override
     public @Nullable String getLastError() {
+
         return "Cannot provide: TNE not supports enhanced error tracing.";
+
     }
 
     @Override
     public @NotNull Plugin getPlugin() {
+
         return this.plugin.getJavaPlugin();
+
     }
 
     /**
@@ -241,7 +289,9 @@ public class Economy_TNE extends AbstractEconomy {
      */
     @Override
     public boolean hasCurrency(@NotNull World world, @NotNull String currency) {
+
         return TNECore.eco().currency().findCurrency(currency).isPresent();
+
     }
 
     /**
@@ -251,7 +301,9 @@ public class Economy_TNE extends AbstractEconomy {
      */
     @Override
     public boolean isValid() {
+
         return this.api != null && TNECore.instance() != null;
+
     }
 
     /**
@@ -261,11 +313,14 @@ public class Economy_TNE extends AbstractEconomy {
      */
     @Override
     public boolean supportCurrency() {
+
         return true;
+
     }
 
     /**
-     * Withdraws a given amount of money from the given username and turns it to thin air.
+     * Withdraws a given amount of money from the given username and turns it to
+     * thin air.
      *
      * @param name     The exact (case-insensitive) username to take money from
      * @param amount   The amount to take from them
@@ -274,8 +329,11 @@ public class Economy_TNE extends AbstractEconomy {
      */
     @Override
     public boolean withdraw(@NotNull String name, double amount, @NotNull World world, @Nullable String currency) {
+
         if (!isValid()) {
+
             return false;
+
         }
 
         final Optional<Account> account = TNECore.api().getAccount(name);
@@ -283,14 +341,18 @@ public class Economy_TNE extends AbstractEconomy {
 
         if (account.isPresent() && currencyOpt.isPresent()) {
 
-            return runTransaction(
-                    account.get(), currencyOpt.get(), world.getName(), BigDecimal.valueOf(amount), "take", true);
+            return runTransaction(account.get(), currencyOpt.get(), world.getName(), BigDecimal.valueOf(amount), "take",
+                    true);
+
         }
+
         return false;
+
     }
 
     /**
-     * Withdraws a given amount of money from the given {@link UUID unique identifier} and turns it to thin air.
+     * Withdraws a given amount of money from the given {@link UUID unique
+     * identifier} and turns it to thin air.
      *
      * @param name     The exact {@link UUID unique identifier} of the user.
      * @param amount   The amount to take from them
@@ -299,11 +361,14 @@ public class Economy_TNE extends AbstractEconomy {
      */
     @Override
     public boolean withdraw(@NotNull UUID name, double amount, @NotNull World world, @Nullable String currency) {
+
         return withdraw(name.toString(), amount, world, currency);
+
     }
 
     /**
-     * Withdraws a given amount of money from the given {@link OfflinePlayer player} and turns it to thin air.
+     * Withdraws a given amount of money from the given {@link OfflinePlayer player}
+     * and turns it to thin air.
      *
      * @param trader   The {@link OfflinePlayer player} to take money from
      * @param amount   The amount to take from them
@@ -311,19 +376,26 @@ public class Economy_TNE extends AbstractEconomy {
      * @return True if success, false if they didn't have enough cash
      */
     @Override
-    public boolean withdraw(
-            @NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency) {
+    public boolean withdraw(@NotNull OfflinePlayer trader, double amount, @NotNull World world,
+            @Nullable String currency)
+    {
+
         return withdraw(trader.getUniqueId().toString(), amount, world, currency);
+
     }
 
     @Override
     public @NotNull String getName() {
+
         return "BuiltIn-TNE";
+
     }
 
     @Override
     public String getProviderName() {
+
         return "TNE";
+
     }
 
     /**
@@ -333,7 +405,10 @@ public class Economy_TNE extends AbstractEconomy {
      */
     @Override
     public ReloadResult reloadModule() {
+
         init();
         return ReloadResult.builder().status(ReloadStatus.SUCCESS).build();
+
     }
+
 }

@@ -8,14 +8,17 @@ import org.jetbrains.annotations.Nullable;
  * Fire when quickshop processing shop tax account.
  */
 public class ShopTaxAccountGettingEvent extends AbstractQSEvent {
+
     private final Shop shop;
 
     @Nullable
     private QUser taxAccount;
 
     public ShopTaxAccountGettingEvent(Shop shop, @Nullable QUser taxAccount) {
+
         this.shop = shop;
         this.taxAccount = taxAccount;
+
     }
 
     /**
@@ -24,7 +27,9 @@ public class ShopTaxAccountGettingEvent extends AbstractQSEvent {
      * @return The shop
      */
     public Shop getShop() {
+
         return shop;
+
     }
 
     /**
@@ -34,7 +39,9 @@ public class ShopTaxAccountGettingEvent extends AbstractQSEvent {
      */
     @Nullable
     public QUser getTaxAccount() {
+
         return taxAccount;
+
     }
 
     /**
@@ -43,6 +50,9 @@ public class ShopTaxAccountGettingEvent extends AbstractQSEvent {
      * @param taxAccount The tax account
      */
     public void setTaxAccount(@Nullable QUser taxAccount) {
+
         this.taxAccount = taxAccount;
+
     }
+
 }

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
  * The Texts of the translation.
  */
 public interface Text {
+
     /**
      * Getting the text that use specify locale
      *
@@ -35,4 +36,5 @@ public interface Text {
      * Send text to the player
      */
     void send();
+
 }

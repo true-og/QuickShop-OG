@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DiscountCodeData {
+
     private UUID owner;
     private String code;
     private CodeType codeType;
@@ -23,4 +24,5 @@ public class DiscountCodeData {
     private int maxUsage;
     private Map<UUID, Integer> usages;
     private Set<Long> shopScope;
+
 }

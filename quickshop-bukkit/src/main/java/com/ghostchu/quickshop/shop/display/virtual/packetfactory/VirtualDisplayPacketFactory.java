@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface VirtualDisplayPacketFactory {
+
     @Nullable
     Throwable testFakeItem();
 
@@ -28,4 +29,5 @@ public interface VirtualDisplayPacketFactory {
 
     @NotNull
     PacketAdapter getChunkUnloadPacketAdapter();
+
 }

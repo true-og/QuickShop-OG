@@ -14,8 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PasteGenerator {
-    private static final String DOCUMENT_HEADER =
-            """
+
+    private static final String DOCUMENT_HEADER = """
             <!DOCTYPE html>
             <html lang="en">
                 <head>
@@ -28,8 +28,7 @@ public class PasteGenerator {
                 <body style = "max-width: 70em !important;">
                 <main>
             """;
-    private static final String DOCUMENT_FOOTER =
-            """
+    private static final String DOCUMENT_FOOTER = """
                 </main>
                 <br />
                 <br />
@@ -45,8 +44,7 @@ public class PasteGenerator {
                 </footer>
             </html>
             """;
-    private static final String INLINE_STYLE =
-            """
+    private static final String INLINE_STYLE = """
             /* Sakura.css v1.3.0
              * ================
              * Minimal css theme.
@@ -246,6 +244,7 @@ public class PasteGenerator {
     private final CommandSender sender;
 
     public PasteGenerator(@Nullable CommandSender sender) {
+
         this.sender = sender;
         add(new HeaderItem(System.currentTimeMillis(), Map.of()));
         add(new ServerInfoItem());
@@ -268,71 +267,83 @@ public class PasteGenerator {
         add(new DisplaySystemItem());
         PasteManager pasteManager = QuickShop.getInstance().getPasteManager();
         if (pasteManager != null) {
+
             pasteManager.getAllRegistered().forEach(this::add);
+
         }
+
     }
 
     public void add(@NotNull PasteItem pasteItem) {
+
         pasteItems.add(pasteItem);
+
     }
 
     @NotNull
     public String render() {
+
         StringBuilder builder = new StringBuilder();
         builder.append(bakeHeader()).append("\n");
         for (PasteItem pasteItem : pasteItems) {
+
             try {
+
                 builder.append(pasteItem.toHTML()).append("\n");
+
             } catch (Throwable e) {
-                QuickShop.getInstance()
-                        .logger()
-                        .warn(
-                                "Cannot render the paste item {}, skipping...",
-                                pasteItem.getClass().getName(),
-                                e);
-                builder.append("<h3># ")
-                        .append(pasteItem.getClass().getName())
-                        .append("</h3>")
-                        .append("<br/>")
-                        .append("Failed to render this paste item: <br/>")
-                        .append(e.getMessage());
+
+                QuickShop.getInstance().logger().warn("Cannot render the paste item {}, skipping...",
+                        pasteItem.getClass().getName(), e);
+                builder.append("<h3># ").append(pasteItem.getClass().getName()).append("</h3>").append("<br/>")
+                        .append("Failed to render this paste item: <br/>").append(e.getMessage());
+
             }
+
         }
+
         builder.append(bakeFooter());
         return builder.toString();
+
     }
 
     @NotNull
     private String bakeHeader() {
-        return DOCUMENT_HEADER
-                .replace("{title}", "QuickShop-" + QuickShop.getInstance().getFork() + " // Paste")
+
+        return DOCUMENT_HEADER.replace("{title}", "QuickShop-" + QuickShop.getInstance().getFork() + " // Paste")
                 .replace("{inline_style}", INLINE_STYLE);
+
     }
 
     @NotNull
     private String bakeFooter() {
+
         return DOCUMENT_FOOTER
-                .replace(
-                        "{product}",
-                        "QuickShop-" + QuickShop.getInstance().getFork() + " v"
-                                + QuickShop.getInstance().getVersion())
+                .replace("{product}",
+                        "QuickShop-" + QuickShop.getInstance().getFork() + " v" + QuickShop.getInstance().getVersion())
                 .replace("{time}", formatTime(timestamp))
                 .replace("{pastecreator}", sender == null ? "Automatic" : sender.getName());
+
     }
 
     @NotNull
     private String formatTime(long time) {
-        String timeUnit = LegacyComponentSerializer.legacySection()
-                .serialize(QuickShop.getInstance()
-                        .text()
-                        .of("timeunit.std-format")
-                        .forLocale(MsgUtil.getDefaultGameLanguageCode()));
+
+        String timeUnit = LegacyComponentSerializer.legacySection().serialize(QuickShop.getInstance().text()
+                .of("timeunit.std-format").forLocale(MsgUtil.getDefaultGameLanguageCode()));
         SimpleDateFormat format;
         try {
+
             format = new SimpleDateFormat(timeUnit);
+
         } catch (Exception e) {
+
             format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+
         }
+
         return format.format(time);
+
     }
+
 }

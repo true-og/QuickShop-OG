@@ -4,10 +4,10 @@ import com.ghostchu.quickshop.api.shop.permission.BuiltInShopPermission;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Permission Audience
- * Can be group or permission item
+ * Permission Audience Can be group or permission item
  */
 public interface ShopPermissionAudience {
+
     /**
      * Gets the name of the audience
      *
@@ -31,4 +31,5 @@ public interface ShopPermissionAudience {
      * @return true if has permission
      */
     boolean hasPermission(@NotNull String permission);
+
 }

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface InventoryTransaction {
+
     /**
      * Commit the transaction
      *
@@ -25,8 +26,8 @@ public interface InventoryTransaction {
     boolean commit(@NotNull InventoryTransaction.TransactionCallback callback);
 
     /**
-     * Commit the transaction by the Fail-Safe way
-     * Automatic rollback when commit failed
+     * Commit the transaction by the Fail-Safe way Automatic rollback when commit
+     * failed
      *
      * @return The transaction success.
      */
@@ -63,13 +64,15 @@ public interface InventoryTransaction {
      * Rolling back the transaction
      *
      * @param continueWhenFailed Continue when some parts of the rollback fails.
-     * @return A list contains all steps executed. If "continueWhenFailed" is false, it only contains all success steps before hit the error. Else all.
+     * @return A list contains all steps executed. If "continueWhenFailed" is false,
+     *         it only contains all success steps before hit the error. Else all.
      */
     @SuppressWarnings("UnusedReturnValue")
     @NotNull
     List<Operation> rollback(boolean continueWhenFailed);
 
     interface TransactionCallback {
+
         /**
          * Calling while Transaction commit
          *
@@ -77,23 +80,31 @@ public interface InventoryTransaction {
          * @return Does commit event has been cancelled
          */
         default boolean onCommit(@NotNull InventoryTransaction transaction) {
+
             return true;
+
         }
 
         /**
-         * Calling while Transaction commit failed
-         * Use InventoryTransaction#getLastError() to getting reason
-         * Use InventoryTransaction#getSteps() to getting the fail step
+         * Calling while Transaction commit failed Use
+         * InventoryTransaction#getLastError() to getting reason Use
+         * InventoryTransaction#getSteps() to getting the fail step
          *
          * @param transaction Transaction
          */
-        default void onFailed(@NotNull InventoryTransaction transaction) {}
+        default void onFailed(@NotNull InventoryTransaction transaction) {
+
+        }
 
         /**
          * Calling while Transaction commit successfully
          *
          * @param transaction Transaction
          */
-        default void onSuccess(@NotNull InventoryTransaction transaction) {}
+        default void onSuccess(@NotNull InventoryTransaction transaction) {
+
+        }
+
     }
+
 }

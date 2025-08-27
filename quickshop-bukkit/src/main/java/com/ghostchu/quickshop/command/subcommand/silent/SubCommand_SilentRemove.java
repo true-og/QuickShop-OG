@@ -12,19 +12,27 @@ import org.jetbrains.annotations.NotNull;
 public class SubCommand_SilentRemove extends SubCommand_SilentBase {
 
     public SubCommand_SilentRemove(QuickShop plugin) {
+
         super(plugin);
+
     }
 
     @Override
     protected void doSilentCommand(@NotNull Player sender, @NotNull Shop shop, @NotNull CommandParser parser) {
+
         if (!shop.playerAuthorize(sender.getUniqueId(), BuiltInShopPermission.DELETE)
-                && !plugin.perm().hasPermission(sender, "quickshop.other.destroy")) {
+                && !plugin.perm().hasPermission(sender, "quickshop.other.destroy"))
+        {
+
             plugin.text().of(sender, "no-permission").send();
             return;
+
         }
 
-        plugin.logEvent(new ShopRemoveLog(
-                QUserImpl.createFullFilled(sender), "/quickshop silentremove command", shop.saveToInfoStorage()));
+        plugin.logEvent(new ShopRemoveLog(QUserImpl.createFullFilled(sender), "/quickshop silentremove command",
+                shop.saveToInfoStorage()));
         plugin.getShopManager().deleteShop(shop);
+
     }
+
 }

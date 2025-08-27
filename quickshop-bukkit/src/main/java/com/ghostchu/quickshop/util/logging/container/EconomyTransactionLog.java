@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class EconomyTransactionLog {
+
     private static int v = 2;
     private boolean success;
     private String from;
@@ -15,15 +16,10 @@ public class EconomyTransactionLog {
     private double amount;
     private String lastError;
 
-    public EconomyTransactionLog(
-            boolean success,
-            QUser from,
-            QUser to,
-            String currency,
-            double tax,
-            QUser taxAccount,
-            double amount,
-            String lastError) {
+    public EconomyTransactionLog(boolean success, QUser from, QUser to, String currency, double tax, QUser taxAccount,
+            double amount, String lastError)
+    {
+
         this.success = success;
         this.from = from.serialize();
         this.to = to.serialize();
@@ -32,5 +28,7 @@ public class EconomyTransactionLog {
         this.taxAccount = taxAccount.serialize();
         this.amount = amount;
         this.lastError = lastError;
+
     }
+
 }

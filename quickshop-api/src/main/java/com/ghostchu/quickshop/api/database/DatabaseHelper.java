@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
  * Processing and handle most things about database ;)
  */
 public interface DatabaseHelper {
+
     /**
      * Cleanup transaction messages that saved in database
      *
@@ -27,7 +28,8 @@ public interface DatabaseHelper {
     CompletableFuture<Integer> cleanMessage(long weekAgo);
 
     /**
-     * Purge and clean all saved transaction message in data that should send to specific player
+     * Purge and clean all saved transaction message in data that should send to
+     * specific player
      *
      * @param player The player
      * @return
@@ -112,14 +114,8 @@ public interface DatabaseHelper {
     @NotNull
     CompletableFuture<@NotNull Integer> insertMetricRecord(@NotNull ShopMetricRecord recordEntry);
 
-    void insertTransactionRecord(
-            @Nullable UUID from,
-            @Nullable UUID to,
-            double amount,
-            @Nullable String currency,
-            double taxAmount,
-            @Nullable UUID taxAccount,
-            @Nullable String error);
+    void insertTransactionRecord(@Nullable UUID from, @Nullable UUID to, double amount, @Nullable String currency,
+            double taxAmount, @Nullable UUID taxAccount, @Nullable String error);
 
     @NotNull
     List<ShopRecord> listShops(boolean deleteIfCorrupt);
@@ -197,8 +193,8 @@ public interface DatabaseHelper {
      * @return
      */
     @NotNull
-    CompletableFuture<@NotNull Integer> saveOfflineTransactionMessage(
-            @NotNull UUID player, @NotNull String message, long time);
+    CompletableFuture<@NotNull Integer> saveOfflineTransactionMessage(@NotNull UUID player, @NotNull String message,
+            long time);
 
     /**
      * Select all messages that saved in the database
@@ -226,8 +222,8 @@ public interface DatabaseHelper {
     @NotNull
     SQLQuery selectTable(@NotNull String table) throws SQLException;
 
-    CompletableFuture<Integer> updatePlayerProfile(
-            @NotNull UUID uuid, @Nullable String locale, @NotNull String username);
+    CompletableFuture<Integer> updatePlayerProfile(@NotNull UUID uuid, @Nullable String locale,
+            @NotNull String username);
 
     /**
      * Update player profiles in batch
@@ -255,4 +251,5 @@ public interface DatabaseHelper {
      * @return
      */
     CompletableFuture<Void> updateShop(@NotNull Shop shop);
+
 }

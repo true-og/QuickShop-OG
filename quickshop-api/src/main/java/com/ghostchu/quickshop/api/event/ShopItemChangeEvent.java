@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
  * Calling when shop item was changed
  */
 public class ShopItemChangeEvent extends AbstractQSEvent implements QSCancellable {
+
     private final ItemStack oldItem;
 
     private final ItemStack newItem;
@@ -21,28 +22,34 @@ public class ShopItemChangeEvent extends AbstractQSEvent implements QSCancellabl
     private @Nullable Component cancelReason;
 
     /**
-     * Will call when shop price was changed.
-     * All the item will be passed with a copy, so you can't change them
+     * Will call when shop price was changed. All the item will be passed with a
+     * copy, so you can't change them
      *
      * @param shop    Target shop
      * @param oldItem The old shop item
      * @param newItem The new shop item
      */
     public ShopItemChangeEvent(@NotNull Shop shop, ItemStack oldItem, ItemStack newItem) {
+
         this.shop = shop;
         this.oldItem = oldItem.clone();
         this.newItem = newItem.clone();
+
     }
 
     @Override
     public @Nullable Component getCancelReason() {
+
         return this.cancelReason;
+
     }
 
     @Override
     public void setCancelled(boolean cancel, @Nullable Component reason) {
+
         this.cancelled = cancel;
         this.cancelReason = reason;
+
     }
 
     /**
@@ -51,7 +58,9 @@ public class ShopItemChangeEvent extends AbstractQSEvent implements QSCancellabl
      * @return NewItem
      */
     public ItemStack getNewItem() {
+
         return this.newItem;
+
     }
 
     /**
@@ -60,7 +69,9 @@ public class ShopItemChangeEvent extends AbstractQSEvent implements QSCancellabl
      * @return OldItem
      */
     public ItemStack getOldItem() {
+
         return this.oldItem;
+
     }
 
     /**
@@ -69,11 +80,16 @@ public class ShopItemChangeEvent extends AbstractQSEvent implements QSCancellabl
      * @return the shop
      */
     public @NotNull Shop getShop() {
+
         return this.shop;
+
     }
 
     @Override
     public boolean isCancelled() {
+
         return this.cancelled;
+
     }
+
 }

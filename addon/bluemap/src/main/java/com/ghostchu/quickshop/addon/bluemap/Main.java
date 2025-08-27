@@ -20,86 +20,100 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 public final class Main extends JavaPlugin implements Listener {
+
     static Main instance;
     private QuickShop plugin;
     private BlueMapAPI blueMapAPI;
 
     @Override
     public void onLoad() {
+
         instance = this;
+
     }
 
     @Override
     public void onDisable() {
+
         HandlerList.unregisterAll((Plugin) this);
+
     }
 
     @Override
     public void onEnable() {
+
         saveDefaultConfig();
         plugin = QuickShop.getInstance();
         getLogger().info("Registering the per shop permissions...");
         BlueMapAPI.onEnable(blueMapAPI -> {
+
             getLogger().info("Found BlueMap loaded! Hooking!");
             createMarkerSet();
-            Bukkit.getScheduler()
-                    .runTaskTimerAsynchronously(
-                            this, this::updateAllMarkers, 1, getConfig().getInt("refresh-per-seconds") * 20L);
+            Bukkit.getScheduler().runTaskTimerAsynchronously(this, this::updateAllMarkers, 1,
+                    getConfig().getInt("refresh-per-seconds") * 20L);
+
         });
 
         BlueMapAPI.onDisable(api -> Bukkit.getScheduler().cancelTasks(this));
+
     }
 
     @NotNull
     public String plain(@NotNull Component component) {
+
         return PlainTextComponentSerializer.plainText().serialize(component);
+
     }
 
     @NotNull
     public TextManager text() {
+
         return plugin.getTextManager();
+
     }
 
     public MarkerSet createMarkerSet() {
-        return MarkerSet.builder()
-                .defaultHidden(true)
+
+        return MarkerSet.builder().defaultHidden(true)
                 .label(plain(text().of("addon.bluemap.markerset-title").forLocale()))
-                .defaultHidden(getConfig().getBoolean("display-by-default"))
-                .toggleable(true)
-                .build();
+                .defaultHidden(getConfig().getBoolean("display-by-default")).toggleable(true).build();
+
     }
 
     private void updateAllMarkers() {
-        blueMapAPI.getWorlds().forEach(bWorld -> bWorld.getMaps()
-                .forEach(bMap -> bMap.getMarkerSets().remove("quickshop-hikari-shops")));
+
+        blueMapAPI.getWorlds().forEach(
+                bWorld -> bWorld.getMaps().forEach(bMap -> bMap.getMarkerSets().remove("quickshop-hikari-shops")));
         plugin.getShopManager().getAllShops().forEach(this::updateShopMarker);
+
     }
 
     public void updateShopMarker(Shop shop) {
+
         Optional<BlueMapWorld> bWorld = blueMapAPI.getWorld(shop.getLocation().getWorld());
         if (bWorld.isEmpty()) {
+
             return;
+
         }
+
         for (BlueMapMap map : bWorld.get().getMaps()) {
-            MarkerSet markerSet =
-                    map.getMarkerSets().computeIfAbsent("quickshop-hikari-shops", (key) -> createMarkerSet());
+
+            MarkerSet markerSet = map.getMarkerSets().computeIfAbsent("quickshop-hikari-shops",
+                    (key) -> createMarkerSet());
             String markerName = fillPlaceholders(getConfig().getString("marker-label"), shop);
             String desc = fillPlaceholders(getConfig().getString("marker-detail"), shop);
-            POIMarker marker = POIMarker.builder()
-                    .label(markerName)
-                    .position(
-                            shop.getLocation().getX(),
-                            shop.getLocation().getY(),
-                            shop.getLocation().getZ())
-                    .maxDistance(getConfig().getDouble("max-distance"))
-                    .detail(desc)
-                    .styleClasses()
-                    .build();
+            POIMarker marker = POIMarker.builder().label(markerName)
+                    .position(shop.getLocation().getX(), shop.getLocation().getY(), shop.getLocation().getZ())
+                    .maxDistance(getConfig().getDouble("max-distance")).detail(desc).styleClasses().build();
             markerSet.getMarkers().put("quickshop-hikari-shop" + shop.getShopId(), marker);
+
         }
+
     }
 
     private String fillPlaceholders(String s, Shop shop) {
+
         Location loc = shop.getLocation();
         String x = String.valueOf(loc.getX());
         String y = String.valueOf(loc.getY());
@@ -111,5 +125,7 @@ public final class Main extends JavaPlugin implements Listener {
         s = s.replace("%type%", shop.getShopType().name());
         s = s.replace("%location%", x + "," + y + "," + z);
         return s;
+
     }
+
 }

@@ -11,8 +11,10 @@ import org.jetbrains.annotations.Nullable;
 @Target(ElementType.METHOD)
 @Inherited
 public @interface UpdateScript {
+
     @Nullable
     String description() default "";
 
     int version();
+
 }

@@ -29,30 +29,40 @@ public class Economy_GemsEconomy extends AbstractEconomy {
     private GemsEconomyAPI api;
 
     public Economy_GemsEconomy(@NotNull QuickShop plugin) {
+
         super();
         this.plugin = plugin;
         this.formatter = new BuiltInEconomyFormatter(plugin);
         plugin.getReloadManager().register(this);
         init();
         setupEconomy();
+
     }
 
     private void init() {
+
         this.allowLoan = plugin.getConfig().getBoolean("shop.allow-economy-loan");
+
     }
 
     private void setupEconomy() {
+
         this.api = new GemsEconomyAPI();
+
     }
 
     @Override
     public @NotNull String getName() {
+
         return "BuiltIn-GemsEconomy";
+
     }
 
     @Override
     public String getProviderName() {
+
         return "GemsEconomy";
+
     }
 
     /**
@@ -62,28 +72,43 @@ public class Economy_GemsEconomy extends AbstractEconomy {
      */
     @Override
     public ReloadResult reloadModule() {
+
         init();
         return ReloadResult.builder().status(ReloadStatus.SUCCESS).build();
+
     }
 
     @Nullable
     private Currency getCurrency(@NotNull World world, @Nullable String currency) {
+
         if (!isValid()) {
+
             return null;
+
         }
+
         if (currency == null) {
+
             return null;
+
         }
+
         return this.api.getCurrency(currency);
+
     }
 
     @Override
     public boolean deposit(@NotNull String name, double amount, @NotNull World world, @Nullable String currency) {
+
         if (!isValid()) {
+
             return false;
+
         }
+
         this.api.deposit(plugin.getPlayerFinder().name2Uuid(name), amount, getCurrency(world, currency));
         return true;
+
     }
 
     /**
@@ -96,11 +121,16 @@ public class Economy_GemsEconomy extends AbstractEconomy {
      */
     @Override
     public boolean deposit(@NotNull UUID name, double amount, @NotNull World world, @Nullable String currency) {
+
         if (!isValid()) {
+
             return false;
+
         }
+
         this.api.deposit(name, amount, getCurrency(world, currency));
         return true;
+
     }
 
     /**
@@ -112,13 +142,17 @@ public class Economy_GemsEconomy extends AbstractEconomy {
      * @return True if success (Should be almost always)
      */
     @Override
-    public boolean deposit(
-            @NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency) {
+    public boolean deposit(@NotNull OfflinePlayer trader, double amount, @NotNull World world,
+            @Nullable String currency)
+    {
+
         return deposit(trader.getUniqueId(), amount, world, currency);
+
     }
 
     /**
-     * Formats the given number... E.g. 50.5 becomes $50.5 Dollars, or 50 Dollars 5 Cents
+     * Formats the given number... E.g. 50.5 becomes $50.5 Dollars, or 50 Dollars 5
+     * Cents
      *
      * @param balance  The given number
      * @param currency The currency name
@@ -126,26 +160,40 @@ public class Economy_GemsEconomy extends AbstractEconomy {
      */
     @Override
     public String format(double balance, @NotNull World world, @Nullable String currency) {
+
         if (!isValid()) {
+
             return "Error";
+
         }
+
         return formatInternal(balance, currency);
+
     }
 
     @Override
     public double getBalance(@NotNull String name, @NotNull World world, @Nullable String currency) {
+
         if (!isValid()) {
+
             return 0.0;
+
         }
+
         return this.api.getBalance(plugin.getPlayerFinder().name2Uuid(name), getCurrency(world, currency));
+
     }
 
     private String formatInternal(double balance, @Nullable String currency) {
+
         if (!isValid()) {
+
             return "Error";
+
         }
 
         return this.formatter.getInternalFormat(balance, currency);
+
     }
 
     /**
@@ -157,10 +205,15 @@ public class Economy_GemsEconomy extends AbstractEconomy {
      */
     @Override
     public double getBalance(@NotNull UUID name, @NotNull World world, @Nullable String currency) {
+
         if (!isValid()) {
+
             return 0.0;
+
         }
+
         return this.api.getBalance(name, getCurrency(world, currency));
+
     }
 
     /**
@@ -172,11 +225,14 @@ public class Economy_GemsEconomy extends AbstractEconomy {
      */
     @Override
     public double getBalance(@NotNull OfflinePlayer player, @NotNull World world, @Nullable String currency) {
+
         return getBalance(player.getUniqueId(), world, currency);
+
     }
 
     /**
-     * Withdraws a given amount of money from the given username and turns it to thin air.
+     * Withdraws a given amount of money from the given username and turns it to
+     * thin air.
      *
      * @param name     The exact (case insensitive) username to take money from
      * @param amount   The amount to take from them
@@ -185,20 +241,31 @@ public class Economy_GemsEconomy extends AbstractEconomy {
      */
     @Override
     public boolean withdraw(@NotNull UUID name, double amount, @NotNull World world, @Nullable String currency) {
+
         if (!isValid()) {
+
             return false;
+
         }
+
         if (!allowLoan) {
+
             if (getBalance(name, world, currency) < amount) {
+
                 return false;
+
             }
+
         }
+
         this.api.withdraw(name, amount, getCurrency(world, currency));
         return true;
+
     }
 
     /**
-     * Withdraws a given amount of money from the given username and turns it to thin air.
+     * Withdraws a given amount of money from the given username and turns it to
+     * thin air.
      *
      * @param trader   The player to take money from
      * @param amount   The amount to take from them
@@ -206,9 +273,12 @@ public class Economy_GemsEconomy extends AbstractEconomy {
      * @return True if success, false if they didn't have enough cash
      */
     @Override
-    public boolean withdraw(
-            @NotNull OfflinePlayer trader, double amount, @NotNull World world, @Nullable String currency) {
+    public boolean withdraw(@NotNull OfflinePlayer trader, double amount, @NotNull World world,
+            @Nullable String currency)
+    {
+
         return withdraw(trader.getUniqueId(), amount, world, currency);
+
     }
 
     /**
@@ -219,7 +289,9 @@ public class Economy_GemsEconomy extends AbstractEconomy {
      */
     @Override
     public boolean hasCurrency(@NotNull World world, @NotNull String currency) {
+
         return getCurrency(world, currency) != null;
+
     }
 
     /**
@@ -229,26 +301,40 @@ public class Economy_GemsEconomy extends AbstractEconomy {
      */
     @Override
     public boolean supportCurrency() {
+
         return true;
+
     }
 
     @Override
     public boolean withdraw(@NotNull String name, double amount, @NotNull World world, @Nullable String currency) {
+
         if (!isValid()) {
+
             return false;
+
         }
+
         if (!allowLoan) {
+
             if (getBalance(name, world, currency) < amount) {
+
                 return false;
+
             }
+
         }
+
         this.api.withdraw(plugin.getPlayerFinder().name2Uuid(name), amount, getCurrency(world, currency));
         return true;
+
     }
 
     @Override
     public @Nullable String getLastError() {
+
         return "Cannot provide: GemsEconomy doesn't support enhanced error tracing.";
+
     }
 
     /**
@@ -258,11 +344,16 @@ public class Economy_GemsEconomy extends AbstractEconomy {
      */
     @Override
     public boolean isValid() {
+
         return this.api != null;
+
     }
 
     @Override
     public @NotNull Plugin getPlugin() {
+
         return this.plugin.getJavaPlugin();
+
     }
+
 }

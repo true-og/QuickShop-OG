@@ -10,45 +10,38 @@ import java.util.Locale;
 import org.jetbrains.annotations.NotNull;
 
 public enum BuiltInShopPermissionGroup implements ShopPermissionAudience {
-    BLOCKED("blocked", "blocked"),
-    EVERYONE("everyone", "everyone", PURCHASE, SHOW_INFORMATION, PREVIEW_SHOP, SEARCH),
-    STAFF(
-            "staff",
-            "staff",
-            PURCHASE,
-            SHOW_INFORMATION,
-            PREVIEW_SHOP,
-            SEARCH,
-            ACCESS_INVENTORY,
-            TOGGLE_DISPLAY,
-            SET_SHOPTYPE,
-            SET_PRICE,
-            SET_ITEM,
-            SET_STACK_AMOUNT,
-            SET_CURRENCY,
-            RECEIVE_ALERT,
-            SET_BENEFIT),
+
+    BLOCKED("blocked", "blocked"), EVERYONE("everyone", "everyone", PURCHASE, SHOW_INFORMATION, PREVIEW_SHOP, SEARCH),
+    STAFF("staff", "staff", PURCHASE, SHOW_INFORMATION, PREVIEW_SHOP, SEARCH, ACCESS_INVENTORY, TOGGLE_DISPLAY,
+            SET_SHOPTYPE, SET_PRICE, SET_ITEM, SET_STACK_AMOUNT, SET_CURRENCY, RECEIVE_ALERT, SET_BENEFIT),
     ADMINISTRATOR("administrator", "administrator", BuiltInShopPermission.values());
 
     private final String node;
     private final String descriptionKey;
     private final List<BuiltInShopPermission> permissions;
 
-    BuiltInShopPermissionGroup(
-            @NotNull String node, @NotNull String descriptionKey, @NotNull BuiltInShopPermission... permissions) {
+    BuiltInShopPermissionGroup(@NotNull String node, @NotNull String descriptionKey,
+            @NotNull BuiltInShopPermission... permissions)
+    {
+
         this.node = node;
         this.descriptionKey = descriptionKey;
         this.permissions = ImmutableList.copyOf(permissions);
+
     }
 
     @NotNull
     public String getDescriptionKey() {
+
         return descriptionKey;
+
     }
 
     @Override
     public @NotNull String getName() {
+
         return this.descriptionKey;
+
     }
 
     /**
@@ -59,26 +52,37 @@ public enum BuiltInShopPermissionGroup implements ShopPermissionAudience {
      */
     @Override
     public boolean hasPermission(@NotNull BuiltInShopPermission permission) {
+
         return this.getPermissions().contains(permission);
+
     }
 
     @Override
     public boolean hasPermission(@NotNull String permission) {
+
         return node.contains(permission);
+
     }
 
     @NotNull
     public List<BuiltInShopPermission> getPermissions() {
+
         return permissions;
+
     }
 
     @NotNull
     public String getNamespacedNode() {
+
         return QuickShopAPI.getPluginInstance().getName().toLowerCase(Locale.ROOT) + "." + this.node;
+
     }
 
     @NotNull
     public String getRawNode() {
+
         return node;
+
     }
+
 }

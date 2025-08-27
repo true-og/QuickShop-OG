@@ -6,6 +6,8 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class ShopRecord {
+
     private DataRecord dataRecord;
     private InfoRecord infoRecord;
+
 }

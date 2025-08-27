@@ -15,34 +15,55 @@ public class SubCommand_ToggleDisplay implements CommandHandler<Player> {
     private final QuickShop plugin;
 
     public SubCommand_ToggleDisplay(QuickShop plugin) {
+
         this.plugin = plugin;
+
     }
 
     @Override
     public void onCommand(@NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+
         final Shop shop = getLookingShop(sender);
         if (shop != null) {
+
             if (shop.playerAuthorize(sender.getUniqueId(), BuiltInShopPermission.TOGGLE_DISPLAY)
-                    || plugin.perm().hasPermission(sender, "quickshop.other.toggledisplay")) {
+                    || plugin.perm().hasPermission(sender, "quickshop.other.toggledisplay"))
+            {
+
                 if (shop.isDisableDisplay()) {
+
                     shop.setDisableDisplay(false);
                     plugin.text().of(sender, "display-turn-on").send();
+
                 } else {
+
                     shop.setDisableDisplay(true);
                     plugin.text().of(sender, "display-turn-off").send();
+
                 }
+
             } else {
+
                 plugin.text().of(sender, "not-managed-shop").send();
+
             }
+
         } else {
+
             plugin.text().of(sender, "not-looking-at-shop").send();
+
         }
+
     }
 
     @NotNull
     @Override
-    public List<String> onTabComplete(
-            @NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+    public List<String> onTabComplete(@NotNull Player sender, @NotNull String commandLabel,
+            @NotNull CommandParser parser)
+    {
+
         return Collections.emptyList();
+
     }
+
 }

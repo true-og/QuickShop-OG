@@ -30,13 +30,8 @@ public interface ShopManager {
      * @param shop           The shop
      * @param amount         The amount of the item/stack
      */
-    void actionBuying(
-            @NotNull Player buyer,
-            @NotNull InventoryWrapper buyerInventory,
-            @NotNull AbstractEconomy eco,
-            @NotNull Info info,
-            @NotNull Shop shop,
-            int amount);
+    void actionBuying(@NotNull Player buyer, @NotNull InventoryWrapper buyerInventory, @NotNull AbstractEconomy eco,
+            @NotNull Info info, @NotNull Shop shop, int amount);
 
     /**
      * Handle the player shop creating
@@ -57,28 +52,24 @@ public interface ShopManager {
      * @param shop            The shop
      * @param amount          The amount of the item/stack
      */
-    void actionSelling(
-            @NotNull Player seller,
-            @NotNull InventoryWrapper sellerInventory,
-            @NotNull AbstractEconomy eco,
-            @NotNull Info info,
-            @NotNull Shop shop,
-            int amount);
+    void actionSelling(@NotNull Player seller, @NotNull InventoryWrapper sellerInventory, @NotNull AbstractEconomy eco,
+            @NotNull Info info, @NotNull Shop shop, int amount);
 
-    //    /**
-    //     * Adds a shop to the world. Does NOT require the chunk or world to be loaded Call shop.onLoad
-    //     * by yourself
-    //     *
-    //     * @param world The name of the world
-    //     * @param shop  The shop to add
-    //     */
-    //    void addShop(@NotNull String world, @NotNull Shop shop);
+    // /**
+    // * Adds a shop to the world. Does NOT require the chunk or world to be loaded
+    // Call shop.onLoad
+    // * by yourself
+    // *
+    // * @param world The name of the world
+    // * @param shop The shop to add
+    // */
+    // void addShop(@NotNull String world, @NotNull Shop shop);
 
     void bakeShopRuntimeRandomUniqueIdCache(@NotNull Shop shop);
 
     /**
-     * Removes all shops from memory and the world. Does not delete them from the database. Call
-     * this on plugin disable ONLY.
+     * Removes all shops from memory and the world. Does not delete them from the
+     * database. Call this on plugin disable ONLY.
      */
     void clear();
 
@@ -125,7 +116,8 @@ public interface ShopManager {
     /**
      * Returns all shops in the whole database, include unloaded.
      *
-     * <p>Make sure you have caching this, because this need a while to get all shops
+     * <p>
+     * Make sure you have caching this, because this need a while to get all shops
      *
      * @return All shop in the database
      */
@@ -143,7 +135,9 @@ public interface ShopManager {
     /**
      * Get a players all shops.
      *
-     * <p>Make sure you have caching this, because this need a while to get player's all shops
+     * <p>
+     * Make sure you have caching this, because this need a while to get player's
+     * all shops
      *
      * @param playerUUID The player's uuid.
      * @return The list have this player's all shops.
@@ -154,7 +148,9 @@ public interface ShopManager {
     /**
      * Get a players all shops.
      *
-     * <p>Make sure you have caching this, because this need a while to get player's all shops
+     * <p>
+     * Make sure you have caching this, because this need a while to get player's
+     * all shops
      *
      * @param playerUUID The player's uuid.
      * @return The list have this player's all shops.
@@ -179,8 +175,8 @@ public interface ShopManager {
     Shop getShop(long shopId);
 
     /**
-     * Gets a shop in a specific location
-     * ATTENTION: This not include attached shops (double-chest)
+     * Gets a shop in a specific location ATTENTION: This not include attached shops
+     * (double-chest)
      *
      * @param loc The location to get the shop from
      * @return The shop at that location
@@ -189,8 +185,8 @@ public interface ShopManager {
     Shop getShop(@NotNull Location loc);
 
     /**
-     * Gets a shop in a specific location but via cache
-     * ATTENTION: This not include attached shops (double-chest)
+     * Gets a shop in a specific location but via cache ATTENTION: This not include
+     * attached shops (double-chest)
      *
      * @param loc The location to get the shop from
      * @return The shop at that location but via cache
@@ -199,8 +195,8 @@ public interface ShopManager {
     Shop getShopViaCache(@NotNull Location loc);
 
     /**
-     * Gets a shop in a specific location
-     * ATTENTION: This not include attached shops (double-chest)
+     * Gets a shop in a specific location ATTENTION: This not include attached shops
+     * (double-chest)
      *
      * @param loc                  The location to get the shop from
      * @param skipShopableChecking whether to check is shopable
@@ -216,7 +212,8 @@ public interface ShopManager {
     Shop getShopFromRuntimeRandomUniqueId(@NotNull UUID runtimeRandomUniqueId, boolean includeInvalid);
 
     /**
-     * Gets a shop in a specific location Include the attached shop, e.g DoubleChest shop.
+     * Gets a shop in a specific location Include the attached shop, e.g DoubleChest
+     * shop.
      *
      * @param loc The location to get the shop from
      * @return The shop at that location
@@ -225,7 +222,8 @@ public interface ShopManager {
     Shop getShopIncludeAttached(@Nullable Location loc);
 
     /**
-     * Gets a shop in a specific location Include the attached shop, e.g DoubleChest shop. but via cache
+     * Gets a shop in a specific location Include the attached shop, e.g DoubleChest
+     * shop. but via cache
      *
      * @param loc The location to get the shop from
      * @return The shop at that location but via cache
@@ -234,8 +232,8 @@ public interface ShopManager {
     Shop getShopIncludeAttachedViaCache(@Nullable Location loc);
 
     /**
-     * Returns a new shop iterator object, allowing iteration over shops easily, instead of sorting
-     * through a 3D map.
+     * Returns a new shop iterator object, allowing iteration over shops easily,
+     * instead of sorting through a 3D map.
      *
      * @return a new shop iterator object.
      */
@@ -253,8 +251,8 @@ public interface ShopManager {
     /**
      * Returns a map of Shops
      *
-     * @param c The chunk to search. Referencing doesn't matter, only coordinates and world are
-     *          used.
+     * @param c The chunk to search. Referencing doesn't matter, only coordinates
+     *          and world are used.
      * @return Shops
      */
     @Nullable
@@ -283,7 +281,8 @@ public interface ShopManager {
     /**
      * Returns a map of Chunk - Shop
      *
-     * @param world The name of the world (case sensitive) to get the list of shops from
+     * @param world The name of the world (case sensitive) to get the list of shops
+     *              from
      * @return a map of Chunk - Shop
      */
     @Nullable
@@ -327,8 +326,9 @@ public interface ShopManager {
     boolean isReachedLimit(@NotNull QUser p);
 
     /**
-     * Load shop method for loading shop into mapping, so getShops method will can find it. It also
-     * effects a lots of feature, make sure load it after create it.
+     * Load shop method for loading shop into mapping, so getShops method will can
+     * find it. It also effects a lots of feature, make sure load it after create
+     * it.
      *
      * @param world The world the shop is in
      * @param shop  The shop to load
@@ -336,8 +336,9 @@ public interface ShopManager {
     void loadShop(@NotNull Shop shop);
 
     /**
-     * Load shop method for loading shop into mapping, so getShops method will can find it. It also
-     * effects a lots of feature, make sure load it after create it.
+     * Load shop method for loading shop into mapping, so getShops method will can
+     * find it. It also effects a lots of feature, make sure load it after create
+     * it.
      *
      * @param world The world the shop is in
      * @param shop  The shop to load
@@ -345,8 +346,7 @@ public interface ShopManager {
     void unloadShop(@NotNull Shop shop);
 
     /**
-     * Change the owner to unlimited shop owner.
-     * It defined in configuration.
+     * Change the owner to unlimited shop owner. It defined in configuration.
      */
     void migrateOwnerToUnlimitedShopOwner(Shop shop);
 
@@ -433,6 +433,7 @@ public interface ShopManager {
      * An getActions() alternative.
      */
     public static interface InteractiveManager {
+
         public int size();
 
         public boolean isEmpty();
@@ -449,5 +450,7 @@ public interface ShopManager {
         public boolean containsKey(UUID uuid);
 
         public boolean containsValue(Info info);
+
     }
+
 }

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
  * Post-processing the Components
  */
 public interface PostProcessor {
+
     /**
      * Process the string
      *
@@ -19,4 +20,5 @@ public interface PostProcessor {
      */
     @NotNull
     Component process(@NotNull Component text, @Nullable CommandSender sender, @Nullable Component... args);
+
 }

@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
  * A shop
  */
 public interface Shop {
+
     NamespacedKey SHOP_NAMESPACED_KEY = new NamespacedKey(QuickShopAPI.getPluginInstance(), "shopsign");
 
     /**
@@ -44,7 +45,8 @@ public interface Shop {
      *
      * @param buyer          The player buying
      * @param buyerInventory The buyer inventory ( may not a player inventory )
-     * @param loc2Drop       The location to drops items if player inventory are full
+     * @param loc2Drop       The location to drops items if player inventory are
+     *                       full
      * @param paramInt       How many buyed?
      * @throws Exception Possible exception thrown if anything wrong.
      */
@@ -89,7 +91,8 @@ public interface Shop {
      * Getting ConfigurationSection (extra data) instance of your plugin namespace)
      *
      * @param plugin The plugin and plugin name will used for namespace
-     * @return ExtraSection, save it through Shop#setExtra. If you don't save it, it may randomly lose or save
+     * @return ExtraSection, save it through Shop#setExtra. If you don't save it, it
+     *         may randomly lose or save
      */
     @NotNull
     ConfigurationSection getExtra(@NotNull Plugin plugin);
@@ -103,7 +106,8 @@ public interface Shop {
     InventoryWrapper getInventory();
 
     /**
-     * Gets the InventoryWrapper provider name (the plugin name who register it), usually is QuickShop
+     * Gets the InventoryWrapper provider name (the plugin name who register it),
+     * usually is QuickShop
      *
      * @return InventoryWrapper
      */
@@ -136,7 +140,8 @@ public interface Shop {
     /**
      * Get shop's owner QUser
      *
-     * @return Shop's owner QUser object, can use Bukkit.getOfflinePlayer to convert to the OfflinePlayer.
+     * @return Shop's owner QUser object, can use Bukkit.getOfflinePlayer to convert
+     *         to the OfflinePlayer.
      */
     @NotNull
     QUser getOwner();
@@ -194,8 +199,8 @@ public interface Shop {
     int getRemainingStock();
 
     /**
-     * WARNING: This UUID will changed after plugin reload, shop reload or server restart
-     * DO NOT USE IT TO STORE DATA!
+     * WARNING: This UUID will changed after plugin reload, shop reload or server
+     * restart DO NOT USE IT TO STORE DATA!
      *
      * @return Random UUID
      */
@@ -253,16 +258,14 @@ public interface Shop {
      * Get sign texts on shop's sign.
      *
      * @param locale The locale to be created for
-     * @return String arrays represents sign texts:
-     * Index | Content
-     * Line 0: Header
-     * Line 1: Shop Type
-     * Line 2: Shop Item Name
-     * Line 3: Price
+     * @return String arrays represents sign texts: Index | Content Line 0: Header
+     *         Line 1: Shop Type Line 2: Shop Item Name Line 3: Price
      */
     default List<Component> getSignText(@NotNull ProxiedLocale locale) {
+
         // backward support
         throw new UnsupportedOperationException();
+
     }
 
     /**
@@ -274,7 +277,8 @@ public interface Shop {
     List<Sign> getSigns();
 
     /**
-     * Getting the shop tax account for using, it can be specific uuid or general tax account
+     * Getting the shop tax account for using, it can be specific uuid or general
+     * tax account
      *
      * @return Shop Tax Account or fallback to general tax account
      */
@@ -319,8 +323,7 @@ public interface Shop {
     boolean isBuying();
 
     /**
-     * Gets if shop is dirty
-     * (so shop will be save)
+     * Gets if shop is dirty (so shop will be save)
      *
      * @return Is dirty
      */
@@ -433,7 +436,8 @@ public interface Shop {
     void openPreview(@NotNull Player player);
 
     /**
-     * Get shop's owner name, it will return owner name or Admin Shop(i18n) when it is unlimited
+     * Get shop's owner name, it will return owner name or Admin Shop(i18n) when it
+     * is unlimited
      *
      * @param forceUsername Force returns username of shop
      * @param locale        The locale to parse the message
@@ -443,7 +447,8 @@ public interface Shop {
     Component ownerName(boolean forceUsername, @NotNull ProxiedLocale locale);
 
     /**
-     * Get shop's owner name, it will return owner name or Admin Shop(i18n) when it is unlimited
+     * Get shop's owner name, it will return owner name or Admin Shop(i18n) when it
+     * is unlimited
      *
      * @param locale The locale to parse the message
      * @return owner name
@@ -452,7 +457,8 @@ public interface Shop {
     Component ownerName(@NotNull ProxiedLocale locale);
 
     /**
-     * Get shop's owner name, it will return owner name or Admin Shop(i18n) when it is unlimited
+     * Get shop's owner name, it will return owner name or Admin Shop(i18n) when it
+     * is unlimited
      *
      * @return owner name
      */
@@ -507,7 +513,9 @@ public interface Shop {
      * Refresh shop sign and display item
      */
     @Deprecated(forRemoval = true)
-    default void refresh() {}
+    default void refresh() {
+
+    }
 
     /**
      * Remove x ItemStack from the shop inventory
@@ -545,13 +553,14 @@ public interface Shop {
      *
      * @param seller          Seller
      * @param sellerInventory Seller's inventory ( may not a player inventory )
-     * @param loc2Drop        The location to be drop if buyer inventory full ( if player enter a number that < 0, it will turn to buying item)
+     * @param loc2Drop        The location to be drop if buyer inventory full ( if
+     *                        player enter a number that < 0, it will turn to buying
+     *                        item)
      * @param paramInt        How many sold?
      * @throws Exception Possible exception thrown if anything wrong.
      */
-    void sell(
-            @NotNull QUser seller, @NotNull InventoryWrapper sellerInventory, @NotNull Location loc2Drop, int paramInt)
-            throws Exception;
+    void sell(@NotNull QUser seller, @NotNull InventoryWrapper sellerInventory, @NotNull Location loc2Drop,
+            int paramInt) throws Exception;
 
     /**
      * Sets shop is dirty
@@ -614,4 +623,5 @@ public interface Shop {
      * Sets the benefit in this shop
      */
     void setShopBenefit(@NotNull Benefit benefit);
+
 }

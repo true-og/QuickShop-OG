@@ -1,3 +1,11 @@
+/* This is free and unencumbered software released into the public domain */
+
+import org.gradle.kotlin.dsl.provideDelegate
+
+extra["kotlinAttribute"] = Attribute.of("kotlin-tag", Boolean::class.javaObjectType)
+
+val kotlinAttribute: Attribute<Boolean> by rootProject.extra
+
 val quickshopVersion = "5.9"
 val purpurApiVersion = "1.19.4-R0.1-SNAPSHOT"
 val javaLanguageVersion = 17
@@ -7,13 +15,19 @@ val adventureExtraVersion = "4.2.0"
 val adventurePlatformVersion = "4.3.2"
 val viaversionApi = "4.3.0"
 
+/* ------------------------------ Plugins ------------------------------ */
 plugins {
-    id("java-library")
-    id("io.freefair.lombok") version "8.14" apply false
-    id("com.gradleup.shadow") version "8.3.6" apply false
-    id("com.diffplug.spotless") version "7.0.4"
+    id("java") // Import Java plugin.
+    id("java-library") // Import Java Library plugin.
+    id("com.diffplug.spotless") version "7.0.4" // Import Spotless plugin.
+    id("com.gradleup.shadow") version "8.3.6" apply false // Import Shadow plugin.
+    id("checkstyle") // Import Checkstyle plugin.
+    id("io.freefair.lombok") version "8.13.1" apply false // Import automatic lombok support.
+    eclipse // Import Eclipse plugin.
+    kotlin("jvm") version "2.1.21" // Import Kotlin JVM plugin.
 }
 
+/* --------------------------- JDK / Kotlin ---------------------------- */
 subprojects {
     apply(plugin = "java-library")
     apply(plugin = "io.freefair.lombok")
@@ -25,14 +39,16 @@ subprojects {
     version = quickshopVersion
 
     java {
-        toolchain {
-            languageVersion.set(JavaLanguageVersion.of(javaLanguageVersion))
-            vendor.set(org.gradle.jvm.toolchain.JvmVendorSpec.GRAAL_VM)
+        sourceCompatibility = JavaVersion.VERSION_17 // Compile with JDK 17 compatibility.
+        toolchain { // Select Java toolchain.
+            languageVersion.set(JavaLanguageVersion.of(javaLanguageVersion)) // Use JDK 17.
+            vendor.set(org.gradle.jvm.toolchain.JvmVendorSpec.GRAAL_VM) // Use GraalVM CE.
         }
     }
 
+    /* ---------------------------- Repos ---------------------------------- */
     repositories {
-        mavenCentral()
+        mavenCentral() // Import the Maven Central Maven Repository.
         maven("https://repo.viaversion.com")
         maven("https://repo.purpurmc.org/snapshots")
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
@@ -48,35 +64,55 @@ subprojects {
         maven("https://m2.dv8tion.net/releases")
         maven("https://nexus.scarsz.me/content/groups/public/")
         maven("https://www.jitpack.io")
-    }
-
-    dependencies { compileOnly("org.jetbrains:annotations:$jetbrainsAnnotationsVersion") }
-
-    if (path != ":libs:Utilities-OG") {
-        spotless {
-            java {
-                removeUnusedImports()
-                palantirJavaFormat()
-            }
-            kotlinGradle {
-                ktfmt().kotlinlangStyle().configure { it.setMaxWidth(120) }
-                target("build.gradle.kts", "settings.gradle.kts")
+        maven { url = uri("file://${System.getProperty("user.home")}/.m2/repository") }
+        System.getProperty("SELF_MAVEN_LOCAL_REPO")?.let { // TrueOG Bootstrap mavenLocal().
+            val dir = file(it)
+            if (dir.isDirectory) {
+                println("Using SELF_MAVEN_LOCAL_REPO at: $it")
+                maven { url = uri("file://${dir.absolutePath}") }
+            } else {
+                mavenLocal()
             }
         }
     }
 
-    tasks.withType<AbstractArchiveTask>().configureEach {
+    /* ---------------------- Java project deps ---------------------------- */
+    dependencies {
+        compileOnly("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
+    }
+
+    /* ----------------------------- Auto Formatting ------------------------ */
+    if (path != ":libs:Utilities-OG") {
+		spotless {
+			java {
+				eclipse().configFile(rootProject.file("config/formatter/eclipse-java-formatter.xml")) // Eclipse java formatting.
+				leadingTabsToSpaces() // Convert leftover leading tabs to spaces.
+				removeUnusedImports() // Remove imports that aren't being called.
+			}
+			kotlinGradle {
+				ktfmt().kotlinlangStyle().configure { it.setMaxWidth(120) } // JetBrains Kotlin formatting.
+				target("build.gradle.kts", "settings.gradle.kts") // Gradle files to format.
+			}
+		}
+    }
+
+    /* ---------------------- Reproducible jars ---------------------------- */
+    tasks.withType<AbstractArchiveTask>().configureEach { // Ensure reproducible .jars
         isPreserveFileTimestamps = false
         isReproducibleFileOrder = true
     }
+
+    /* --------------------------- Javac opts ------------------------------- */
     tasks.withType<JavaCompile>().configureEach {
-        dependsOn("spotlessApply")
-        options.compilerArgs.addAll(listOf("-parameters", "-Xlint:deprecation"))
-        options.encoding = "UTF-8"
-        options.isFork = true
+        dependsOn("spotlessApply") // Run spotless before compiling with the JDK.
+        options.compilerArgs.add("-parameters") // Enable reflection for java code.
+        options.isFork = true // Run javac in its own process.
+        options.compilerArgs.add("-Xlint:deprecation") // Trigger deprecation warning messages.
+        options.encoding = "UTF-8" // Use UTF-8 file encoding.
     }
 }
 
+/* ---------------------- Module: quickshop-common ---------------------- */
 project(":quickshop-common") {
     dependencies {
         api("net.kyori:adventure-api:$adventureApiVersion")
@@ -93,6 +129,7 @@ project(":quickshop-common") {
     }
 }
 
+/* ------------------------ Module: quickshop-api ----------------------- */
 project(":quickshop-api") {
     dependencies {
         api(project(":quickshop-common"))
@@ -104,6 +141,7 @@ project(":quickshop-api") {
 
 val platformApi = "org.purpurmc.purpur:purpur-api:$purpurApiVersion"
 
+/* --------------- Module: platform-interface & friends ---------------- */
 project(":platform:quickshop-platform-interface") {
     dependencies {
         api(project(":quickshop-common"))
@@ -142,7 +180,9 @@ listOf(
     }
 }
 
+/* ---------------------- Module: quickshop-bukkit ---------------------- */
 project(":quickshop-bukkit") {
+    /* ----------------------------- Resources ----------------------------- */
     tasks.processResources {
         val versionString = project.version.toString()
         val props = mapOf(
@@ -153,41 +193,53 @@ project(":quickshop-bukkit") {
         filesMatching("plugin.yml") { expand(props) }
     }
 
-    dependencies {
-        implementation(project(":quickshop-api"))
-        implementation(project(":platform:quickshop-platform-spigot-abstract"))
-        implementation("com.ghostchu.crowdin:crowdinota:1.0.3")
-        compileOnly(project(":libs:Utilities-OG"))
-        listOf(
-            ":platform:quickshop-platform-spigot-v1_19_R1",
-            ":platform:quickshop-platform-spigot-v1_19_R2",
-            ":platform:quickshop-platform-spigot-v1_19_R3",
-            ":platform:quickshop-platform-paper"
-        ).forEach { implementation(project(it)) }
-        compileOnly(platformApi)
-        compileOnly("net.kyori:adventure-platform-bukkit:$adventurePlatformVersion")
-        compileOnly("net.kyori:adventure-platform-viaversion:$adventurePlatformVersion")
-        compileOnly("net.kyori:adventure-text-serializer-ansi:$adventureExtraVersion")
-        compileOnly("net.kyori:adventure-text-serializer-bungeecord:$adventureExtraVersion")
-        compileOnly("com.viaversion:viaversion-api:$viaversionApi")
-        compileOnly("com.h2database:h2:2.2.224")
-        compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
-        compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
-        compileOnly("me.clip:placeholderapi:2.11.5")
-        compileOnly("net.tnemc:EconomyCore:0.1.2.6-Pre1")
-        compileOnly("net.tnemc:Reserve:0.1.5.3-SNAPSHOT-4")
-        compileOnly("org.bstats:bstats-bukkit:3.0.2")
-        compileOnly("com.konghq:unirest-java:3.14.5")
-        compileOnly("com.github.juliomarcopineda:jdbc-stream:0.1.1")
-        compileOnly("net.sourceforge.csvjdbc:csvjdbc:1.0.41")
-        compileOnly("org.dom4j:dom4j:2.1.4")
-        compileOnly("net.essentialsx:EssentialsX:2.20.1")
-        compileOnly("com.rollbar:rollbar-java:1.10.0")
-        compileOnly(files("lib/GemsEconomy-4.9.2.jar"))
-    }
+	/* ---------------------- Java project deps ---------------------------- */
+	val protocolLibJar = rootProject.file("libs/ProtocolLib/ProtocolLib-5.0.jar")
 
+	dependencies {
+		implementation(project(":quickshop-api"))
+		implementation(project(":platform:quickshop-platform-spigot-abstract"))
+		implementation("com.ghostchu.crowdin:crowdinota:1.0.3")
+		compileOnly(project(":libs:Utilities-OG"))
+		listOf(
+		    ":platform:quickshop-platform-spigot-v1_19_R1",
+		    ":platform:quickshop-platform-spigot-v1_19_R2",
+		    ":platform:quickshop-platform-spigot-v1_19_R3",
+		    ":platform:quickshop-platform-paper"
+		).forEach { implementation(project(it)) }
+		compileOnly(platformApi)
+		compileOnly("net.kyori:adventure-platform-bukkit:$adventurePlatformVersion")
+		compileOnly("net.kyori:adventure-platform-viaversion:$adventurePlatformVersion")
+		compileOnly("net.kyori:adventure-text-serializer-ansi:$adventureExtraVersion")
+		compileOnly("net.kyori:adventure-text-serializer-bungeecord:$adventureExtraVersion")
+		compileOnly("com.viaversion:viaversion-api:$viaversionApi")
+		compileOnly("com.h2database:h2:2.2.224")
+		compileOnly(files(protocolLibJar)) // Import Legacy ProtocolLib API.
+		compileOnly("me.xanium:GemsEconomy:4.9.3-GCRemake-1.6")
+		compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
+		compileOnly("me.clip:placeholderapi:2.11.5")
+		compileOnly("net.tnemc:EconomyCore:0.1.2.6-Pre1")
+		compileOnly("net.tnemc:Reserve:0.1.5.3-SNAPSHOT-4")
+		compileOnly("org.bstats:bstats-bukkit:3.0.2")
+		compileOnly("com.konghq:unirest-java:3.14.5")
+		compileOnly("com.github.juliomarcopineda:jdbc-stream:0.1.1")
+		compileOnly("net.sourceforge.csvjdbc:csvjdbc:1.0.41")
+		compileOnly("org.dom4j:dom4j:2.1.4")
+		compileOnly("net.essentialsx:EssentialsX:2.20.1")
+		compileOnly("com.rollbar:rollbar-java:1.10.0")
+	}
+
+	/* ------------------------------ Eclipse ------------------------------ */
+	val eclipseCompileOnly = configurations.register("eclipseCompileOnly") {
+		isCanBeResolved = true
+		extendsFrom(configurations.compileOnly.get())
+	}.get()
+
+	eclipse.classpath.plusConfigurations.add(eclipseCompileOnly)
+
+    /* ----------------------------- Shadow -------------------------------- */
     tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
-        archiveClassifier.set("")
+        archiveClassifier.set("") // Use empty string instead of null.
         minimize()
         relocate("io.papermc.lib", "com.ghostchu.quickshop.shade.io.papermc.lib")
         relocate("de.tr7zw.changeme.nbtapi", "com.ghostchu.quickshop.shade.de.tr7zw.changeme.nbtapi")
@@ -202,7 +254,7 @@ project(":quickshop-bukkit") {
         )
     }
 
-    tasks.named<Jar>("jar") { archiveClassifier.set("original") }
+    tasks.named<Jar>("jar") { archiveClassifier.set("original") } // Applies to root jarfile only.
 
     tasks.register<Copy>("copyReleaseJar") {
         dependsOn("shadowJar")
@@ -211,11 +263,11 @@ project(":quickshop-bukkit") {
     }
 
     tasks.build {
-        dependsOn(tasks.spotlessApply)
-        dependsOn("shadowJar", "copyReleaseJar")
+        dependsOn(tasks.spotlessApply, tasks.named("shadowJar"), tasks.named("copyReleaseJar")) // Build depends on spotless and shadow.
     }
 }
 
+/* ------------------------- Add-on modules ---------------------------- */
 val commonAddOnDeps = listOf(
     platformApi,
     "org.apache.commons:commons-lang3:3.14.0"
@@ -240,6 +292,7 @@ listOf("discount", "list", "shopitemonly").forEach { name ->
     }
 }
 
+/* ------------------------- Compatibility mods ------------------------ */
 project(":compatibility:common") {
     dependencies {
         compileOnly(platformApi)
@@ -298,4 +351,16 @@ project(":compatibility:worldguard") {
         compileOnly("com.github.juliomarcopineda:jdbc-stream:0.1.1")
         compileOnly("one.util:streamex:0.8.2")
     }
+}
+
+apply(from = "eclipse.gradle.kts") // Import eclipse classpath support script.
+
+/* ------------------------------ Eclipse SHIM ------------------------- */
+
+// This can't be put in eclipse.gradle.kts because Gradle is weird.
+subprojects {
+    apply(plugin = "java-library")
+    apply(plugin = "eclipse")
+    eclipse.project.name = "${project.name}-${rootProject.name}"
+    tasks.withType<Jar>().configureEach { archiveBaseName.set("${project.name}-${rootProject.name}") }
 }

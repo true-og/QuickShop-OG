@@ -20,27 +20,40 @@ public class BukkitPermsProvider implements PermissionProvider {
      * @param permission The permission want to check
      * @return Debug Infos
      */
-    public @NotNull PermissionInformationContainer getDebugInfo(
-            @NotNull CommandSender sender, @NotNull String permission) {
+    public @NotNull PermissionInformationContainer getDebugInfo(@NotNull CommandSender sender,
+            @NotNull String permission)
+    {
+
         return new PermissionInformationContainer(sender, permission, null, null);
+
     }
 
     @Override
     public @NotNull String getName() {
+
         return "Bukkit";
+
     }
 
     @Override
     public boolean hasPermission(@NotNull CommandSender sender, @NotNull String permission) {
+
         return sender.hasPermission(permission);
+
     }
 
     @Override
     public boolean hasPermission(@NotNull QUser sender, @NotNull String permission) {
+
         Player player = sender.getBukkitPlayer().orElse(null);
         if (player == null) {
+
             return false;
+
         }
+
         return player.hasPermission(permission);
+
     }
+
 }

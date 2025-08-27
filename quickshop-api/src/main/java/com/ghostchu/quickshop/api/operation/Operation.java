@@ -4,6 +4,7 @@ package com.ghostchu.quickshop.api.operation;
  * The transaction Operation
  */
 public interface Operation {
+
     /**
      * Commit the operation
      *
@@ -31,4 +32,5 @@ public interface Operation {
      * @return true if successes
      */
     boolean rollback();
+
 }

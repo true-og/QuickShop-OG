@@ -14,15 +14,21 @@ import org.jetbrains.annotations.NotNull;
 
 @Deprecated
 public class VaultPermissionProvider implements PermissionProvider {
+
     private final Permission api;
 
     @Deprecated
     public VaultPermissionProvider() {
+
         RegisteredServiceProvider<Permission> rsp = Bukkit.getServicesManager().getRegistration(Permission.class);
         if (rsp == null) {
+
             throw new ProviderIsEmptyException(getName());
+
         }
+
         api = rsp.getProvider();
+
     }
 
     /**
@@ -32,7 +38,9 @@ public class VaultPermissionProvider implements PermissionProvider {
      */
     @Override
     public @NotNull String getName() {
+
         return "Vault";
+
     }
 
     /**
@@ -44,16 +52,23 @@ public class VaultPermissionProvider implements PermissionProvider {
      */
     @Override
     public boolean hasPermission(@NotNull CommandSender sender, @NotNull String permission) {
+
         return api.has(sender, permission);
+
     }
 
     @Override
     public boolean hasPermission(@NotNull QUser sender, @NotNull String permission) {
+
         Player player = sender.getBukkitPlayer().orElse(null);
         if (player == null) {
+
             return false;
+
         }
+
         return api.has(player, permission);
+
     }
 
     /**
@@ -63,12 +78,19 @@ public class VaultPermissionProvider implements PermissionProvider {
      * @param permission The permission want to check
      * @return Debug Infos
      */
-    public @NotNull PermissionInformationContainer getDebugInfo(
-            @NotNull CommandSender sender, @NotNull String permission) {
+    public @NotNull PermissionInformationContainer getDebugInfo(@NotNull CommandSender sender,
+            @NotNull String permission)
+    {
+
         if (sender instanceof Server) {
+
             return new PermissionInformationContainer(sender, permission, null, "User is Console");
+
         }
+
         OfflinePlayer offlinePlayer = (OfflinePlayer) sender;
         return new PermissionInformationContainer(sender, permission, api.getPrimaryGroup(null, offlinePlayer), null);
+
     }
+
 }

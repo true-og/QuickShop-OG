@@ -23,139 +23,192 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class QSEventManager implements QuickEventManager, Listener, Reloadable {
+
     private final QuickShop plugin;
     private final List<ListenerContainer> ignoredListener = new ArrayList<>();
 
     public QSEventManager(QuickShop plugin) {
+
         this.plugin = plugin;
         Bukkit.getPluginManager().registerEvents(this, plugin.getJavaPlugin());
         this.rescan();
+
     }
 
     private synchronized void rescan() {
+
         this.ignoredListener.clear();
-        plugin.getConfig()
-                .getStringList("shop.protection-checking-listener-blacklist")
-                .forEach(input -> {
-                    if (StringUtils.isEmpty(input)) {
-                        return;
-                    }
-                    try {
-                        Class<?> clazz = Class.forName(input);
-                        this.ignoredListener.add(new ListenerContainer(clazz, input));
-                        Log.debug("Successfully added blacklist: [BINDING] " + clazz.getName());
-                    } catch (Exception ignored) {
-                        this.ignoredListener.add(new ListenerContainer(null, input));
-                        Log.debug("Successfully added blacklist: [DYNAMIC] " + input);
-                    }
-                });
+        plugin.getConfig().getStringList("shop.protection-checking-listener-blacklist").forEach(input -> {
+
+            if (StringUtils.isEmpty(input)) {
+
+                return;
+
+            }
+
+            try {
+
+                Class<?> clazz = Class.forName(input);
+                this.ignoredListener.add(new ListenerContainer(clazz, input));
+                Log.debug("Successfully added blacklist: [BINDING] " + clazz.getName());
+
+            } catch (Exception ignored) {
+
+                this.ignoredListener.add(new ListenerContainer(null, input));
+                Log.debug("Successfully added blacklist: [DYNAMIC] " + input);
+
+            }
+
+        });
+
     }
 
     @Override
     public void callEvent(@NotNull Event event, @Nullable Consumer<Event> callBeforePassToMonitor) {
+
         if (event.isAsynchronous()) {
+
             if (Thread.holdsLock(Bukkit.getPluginManager())) {
+
                 throw new IllegalStateException(
                         event.getEventName() + " cannot be triggered asynchronously from inside synchronized code.");
+
             }
+
             if (Bukkit.getServer().isPrimaryThread()) {
+
                 throw new IllegalStateException(
                         event.getEventName() + " cannot be triggered asynchronously from primary server thread.");
+
             }
+
         } else {
+
             if (!Bukkit.getServer().isPrimaryThread()) {
+
                 throw new IllegalStateException(
                         event.getEventName() + " cannot be triggered asynchronously from another thread.");
+
             }
+
         }
 
         if (callBeforePassToMonitor == null) {
-            callBeforePassToMonitor = empty -> {};
+
+            callBeforePassToMonitor = empty -> {
+
+            };
+
         }
 
         fireEvent(event, callBeforePassToMonitor);
+
     }
 
     private void fireEvent(Event event, Consumer<Event> callBeforePassToMonitor) {
+
         boolean reachedMonitorPriority = false;
         HandlerList handlers = event.getHandlers();
         RegisteredListener[] listeners = handlers.getRegisteredListeners();
         for (RegisteredListener registration : listeners) {
+
             if (!registration.getPlugin().isEnabled()) {
+
                 continue;
+
             }
+
             Class<?> regClass = registration.getListener().getClass();
             boolean skip = false;
             for (ListenerContainer container : this.ignoredListener) {
+
                 if (container.matches(regClass, registration.getPlugin())) {
+
                     skip = true;
                     break;
+
                 }
+
             }
+
             if (skip) {
+
                 continue;
+
             }
+
             try {
+
                 if (registration.getPriority() == EventPriority.MONITOR) {
+
                     if (!reachedMonitorPriority) {
+
                         reachedMonitorPriority = true;
                         callBeforePassToMonitor.accept(event);
+
                     }
+
                 }
+
                 registration.callEvent(event);
+
             } catch (AuthorNagException ex) {
+
                 Plugin regPlugin = registration.getPlugin();
                 if (regPlugin.isNaggable()) {
+
                     regPlugin.setNaggable(false);
-                    regPlugin
-                            .getLogger()
-                            .log(
-                                    Level.SEVERE,
-                                    String.format(
-                                            "Nag author(s): '%s' of '%s' about the following: %s",
-                                            regPlugin.getDescription().getAuthors(),
-                                            regPlugin.getDescription().getFullName(),
-                                            ex.getMessage()));
+                    regPlugin.getLogger().log(Level.SEVERE,
+                            String.format("Nag author(s): '%s' of '%s' about the following: %s",
+                                    regPlugin.getDescription().getAuthors(), regPlugin.getDescription().getFullName(),
+                                    ex.getMessage()));
+
                 }
+
             } catch (Throwable ex) {
-                Bukkit.getLogger()
-                        .log(
-                                Level.SEVERE,
-                                "Could not pass event "
-                                        + event.getEventName()
-                                        + " to "
-                                        + registration
-                                                .getPlugin()
-                                                .getDescription()
-                                                .getFullName(),
-                                ex);
+
+                Bukkit.getLogger().log(Level.SEVERE, "Could not pass event " + event.getEventName() + " to "
+                        + registration.getPlugin().getDescription().getFullName(), ex);
+
             }
+
         }
+
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void pluginDisable(PluginDisableEvent event) {
+
         this.rescan();
+
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void pluginEnable(PluginEnableEvent event) {
+
         this.rescan();
+
     }
 
     @Override
     public ReloadResult reloadModule() {
+
         rescan();
         return new ReloadResult(ReloadStatus.SUCCESS, null, null);
+
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void serverReloaded(ServerLoadEvent event) {
+
         this.rescan();
+
     }
+
 }
 
 class ListenerContainer {
+
     @Nullable
     private final Class<?> clazz;
 
@@ -163,24 +216,41 @@ class ListenerContainer {
     private final String clazzName;
 
     public ListenerContainer(@Nullable Class<?> clazz, @NotNull String clazzName) {
+
         this.clazz = clazz;
         this.clazzName = clazzName;
+
     }
 
     public boolean matches(@NotNull Class<?> matching, @NotNull Plugin plugin) {
+
         if (clazz != null) {
+
             return matching.equals(clazz);
+
         }
+
         if (clazzName.startsWith("@")) {
+
             return clazzName.equalsIgnoreCase("@" + plugin.getName());
+
         }
+
         String name = matching.getName();
         if (name.equalsIgnoreCase(clazzName)) {
+
             return true;
+
         }
+
         if (name.startsWith(clazzName)) {
+
             return true;
+
         }
+
         return name.matches(clazzName);
+
     }
+
 }

@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Data
 public class ShopPurchaseLog {
+
     private static int v = 2;
     private ShopInfoStorage shop;
     private ShopType type;
@@ -17,15 +18,10 @@ public class ShopPurchaseLog {
     private double balance;
     private double tax;
 
-    public ShopPurchaseLog(
-            ShopInfoStorage shop,
-            ShopType type,
-            QUser trader,
-            String itemName,
-            String itemStack,
-            int amount,
-            double balance,
-            double tax) {
+    public ShopPurchaseLog(ShopInfoStorage shop, ShopType type, QUser trader, String itemName, String itemStack,
+            int amount, double balance, double tax)
+    {
+
         this.shop = shop;
         this.type = type;
         this.trader = trader.serialize();
@@ -34,5 +30,7 @@ public class ShopPurchaseLog {
         this.amount = amount;
         this.balance = balance;
         this.tax = tax;
+
     }
+
 }

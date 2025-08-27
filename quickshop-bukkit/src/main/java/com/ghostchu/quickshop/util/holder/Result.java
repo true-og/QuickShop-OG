@@ -10,26 +10,38 @@ import lombok.ToString;
 public class Result {
 
     public static final Result SUCCESS = new Result() {
+
         @Override
         public String getMessage() {
+
             return "";
+
         }
 
         @Override
-        public void setMessage(String message) {}
+        public void setMessage(String message) {
+
+        }
 
         @Override
-        public void setResult(boolean result) {}
+        public void setResult(boolean result) {
+
+        }
 
         @Override
         public String getListener() {
+
             return "";
+
         }
 
         @Override
         public boolean isSuccess() {
+
             return true;
+
         }
+
     };
 
     @Setter
@@ -43,14 +55,21 @@ public class Result {
     @Setter
     private String listener;
 
-    public Result() {}
+    public Result() {
+
+    }
 
     public Result(String message) {
+
         result = false;
         this.message = message;
+
     }
 
     public boolean isSuccess() {
+
         return result;
+
     }
+
 }

@@ -27,76 +27,108 @@ import org.jetbrains.annotations.NotNull;
 public class Spigot1191Platform extends AbstractSpigotPlatform implements Platform {
 
     public Spigot1191Platform(@NotNull Plugin plugin) {
+
         super(plugin);
+
     }
 
     @Override
     public @NotNull HoverEvent<HoverEvent.ShowItem> getItemStackHoverEvent(@NotNull ItemStack stack) {
+
         NamespacedKey namespacedKey = stack.getType().getKey();
         Key key = Key.key(namespacedKey.toString());
         BinaryTagHolder holder;
         if (Util.methodExists(BinaryTagHolder.class, "binaryTagHolder")) {
-            holder = BinaryTagHolder.binaryTagHolder(
-                    CraftItemStack.asNMSCopy(stack).save(new CompoundTag()).toString());
+
+            holder = BinaryTagHolder
+                    .binaryTagHolder(CraftItemStack.asNMSCopy(stack).save(new CompoundTag()).toString());
+
         } else {
-            //noinspection UnstableApiUsage
-            holder = BinaryTagHolder.of(
-                    CraftItemStack.asNMSCopy(stack).save(new CompoundTag()).toString());
+
+            // noinspection UnstableApiUsage
+            holder = BinaryTagHolder.of(CraftItemStack.asNMSCopy(stack).save(new CompoundTag()).toString());
+
         }
+
         return HoverEvent.showItem(key, stack.getAmount(), holder);
+
     }
 
     @Override
     public @NotNull String getMinecraftVersion() {
+
         return ((CraftServer) Bukkit.getServer()).getServer().getServerVersion();
+
     }
 
     @Override
     public void registerCommand(@NotNull String prefix, @NotNull Command command) {
+
         ((CraftServer) Bukkit.getServer()).getCommandMap().register(prefix, command);
         command.register(((CraftServer) Bukkit.getServer()).getCommandMap());
         ((CraftServer) Bukkit.getServer()).syncCommands();
+
     }
 
     @Override
     public @NotNull String getTranslationKey(@NotNull Material material) {
+
         if (material.isBlock()) {
+
             return CraftMagicNumbers.getBlock(material).getDescriptionId();
+
         } else {
-            return postProcessingTranslationKey(
-                    CraftMagicNumbers.getItem(material).getDescriptionId());
+
+            return postProcessingTranslationKey(CraftMagicNumbers.getItem(material).getDescriptionId());
+
         }
+
     }
 
     private String postProcessingTranslationKey(String key) {
+
         return this.translationMapping.getOrDefault(key, key);
+
     }
 
     @Override
     public @NotNull String getTranslationKey(@NotNull EntityType type) {
-        Optional<net.minecraft.world.entity.EntityType<?>> op =
-                net.minecraft.world.entity.EntityType.byString(type.getKey().toString());
+
+        Optional<net.minecraft.world.entity.EntityType<?>> op = net.minecraft.world.entity.EntityType
+                .byString(type.getKey().toString());
         if (op.isPresent()) {
+
             return postProcessingTranslationKey(op.get().getDescriptionId());
+
         } else {
+
             return postProcessingTranslationKey("entity." + type.getKey());
+
         }
+
     }
 
     @Override
     public @NotNull String getTranslationKey(@NotNull PotionEffectType potionEffectType) {
+
         CraftPotionEffectType craftPotionEffectType = (CraftPotionEffectType) potionEffectType;
         return postProcessingTranslationKey(craftPotionEffectType.getHandle().getDescriptionId());
+
     }
 
     @Override
     public @NotNull String getTranslationKey(@NotNull Enchantment enchantment) {
+
         CraftEnchantment craftEnchantment = (CraftEnchantment) enchantment;
         return postProcessingTranslationKey(craftEnchantment.getHandle().getDescriptionId());
+
     }
 
     @Override
     public @NotNull String getTranslationKey(@NotNull ItemStack stack) {
+
         return getTranslationKey(stack.getType());
+
     }
+
 }

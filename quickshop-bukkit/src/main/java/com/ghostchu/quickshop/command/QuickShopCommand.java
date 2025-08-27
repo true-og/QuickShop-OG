@@ -9,26 +9,38 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class QuickShopCommand extends BukkitCommand {
+
     private final CommandManager manager;
 
     public QuickShopCommand(@NotNull String name, CommandManager commandManager, @NotNull List<String> aliases) {
+
         super(name, "QuickShop command", "/quickshop", aliases);
         this.manager = commandManager;
+
     }
 
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
+
         return this.manager.onCommand(sender, this, commandLabel, args);
+
     }
 
     @NotNull
     @Override
     public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args)
-            throws IllegalArgumentException {
+            throws IllegalArgumentException
+    {
+
         List<String> items = this.manager.onTabComplete(sender, this, alias, args);
         if (items == null) {
+
             items = Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
+
         }
+
         return items;
+
     }
+
 }

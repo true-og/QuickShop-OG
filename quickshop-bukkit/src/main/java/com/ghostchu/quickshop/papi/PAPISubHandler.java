@@ -6,10 +6,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface PAPISubHandler {
+
     @Nullable
     default String handle(@NotNull OfflinePlayer player, @NotNull String params) {
+
         String raw = StringUtils.substringAfter(params, getPrefix() + "_");
         return handle0(player, raw);
+
     }
 
     @NotNull
@@ -17,4 +20,5 @@ public interface PAPISubHandler {
 
     @Nullable
     String handle0(@NotNull OfflinePlayer player, @NotNull String paramsTrimmed);
+
 }

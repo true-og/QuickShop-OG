@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
  * Calling when control panel opened for
  */
 public class ShopControlPanelOpenEvent extends AbstractQSEvent implements QSCancellable {
+
     private final Shop shop;
     private final CommandSender sender;
     private boolean cancelled = false;
@@ -22,19 +23,25 @@ public class ShopControlPanelOpenEvent extends AbstractQSEvent implements QSCanc
      * @param sender The player which receiving shop control panel message
      */
     public ShopControlPanelOpenEvent(@NotNull Shop shop, @NotNull CommandSender sender) {
+
         this.shop = shop;
         this.sender = sender;
+
     }
 
     @Override
     public @Nullable Component getCancelReason() {
+
         return this.cancelReason;
+
     }
 
     @Override
     public void setCancelled(boolean cancel, @Nullable Component reason) {
+
         this.cancelled = cancel;
         this.cancelReason = reason;
+
     }
 
     /**
@@ -43,7 +50,9 @@ public class ShopControlPanelOpenEvent extends AbstractQSEvent implements QSCanc
      * @return The sender
      */
     public CommandSender getSender() {
+
         return this.sender;
+
     }
 
     /**
@@ -52,11 +61,16 @@ public class ShopControlPanelOpenEvent extends AbstractQSEvent implements QSCanc
      * @return The shop
      */
     public Shop getShop() {
+
         return this.shop;
+
     }
 
     @Override
     public boolean isCancelled() {
+
         return cancelled;
+
     }
+
 }

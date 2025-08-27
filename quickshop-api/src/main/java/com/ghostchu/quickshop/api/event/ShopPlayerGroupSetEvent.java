@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
  * Fire when a player's group is set or changed.
  */
 public class ShopPlayerGroupSetEvent extends AbstractQSEvent {
+
     private final Shop shop;
     private final String oldGroup;
     private final String newGroup;
@@ -21,32 +22,43 @@ public class ShopPlayerGroupSetEvent extends AbstractQSEvent {
      * @param oldGroup The old group.
      * @param newGroup The new group.
      */
-    public ShopPlayerGroupSetEvent(
-            @NotNull Shop shop, @NotNull UUID player, @NotNull String oldGroup, @NotNull String newGroup) {
+    public ShopPlayerGroupSetEvent(@NotNull Shop shop, @NotNull UUID player, @NotNull String oldGroup,
+            @NotNull String newGroup)
+    {
+
         this.shop = shop;
         this.player = player;
         this.oldGroup = oldGroup;
         this.newGroup = newGroup;
+
     }
 
     /**
      * Get the new group.
      *
-     * @return The new group. ({@link com.ghostchu.quickshop.api.shop.permission.BuiltInShopPermissionGroup#EVERYONE} if removing)
+     * @return The new group.
+     *         ({@link com.ghostchu.quickshop.api.shop.permission.BuiltInShopPermissionGroup#EVERYONE}
+     *         if removing)
      */
     @NotNull
     public String getNewGroup() {
+
         return newGroup;
+
     }
 
     /**
      * Get the old group.
      *
-     * @return The old group. ({@link com.ghostchu.quickshop.api.shop.permission.BuiltInShopPermissionGroup#EVERYONE} if adding)
+     * @return The old group.
+     *         ({@link com.ghostchu.quickshop.api.shop.permission.BuiltInShopPermissionGroup#EVERYONE}
+     *         if adding)
      */
     @NotNull
     public String getOldGroup() {
+
         return oldGroup;
+
     }
 
     /**
@@ -56,7 +68,9 @@ public class ShopPlayerGroupSetEvent extends AbstractQSEvent {
      */
     @NotNull
     public Shop getShop() {
+
         return shop;
+
     }
 
     /**
@@ -66,6 +80,9 @@ public class ShopPlayerGroupSetEvent extends AbstractQSEvent {
      */
     @NotNull
     public UUID getPlayer() {
+
         return player;
+
     }
+
 }

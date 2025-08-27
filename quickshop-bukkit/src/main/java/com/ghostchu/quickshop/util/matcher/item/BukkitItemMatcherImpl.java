@@ -14,10 +14,13 @@ import org.jetbrains.annotations.Nullable;
  * @author Ghost_chu
  */
 public class BukkitItemMatcherImpl implements ItemMatcher {
+
     private final QuickShop plugin;
 
     public BukkitItemMatcherImpl(QuickShop plugin) {
+
         this.plugin = plugin;
+
     }
 
     /**
@@ -27,7 +30,9 @@ public class BukkitItemMatcherImpl implements ItemMatcher {
      */
     @Override
     public @NotNull String getName() {
+
         return Bukkit.getServer().getName();
+
     }
 
     /**
@@ -37,12 +42,14 @@ public class BukkitItemMatcherImpl implements ItemMatcher {
      */
     @Override
     public @NotNull Plugin getPlugin() {
+
         return plugin.getJavaPlugin();
+
     }
 
     /**
-     * Tests ItemStacks is matches
-     * BEWARE: Different order of itemstacks you might will got different results
+     * Tests ItemStacks is matches BEWARE: Different order of itemstacks you might
+     * will got different results
      *
      * @param original The original ItemStack
      * @param tester   The ItemStack will test matches with original itemstack.
@@ -50,13 +57,19 @@ public class BukkitItemMatcherImpl implements ItemMatcher {
      */
     @Override
     public boolean matches(@Nullable ItemStack original, @Nullable ItemStack tester) {
+
         if (original == null && tester == null) {
+
             return true;
+
         }
+
         boolean originalNull = original == null;
         boolean testerNull = tester == null;
         if (originalNull || testerNull) {
+
             return false;
+
         }
 
         original = original.clone();
@@ -66,11 +79,18 @@ public class BukkitItemMatcherImpl implements ItemMatcher {
 
         String shopIdOrigin = plugin.getPlatform().getItemShopId(original);
         if (shopIdOrigin != null) {
+
             String shopIdTester = plugin.getPlatform().getItemShopId(tester);
             if (shopIdOrigin.equals(shopIdTester)) {
+
                 return true;
+
             }
+
         }
+
         return tester.isSimilar(original);
+
     }
+
 }

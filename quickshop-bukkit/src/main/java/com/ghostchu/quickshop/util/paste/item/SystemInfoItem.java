@@ -10,6 +10,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class SystemInfoItem implements SubPasteItem {
+
     private final String os;
     private final String arch;
     private final String version;
@@ -20,6 +21,7 @@ public class SystemInfoItem implements SubPasteItem {
     private final String systemProperties;
 
     public SystemInfoItem() {
+
         RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
         this.os = System.getProperty("os.name");
         this.arch = System.getProperty("os.arch");
@@ -29,23 +31,28 @@ public class SystemInfoItem implements SubPasteItem {
         this.javaImplName = runtimeMxBean.getVmName();
         this.inputArgs = CommonUtil.list2String(runtimeMxBean.getInputArguments());
         this.systemProperties = runtimeMxBean.getSystemProperties().keySet().stream()
-                .map(key -> StringEscapeUtils.escapeHtml4(
-                        key + "=" + runtimeMxBean.getSystemProperties().get(key)))
+                .map(key -> StringEscapeUtils.escapeHtml4(key + "=" + runtimeMxBean.getSystemProperties().get(key)))
                 .collect(Collectors.joining("<br/>"));
+
     }
 
     @Override
     public @NotNull String genBody() {
+
         return buildContent();
+
     }
 
     @Override
     public @NotNull String getTitle() {
+
         return "System Information";
+
     }
 
     @NotNull
     private String buildContent() {
+
         HTMLTable table = new HTMLTable(2, true);
         table.insert("OS", os);
         table.insert("Arch", arch);
@@ -54,16 +61,20 @@ public class SystemInfoItem implements SubPasteItem {
         table.insert("Java Version", javaVersion);
         table.insert("JVM Name", javaImplName);
         table.insert("Input Arguments", inputArgs);
-        String propertiesContent =
-                """
+        String propertiesContent = """
                 <details>
                   <summary>System Properties (Click to open/close)</summary>
                   {properties}
                 </details>
                 """;
         if (PackageUtil.parsePackageProperly("includeProperties").asBoolean()) {
+
             table.insert("System Properties", propertiesContent.replace("{properties}", systemProperties));
+
         }
+
         return table.render();
+
     }
+
 }

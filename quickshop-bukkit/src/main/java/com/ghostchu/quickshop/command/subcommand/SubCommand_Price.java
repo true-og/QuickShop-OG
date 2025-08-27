@@ -24,30 +24,42 @@ public class SubCommand_Price implements CommandHandler<Player> {
     private final QuickShop plugin;
 
     public SubCommand_Price(QuickShop plugin) {
+
         this.plugin = plugin;
+
     }
 
     @Override
     public void onCommand(@NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+
         if (parser.getArgs().isEmpty()) {
+
             plugin.text().of(sender, "no-price-given").send();
             return;
+
         }
 
         final double price;
 
         try {
+
             price = Double.parseDouble(parser.getArgs().get(0));
+
         } catch (NumberFormatException ex) {
+
             // No number input
             Log.debug(ex.getMessage());
             plugin.text().of(sender, "not-a-number", parser.getArgs().get(0)).send();
             return;
+
         }
+
         // No number input
         if (Double.isInfinite(price) || Double.isNaN(price)) {
+
             plugin.text().of(sender, "not-a-number", parser.getArgs().get(0)).send();
             return;
+
         }
 
         final boolean format = plugin.getConfig().getBoolean("use-decimal-format");
@@ -55,114 +67,114 @@ public class SubCommand_Price implements CommandHandler<Player> {
         double fee = 0;
 
         if (plugin.isPriceChangeRequiresFee()) {
+
             fee = plugin.getConfig().getDouble("shop.fee-for-price-change");
+
         }
+
         PriceLimiter limiter = plugin.getShopManager().getPriceLimiter();
         final Shop shop = getLookingShop(sender);
         if (shop == null) {
+
             plugin.text().of(sender, "not-looking-at-shop").send();
             return;
+
         }
 
         if (!shop.playerAuthorize(sender.getUniqueId(), BuiltInShopPermission.SET_PRICE)
-                && !plugin.perm().hasPermission(sender, "quickshop.other.price")) {
+                && !plugin.perm().hasPermission(sender, "quickshop.other.price"))
+        {
+
             plugin.text().of(sender, "not-managed-shop").send();
             return;
+
         }
 
         if (shop.getPrice() == price) {
+
             // Stop here if there isn't a price change
             plugin.text().of(sender, "no-price-change").send();
             return;
+
         }
 
         PriceLimiterCheckResult checkResult = limiter.check(sender, shop.getItem(), plugin.getCurrency(), price);
 
         switch (checkResult.getStatus()) {
+
             case PRICE_RESTRICTED -> {
-                plugin.text()
-                        .of(
-                                sender,
-                                "restricted-prices",
-                                Util.getItemStackName(shop.getItem()),
-                                Component.text(checkResult.getMin()),
-                                Component.text(checkResult.getMax()))
-                        .send();
+
+                plugin.text().of(sender, "restricted-prices", Util.getItemStackName(shop.getItem()),
+                        Component.text(checkResult.getMin()), Component.text(checkResult.getMax())).send();
                 return;
+
             }
             case REACHED_PRICE_MIN_LIMIT -> {
-                plugin.text()
-                        .of(
-                                sender,
-                                "price-too-cheap",
-                                (format)
-                                        ? MsgUtil.decimalFormat(checkResult.getMin())
-                                        : Double.toString(checkResult.getMin()))
+
+                plugin.text().of(sender, "price-too-cheap",
+                        (format) ? MsgUtil.decimalFormat(checkResult.getMin()) : Double.toString(checkResult.getMin()))
                         .send();
                 return;
+
             }
             case REACHED_PRICE_MAX_LIMIT -> {
-                plugin.text()
-                        .of(
-                                sender,
-                                "price-too-high",
-                                (format)
-                                        ? MsgUtil.decimalFormat(checkResult.getMax())
-                                        : Double.toString(checkResult.getMax()))
+
+                plugin.text().of(sender, "price-too-high",
+                        (format) ? MsgUtil.decimalFormat(checkResult.getMax()) : Double.toString(checkResult.getMax()))
                         .send();
                 return;
+
             }
             case NOT_A_WHOLE_NUMBER -> {
+
                 plugin.text().of(sender, "not-a-integer", price).send();
                 return;
+
             }
+
         }
 
         if (fee > 0) {
-            SimpleEconomyTransaction transaction = SimpleEconomyTransaction.builder()
-                    .core(plugin.getEconomy())
-                    .from(sender.getUniqueId())
-                    .amount(fee)
-                    .world(Objects.requireNonNull(shop.getLocation().getWorld()))
-                    .currency(plugin.getCurrency())
-                    .build();
+
+            SimpleEconomyTransaction transaction = SimpleEconomyTransaction.builder().core(plugin.getEconomy())
+                    .from(sender.getUniqueId()).amount(fee).world(Objects.requireNonNull(shop.getLocation().getWorld()))
+                    .currency(plugin.getCurrency()).build();
             if (!transaction.checkBalance()) {
-                plugin.text()
-                        .of(
-                                sender,
-                                "you-cant-afford-to-change-price",
-                                plugin.getShopManager().format(fee, shop))
+
+                plugin.text().of(sender, "you-cant-afford-to-change-price", plugin.getShopManager().format(fee, shop))
                         .send();
                 return;
+
             }
+
             if (!transaction.failSafeCommit()) {
-                plugin.text()
-                        .of(sender, "economy-transaction-failed", transaction.getLastError())
-                        .send();
+
+                plugin.text().of(sender, "economy-transaction-failed", transaction.getLastError()).send();
                 return;
+
             }
+
         }
-        plugin.text()
-                .of(
-                        sender,
-                        "fee-charged-for-price-change",
-                        plugin.getShopManager().format(fee, shop))
-                .send();
+
+        plugin.text().of(sender, "fee-charged-for-price-change", plugin.getShopManager().format(fee, shop)).send();
         // Update the shop
         shop.setPrice(price);
         shop.setSignText(plugin.text().findRelativeLanguages(sender));
-        plugin.text()
-                .of(sender, "price-is-now", plugin.getShopManager().format(shop.getPrice(), shop))
-                .send();
+        plugin.text().of(sender, "price-is-now", plugin.getShopManager().format(shop.getPrice(), shop)).send();
+
     }
 
     @NotNull
     @Override
-    public List<String> onTabComplete(
-            @NotNull Player sender, @NotNull String commandLabel, @NotNull CommandParser parser) {
+    public List<String> onTabComplete(@NotNull Player sender, @NotNull String commandLabel,
+            @NotNull CommandParser parser)
+    {
+
         return parser.getArgs().size() == 1
                 ? Collections.singletonList(LegacyComponentSerializer.legacySection()
                         .serialize(plugin.text().of(sender, "tabcomplete.price").forLocale()))
                 : Collections.emptyList();
+
     }
+
 }

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
  * InventoryWrapper for countable Inventory
  */
 public interface CountableInventoryWrapper extends InventoryWrapper {
+
     /**
      * Counting the items
      *
@@ -27,6 +28,7 @@ public interface CountableInventoryWrapper extends InventoryWrapper {
      * The item predicate for calculating
      */
     interface ItemPredicate {
+
         /**
          * Check if the item match the predicate
          *
@@ -34,5 +36,7 @@ public interface CountableInventoryWrapper extends InventoryWrapper {
          * @return if the item match the predicate
          */
         boolean isMatch(@NotNull ItemStack input);
+
     }
+
 }

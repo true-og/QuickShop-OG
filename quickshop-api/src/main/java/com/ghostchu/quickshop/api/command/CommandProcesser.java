@@ -15,8 +15,12 @@ public interface CommandProcesser extends CommandHandler<CommandSender> {
 
     @Override
     @Nullable
-    default List<String> onTabComplete(
-            @NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] cmdArg) {
+    default List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String commandLabel,
+            @NotNull String[] cmdArg)
+    {
+
         return Collections.emptyList();
+
     }
+
 }

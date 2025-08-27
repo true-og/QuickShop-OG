@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
  * Utility used for shop price validating
  */
 public interface PriceLimiter {
+
     /**
      * Check the price restriction rules
      *
@@ -19,6 +20,7 @@ public interface PriceLimiter {
      * @return the result
      */
     @NotNull
-    PriceLimiterCheckResult check(
-            @NotNull CommandSender sender, @NotNull ItemStack stack, @Nullable String currency, double price);
+    PriceLimiterCheckResult check(@NotNull CommandSender sender, @NotNull ItemStack stack, @Nullable String currency,
+            double price);
+
 }

@@ -11,6 +11,7 @@ import lombok.Data;
  */
 @Data
 public class ShopInfoStorage {
+
     private final String world;
     private final BlockPos position;
     private final String owner;
@@ -26,21 +27,11 @@ public class ShopInfoStorage {
     private final String symbolLink;
     private final Map<UUID, String> permission;
 
-    public ShopInfoStorage(
-            String world,
-            BlockPos position,
-            QUser owner,
-            double price,
-            String item,
-            int unlimited,
-            int shopType,
-            String extra,
-            String currency,
-            boolean disableDisplay,
-            QUser taxAccount,
-            String inventoryWrapperName,
-            String symbolLink,
-            Map<UUID, String> permission) {
+    public ShopInfoStorage(String world, BlockPos position, QUser owner, double price, String item, int unlimited,
+            int shopType, String extra, String currency, boolean disableDisplay, QUser taxAccount,
+            String inventoryWrapperName, String symbolLink, Map<UUID, String> permission)
+    {
+
         this.world = world;
         this.position = position;
         this.owner = owner.serialize();
@@ -52,12 +43,19 @@ public class ShopInfoStorage {
         this.currency = currency;
         this.disableDisplay = disableDisplay;
         if (taxAccount != null) {
+
             this.taxAccount = taxAccount.serialize();
+
         } else {
+
             this.taxAccount = null;
+
         }
+
         this.inventoryWrapperName = inventoryWrapperName;
         this.symbolLink = symbolLink;
         this.permission = permission;
+
     }
+
 }

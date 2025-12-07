@@ -19,8 +19,8 @@ val viaversionApi = "4.3.0"
 plugins {
     id("java") // Import Java plugin.
     id("java-library") // Import Java Library plugin.
-    id("com.diffplug.spotless") version "7.0.4" // Import Spotless plugin.
-    id("com.gradleup.shadow") version "8.3.6" apply false // Import Shadow plugin.
+    id("com.diffplug.spotless") version "8.1.0" // Import Spotless plugin.
+    id("com.gradleup.shadow") version "8.3.9" apply false // Import Shadow plugin.
     id("checkstyle") // Import Checkstyle plugin.
     id("io.freefair.lombok") version "8.13.1" apply false // Import automatic lombok support.
     eclipse // Import Eclipse plugin.

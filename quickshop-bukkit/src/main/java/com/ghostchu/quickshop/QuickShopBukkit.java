@@ -183,7 +183,7 @@ public class QuickShopBukkit extends JavaPlugin {
 
             } catch (Throwable th) {
 
-                this.logger = LoggerFactory.getLogger(getDescription().getName());
+                this.logger = LoggerFactory.getLogger(getPluginMeta().getName());
 
             }
 
@@ -237,7 +237,7 @@ public class QuickShopBukkit extends JavaPlugin {
     @NotNull
     public String getVersion() {
 
-        return getDescription().getVersion();
+        return getPluginMeta().getVersion();
 
     }
 
@@ -246,7 +246,7 @@ public class QuickShopBukkit extends JavaPlugin {
 
         try {
 
-            return new Semver(getDescription().getVersion());
+            return new Semver(getVersion());
 
         } catch (Exception e) {
 
@@ -262,7 +262,7 @@ public class QuickShopBukkit extends JavaPlugin {
 
             plugin.getLogger().info("Initialing Unirest...");
             Unirest.config().concurrency(10, 5).setDefaultHeader("User-Agent", "QuickShop/" + plugin.getFork() + "-"
-                    + plugin.getDescription().getVersion() + " Java/" + System.getProperty("java.version"));
+                    + plugin.getPluginMeta().getVersion() + " Java/" + System.getProperty("java.version"));
             Unirest.config().verifySsl(PackageUtil.parsePackageProperly("verifySSL").asBoolean());
             if (PackageUtil.parsePackageProperly("proxyHost").isPresent()) {
 

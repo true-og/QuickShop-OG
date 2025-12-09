@@ -200,6 +200,7 @@ project(":quickshop-bukkit") {
 		implementation(project(":quickshop-api"))
 		implementation(project(":platform:quickshop-platform-spigot-abstract"))
 		implementation("com.ghostchu.crowdin:crowdinota:1.0.3")
+        implementation("io.papermc:paperlib:1.0.7")
 		compileOnly(project(":libs:Utilities-OG"))
 		listOf(
 		    ":platform:quickshop-platform-spigot-v1_19_R1",
@@ -220,7 +221,6 @@ project(":quickshop-bukkit") {
 		compileOnly("me.clip:placeholderapi:2.11.5")
 		compileOnly("net.tnemc:EconomyCore:0.1.2.6-Pre1")
 		compileOnly("net.tnemc:Reserve:0.1.5.3-SNAPSHOT-4")
-		compileOnly("org.bstats:bstats-bukkit:3.0.2")
 		compileOnly("com.konghq:unirest-java:3.14.5")
 		compileOnly("com.github.juliomarcopineda:jdbc-stream:0.1.1")
 		compileOnly("net.sourceforge.csvjdbc:csvjdbc:1.0.41")
@@ -243,7 +243,6 @@ project(":quickshop-bukkit") {
         minimize()
         relocate("io.papermc.lib", "com.ghostchu.quickshop.shade.io.papermc.lib")
         relocate("de.tr7zw.changeme.nbtapi", "com.ghostchu.quickshop.shade.de.tr7zw.changeme.nbtapi")
-        relocate("org.bstats", "com.ghostchu.quickshop.shade.org.bstats")
         relocate("de.themoep.minedown", "com.ghostchu.quickshop.shade.de.themoep.minedown")
         manifest { attributes["Main-Class"] = "com.ghostchu.quickshop.bootstrap.Bootstrap" }
         exclude(
@@ -259,7 +258,8 @@ project(":quickshop-bukkit") {
     tasks.register<Copy>("copyReleaseJar") {
         dependsOn("shadowJar")
         from(tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar").flatMap { it.archiveFile })
-        into(layout.projectDirectory.dir("../target"))
+        into(rootProject.layout.buildDirectory.dir("libs"))
+        rename { "QuickShop-OG.jar" }
     }
 
     tasks.build {
@@ -364,3 +364,12 @@ subprojects {
     eclipse.project.name = "${project.name}-${rootProject.name}"
     tasks.withType<Jar>().configureEach { archiveBaseName.set("${project.name}-${rootProject.name}") }
 }
+
+tasks.named<Jar>("jar") {
+    enabled = false
+}
+
+tasks.named("build") {
+    dependsOn(":quickshop-bukkit:copyReleaseJar")
+}
+

@@ -67,7 +67,7 @@ public class SubCommand_About implements CommandHandler<CommandSender> {
 
         MsgUtil.sendDirectMessage(sender,
                 serializer.deserialize(ChatColor.AQUA + "Developers " + ChatColor.YELLOW + ">> " + ChatColor.GREEN
-                        + CommonUtil.list2String(plugin.getJavaPlugin().getDescription().getAuthors())));
+                        + CommonUtil.list2String(plugin.getJavaPlugin().getPluginMeta().getAuthors())));
         MsgUtil.sendDirectMessage(sender, serializer.deserialize(ChatColor.GOLD + "Powered by Community"));
         MsgUtil.sendDirectMessage(sender, serializer.deserialize(ChatColor.RED + "Made with ❤"));
         Util.asyncThreadRun(() -> {

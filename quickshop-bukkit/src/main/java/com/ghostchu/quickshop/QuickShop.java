@@ -51,11 +51,8 @@ import com.ghostchu.quickshop.util.envcheck.*;
 import com.ghostchu.quickshop.util.logger.Log;
 import com.ghostchu.quickshop.util.matcher.item.BukkitItemMatcherImpl;
 import com.ghostchu.quickshop.util.matcher.item.QuickShopItemMatcherImpl;
-import com.ghostchu.quickshop.util.metric.MetricManager;
 import com.ghostchu.quickshop.util.paste.PasteManager;
 import com.ghostchu.quickshop.util.performance.PerfMonitor;
-import com.ghostchu.quickshop.util.privacy.PrivacyController;
-import com.ghostchu.quickshop.util.reporter.error.RollbarErrorReporter;
 import com.ghostchu.quickshop.util.updater.NexusManager;
 import com.ghostchu.quickshop.watcher.*;
 import com.ghostchu.simplereloadlib.ReloadManager;
@@ -183,15 +180,6 @@ public class QuickShop implements QuickShopAPI, Reloadable {
      */
     @Getter
     private PermissionChecker permissionChecker;
-    /**
-     * The error reporter to help devs report errors to Sentry.io
-     */
-    @Getter
-    @Nullable
-    private RollbarErrorReporter sentryErrorReporter;
-    /**
-     * The server UniqueID, use to the ErrorReporter
-     */
     @Getter
     private UUID serverUniqueID;
 
@@ -275,12 +263,6 @@ public class QuickShop implements QuickShopAPI, Reloadable {
     @Getter
     private VirtualDisplayItemManager virtualDisplayItemManager;
 
-    @Getter
-    private PrivacyController privacyController;
-
-    @Getter
-    private MetricManager metricManager;
-
     public QuickShop(QuickShopBukkit javaPlugin, Logger logger, Platform platform) {
 
         this.javaPlugin = javaPlugin;
@@ -339,10 +321,6 @@ public class QuickShop implements QuickShopAPI, Reloadable {
 
         logger.info("Reading the configuration...");
         initConfiguration();
-        logger.info("Setting up privacy controller...");
-        this.privacyController = new PrivacyController(this);
-        logger.info("Setting up metrics manager...");
-        this.metricManager = new MetricManager(this);
         logger.info("Loading player name and unique id mapping...");
         this.playerFinder = new FastPlayerFinder(this);
         loadChatProcessor();
@@ -740,7 +718,7 @@ public class QuickShop implements QuickShopAPI, Reloadable {
 
         logger.info("Reading the configuration...");
         initConfiguration();
-        logger.info("Developers: {}", CommonUtil.list2String(javaPlugin.getDescription().getAuthors()));
+        logger.info("Developers: {}", CommonUtil.list2String(javaPlugin.getPluginMeta().getAuthors()));
         logger.info("Original author: Netherfoam, Timtower, KaiNoMood, sandtechnology");
         logger.info("Let's start loading the plugin");
         loadErrorReporter();
@@ -841,11 +819,6 @@ public class QuickShop implements QuickShopAPI, Reloadable {
             if (!getConfig().getBoolean("auto-report-errors")) {
 
                 Log.debug("Error Reporter has been disabled by the configuration.");
-
-            } else {
-
-                sentryErrorReporter = new RollbarErrorReporter(this);
-                Log.debug("Error Reporter has been initialized.");
 
             }
 
@@ -1287,12 +1260,6 @@ public class QuickShop implements QuickShopAPI, Reloadable {
     public final void onDisable() {
 
         logger.info("QuickShop is finishing remaining work, this may need a while...");
-        if (sentryErrorReporter != null) {
-
-            logger.info("Shutting down error reporter...");
-            sentryErrorReporter.unregister();
-
-        }
 
         if (this.quickShopPAPI != null) {
 
@@ -1494,12 +1461,6 @@ public class QuickShop implements QuickShopAPI, Reloadable {
                 return setupEconomy();
 
             } catch (Exception e) {
-
-                if (parent.sentryErrorReporter != null) {
-
-                    parent.sentryErrorReporter.ignoreThrow();
-
-                }
 
                 parent.logger().error("Something went wrong while trying to load the economy system!");
                 parent.logger()

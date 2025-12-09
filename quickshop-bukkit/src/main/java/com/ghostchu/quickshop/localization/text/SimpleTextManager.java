@@ -911,11 +911,6 @@ public class SimpleTextManager implements TextManager, Reloadable, SubPasteItem 
             } catch (Exception exception) {
 
                 Log.debug("Failed to process the object: " + obj);
-                if (plugin.getSentryErrorReporter() != null) {
-
-                    plugin.getSentryErrorReporter().sendError(exception, "Failed to process the object: " + obj);
-
-                }
 
                 components[i] = LegacyComponentSerializer.legacySection().deserialize(obj.toString());
 

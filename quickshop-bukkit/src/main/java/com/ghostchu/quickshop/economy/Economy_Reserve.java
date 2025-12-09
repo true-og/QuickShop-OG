@@ -96,12 +96,6 @@ public class Economy_Reserve extends AbstractEconomy {
 
         } catch (Exception throwable) {
 
-            if (plugin.getSentryErrorReporter() != null) {
-
-                plugin.getSentryErrorReporter().ignoreThrow();
-
-            }
-
             plugin.logger().warn(ERROR_MESSAGE, throwable);
             return false;
 
@@ -121,12 +115,6 @@ public class Economy_Reserve extends AbstractEconomy {
 
         } catch (Exception throwable) {
 
-            if (plugin.getSentryErrorReporter() != null) {
-
-                plugin.getSentryErrorReporter().ignoreThrow();
-
-            }
-
             plugin.logger().warn(ERROR_MESSAGE, throwable);
             return false;
 
@@ -142,12 +130,6 @@ public class Economy_Reserve extends AbstractEconomy {
             return Objects.requireNonNull(reserve).removeHoldings(name, BigDecimal.valueOf(amount));
 
         } catch (Exception throwable) {
-
-            if (plugin.getSentryErrorReporter() != null) {
-
-                plugin.getSentryErrorReporter().ignoreThrow();
-
-            }
 
             plugin.logger().warn(ERROR_MESSAGE, throwable);
             return false;
@@ -173,12 +155,6 @@ public class Economy_Reserve extends AbstractEconomy {
 
         } catch (Exception throwable) {
 
-            if (plugin.getSentryErrorReporter() != null) {
-
-                plugin.getSentryErrorReporter().ignoreThrow();
-
-            }
-
             plugin.logger().warn(ERROR_MESSAGE, throwable);
             return false;
 
@@ -202,12 +178,6 @@ public class Economy_Reserve extends AbstractEconomy {
                     currency);
 
         } catch (Exception throwable) {
-
-            if (plugin.getSentryErrorReporter() != null) {
-
-                plugin.getSentryErrorReporter().ignoreThrow();
-
-            }
 
             plugin.logger().warn(ERROR_MESSAGE, throwable);
             return false;
@@ -241,12 +211,6 @@ public class Economy_Reserve extends AbstractEconomy {
 
         } catch (Exception throwable) {
 
-            if (plugin.getSentryErrorReporter() != null) {
-
-                plugin.getSentryErrorReporter().ignoreThrow();
-
-            }
-
             plugin.logger().warn(ERROR_MESSAGE, throwable);
             return formatInternal(balance);
 
@@ -262,12 +226,6 @@ public class Economy_Reserve extends AbstractEconomy {
             return Objects.requireNonNull(reserve).getHoldings(name, world.getName(), currency).doubleValue();
 
         } catch (Exception throwable) {
-
-            if (plugin.getSentryErrorReporter() != null) {
-
-                plugin.getSentryErrorReporter().ignoreThrow();
-
-            }
 
             plugin.logger().warn(ERROR_MESSAGE, throwable);
             return 0.0;
@@ -303,12 +261,6 @@ public class Economy_Reserve extends AbstractEconomy {
 
         } catch (Exception throwable) {
 
-            if (plugin.getSentryErrorReporter() != null) {
-
-                plugin.getSentryErrorReporter().ignoreThrow();
-
-            }
-
             plugin.logger().warn(ERROR_MESSAGE, throwable);
             return 0.0;
 
@@ -339,12 +291,6 @@ public class Economy_Reserve extends AbstractEconomy {
             return Objects.requireNonNull(reserve).removeHoldings(name, BigDecimal.valueOf(amount));
 
         } catch (Exception throwable) {
-
-            if (plugin.getSentryErrorReporter() != null) {
-
-                plugin.getSentryErrorReporter().ignoreThrow();
-
-            }
 
             plugin.logger().warn(ERROR_MESSAGE, throwable);
             return false;

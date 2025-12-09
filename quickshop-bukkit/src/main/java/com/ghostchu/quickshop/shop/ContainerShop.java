@@ -328,12 +328,6 @@ public class ContainerShop implements Shop, Reloadable {
                     .item(this.getItem()).amount(amount).build();
             if (!transaction.failSafeCommit()) {
 
-                if (plugin.getSentryErrorReporter() != null) {
-
-                    plugin.getSentryErrorReporter().ignoreThrow();
-
-                }
-
                 throw new IllegalStateException(
                         "Failed to commit transaction! Economy Error Response:" + transaction.getLastError());
 
@@ -356,12 +350,6 @@ public class ContainerShop implements Shop, Reloadable {
                     .to(chestInv) // To void
                     .item(this.getItem()).amount(amount).build();
             if (!transaction.failSafeCommit()) {
-
-                if (plugin.getSentryErrorReporter() != null) {
-
-                    plugin.getSentryErrorReporter().ignoreThrow();
-
-                }
 
                 throw new IllegalStateException(
                         "Failed to commit transaction! Economy Error Response:" + transaction.getLastError());
@@ -1755,12 +1743,6 @@ public class ContainerShop implements Shop, Reloadable {
                     .item(this.getItem()).amount(amount).build();
             if (!transaction.failSafeCommit()) {
 
-                if (plugin.getSentryErrorReporter() != null) {
-
-                    plugin.getSentryErrorReporter().ignoreThrow();
-
-                }
-
                 throw new IllegalStateException(
                         "Failed to commit transaction! Economy Error Response:" + transaction.getLastError());
 
@@ -1780,12 +1762,6 @@ public class ContainerShop implements Shop, Reloadable {
                     .to(sellerInventory) // To void
                     .item(this.getItem()).amount(amount).build();
             if (!transactionTake.failSafeCommit()) {
-
-                if (plugin.getSentryErrorReporter() != null) {
-
-                    plugin.getSentryErrorReporter().ignoreThrow();
-
-                }
 
                 throw new IllegalStateException(
                         "Failed to commit transaction! Economy Error Response:" + transactionTake.getLastError());

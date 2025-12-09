@@ -626,7 +626,6 @@ public class MsgUtil {
 
             Log.debug("Content is null");
             Throwable throwable = new Throwable("Known issue: Global Alert accepted null string, what the fuck");
-            PLUGIN.getSentryErrorReporter().sendError(throwable, "NullCheck");
             return;
 
         }
@@ -648,7 +647,6 @@ public class MsgUtil {
 
             Log.debug("Content is null");
             Throwable throwable = new Throwable("Known issue: Global Alert accepted null string, what the fuck");
-            PLUGIN.getSentryErrorReporter().sendError(throwable, "NullCheck");
             return;
 
         }

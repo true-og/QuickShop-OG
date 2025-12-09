@@ -28,10 +28,6 @@
 
 [optional_modules]: https://ci.codemc.io/job/Ghost-chu/job/QuickShop-Hikari/
 
-[bStats-site]: https://bstats.org
-
-[bStats-plugin]: https://bstats.org/plugin/bukkit/QuickShop-Hikari/14281
-
 <!-- Images/Badges -->
 
 [licenseBadge]: https://img.shields.io/github/license/Ghost-chu/QuickShop-Hikari.svg
@@ -45,8 +41,6 @@
 [JavaVersion]: https://img.shields.io/badge/Java-Versions_17_+_18-orange.svg
 
 [MinecraftVersion]: https://img.shields.io/badge/Minecraft-Java%20Edition%201.18%2B-blueviolet
-
-[bStatsImage]: https://bstats.org/signatures/bukkit/QuickShop-Hikari.svg
 
 [Ver]: https://img.shields.io/spiget/version/100125?label=version
 
@@ -144,13 +138,6 @@ To compile the QuickShop and debug it by yourself, please follow these steps:
 1. Make sure you're using Java17+ JDK in your PATH.
 2. Compile main-project without signature by using profile: `mvn install -Pgithub` with github profile selected.
 3. Start your server and go on.
-
-## bStats
-
-QuickShop-Hikari collects certain statistic through [bStats][bstats-site].  
-You may opt-out by setting `disabled-metrics` to `true` in the config.yml.
-
-[![bStatsImage]][bStats-plugin]
 
 ## License
 

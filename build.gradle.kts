@@ -83,17 +83,17 @@ subprojects {
 
     /* ----------------------------- Auto Formatting ------------------------ */
     if (path != ":libs:Utilities-OG") {
-		spotless {
-			java {
-				eclipse().configFile(rootProject.file("config/formatter/eclipse-java-formatter.xml")) // Eclipse java formatting.
-				leadingTabsToSpaces() // Convert leftover leading tabs to spaces.
-				removeUnusedImports() // Remove imports that aren't being called.
-			}
-			kotlinGradle {
-				ktfmt().kotlinlangStyle().configure { it.setMaxWidth(120) } // JetBrains Kotlin formatting.
-				target("build.gradle.kts", "settings.gradle.kts") // Gradle files to format.
-			}
-		}
+        spotless {
+            java {
+                eclipse().configFile(rootProject.file("config/formatter/eclipse-java-formatter.xml")) // Eclipse java formatting.
+                leadingTabsToSpaces() // Convert leftover leading tabs to spaces.
+                removeUnusedImports() // Remove imports that aren't being called.
+            }
+            kotlinGradle {
+                ktfmt().kotlinlangStyle().configure { it.setMaxWidth(120) } // JetBrains Kotlin formatting.
+                target("build.gradle.kts", "settings.gradle.kts") // Gradle files to format.
+            }
+        }
     }
 
     /* ---------------------- Reproducible jars ---------------------------- */
@@ -115,15 +115,15 @@ subprojects {
 /* ---------------------- Module: quickshop-common ---------------------- */
 project(":quickshop-common") {
     dependencies {
-        api("net.kyori:adventure-api:$adventureApiVersion")
-        api("net.kyori:adventure-nbt:$adventureApiVersion")
-        api("com.ghostchu:simplereloadlib:1.1.2")
-        implementation("org.apache.commons:commons-lang3:3.14.0")
-        implementation("org.slf4j:slf4j-jdk14:2.0.9")
-        implementation("com.google.code.gson:gson:2.10.1")
-        api("cc.carm.lib:easysql-hikaricp:0.4.7")
-        api("org.apache.commons:commons-text:1.11.0")
-        api("org.apache.commons:commons-compress:1.25.0")
+        compileOnlyApi("net.kyori:adventure-api:$adventureApiVersion")
+        compileOnlyApi("net.kyori:adventure-nbt:$adventureApiVersion")
+        compileOnlyApi("com.ghostchu:simplereloadlib:1.1.2")
+        compileOnlyApi("org.apache.commons:commons-lang3:3.14.0")
+        compileOnlyApi("org.slf4j:slf4j-jdk14:2.0.9")
+        compileOnlyApi("com.google.code.gson:gson:2.10.1")
+        compileOnlyApi("cc.carm.lib:easysql-hikaricp:0.4.7")
+        compileOnlyApi("org.apache.commons:commons-text:1.11.0")
+        compileOnlyApi("org.apache.commons:commons-compress:1.25.0")
         compileOnly("org.purpurmc.purpur:purpur-api:$purpurApiVersion")
         compileOnlyApi(project(":libs:Utilities-OG"))
     }
@@ -133,7 +133,7 @@ project(":quickshop-common") {
 project(":quickshop-api") {
     dependencies {
         api(project(":quickshop-common"))
-        implementation("com.vdurmont:semver4j:3.1.0")
+        compileOnlyApi("com.vdurmont:semver4j:3.1.0")
         compileOnly("cc.carm.lib:easysql-api:0.4.7")
         compileOnly("org.purpurmc.purpur:purpur-api:$purpurApiVersion")
     }
@@ -193,49 +193,49 @@ project(":quickshop-bukkit") {
         filesMatching("plugin.yml") { expand(props) }
     }
 
-	/* ---------------------- Java project deps ---------------------------- */
-	val protocolLibJar = rootProject.file("libs/ProtocolLib/ProtocolLib-5.0.jar")
+    /* ---------------------- Java project deps ---------------------------- */
+    val protocolLibJar = rootProject.file("libs/ProtocolLib/ProtocolLib-5.0.jar")
 
-	dependencies {
-		implementation(project(":quickshop-api"))
-		implementation(project(":platform:quickshop-platform-spigot-abstract"))
-		implementation("com.ghostchu.crowdin:crowdinota:1.0.3")
+    dependencies {
+        implementation(project(":quickshop-api"))
+        implementation(project(":platform:quickshop-platform-spigot-abstract"))
+        compileOnly("com.ghostchu.crowdin:crowdinota:1.0.3")
         implementation("io.papermc:paperlib:1.0.7")
-		compileOnly(project(":libs:Utilities-OG"))
-		listOf(
-		    ":platform:quickshop-platform-spigot-v1_19_R1",
-		    ":platform:quickshop-platform-spigot-v1_19_R2",
-		    ":platform:quickshop-platform-spigot-v1_19_R3",
-		    ":platform:quickshop-platform-paper"
-		).forEach { implementation(project(it)) }
-		compileOnly(platformApi)
-		compileOnly("net.kyori:adventure-platform-bukkit:$adventurePlatformVersion")
-		compileOnly("net.kyori:adventure-platform-viaversion:$adventurePlatformVersion")
-		compileOnly("net.kyori:adventure-text-serializer-ansi:$adventureExtraVersion")
-		compileOnly("net.kyori:adventure-text-serializer-bungeecord:$adventureExtraVersion")
-		compileOnly("com.viaversion:viaversion-api:$viaversionApi")
-		compileOnly("com.h2database:h2:2.2.224")
-		compileOnly(files(protocolLibJar)) // Import Legacy ProtocolLib API.
-		compileOnly("me.xanium:GemsEconomy:4.9.3-GCRemake-1.6")
-		compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
-		compileOnly("me.clip:placeholderapi:2.11.5")
-		compileOnly("net.tnemc:EconomyCore:0.1.2.6-Pre1")
-		compileOnly("net.tnemc:Reserve:0.1.5.3-SNAPSHOT-4")
-		compileOnly("com.konghq:unirest-java:3.14.5")
-		compileOnly("com.github.juliomarcopineda:jdbc-stream:0.1.1")
-		compileOnly("net.sourceforge.csvjdbc:csvjdbc:1.0.41")
-		compileOnly("org.dom4j:dom4j:2.1.4")
-		compileOnly("net.essentialsx:EssentialsX:2.20.1")
-		compileOnly("com.rollbar:rollbar-java:1.10.0")
-	}
+        compileOnly(project(":libs:Utilities-OG"))
+        listOf(
+            ":platform:quickshop-platform-spigot-v1_19_R1",
+            ":platform:quickshop-platform-spigot-v1_19_R2",
+            ":platform:quickshop-platform-spigot-v1_19_R3",
+            ":platform:quickshop-platform-paper"
+        ).forEach { implementation(project(it)) }
+        compileOnly(platformApi)
+        compileOnly("net.kyori:adventure-platform-bukkit:$adventurePlatformVersion")
+        compileOnly("net.kyori:adventure-platform-viaversion:$adventurePlatformVersion")
+        compileOnly("net.kyori:adventure-text-serializer-ansi:$adventureExtraVersion")
+        compileOnly("net.kyori:adventure-text-serializer-bungeecord:$adventureExtraVersion")
+        compileOnly("com.viaversion:viaversion-api:$viaversionApi")
+        compileOnly("com.h2database:h2:2.2.224")
+        compileOnly(files(protocolLibJar)) // Import Legacy ProtocolLib API.
+        compileOnly("me.xanium:GemsEconomy:4.9.3-GCRemake-1.6")
+        compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
+        compileOnly("me.clip:placeholderapi:2.11.5")
+        compileOnly("net.tnemc:EconomyCore:0.1.2.6-Pre1")
+        compileOnly("net.tnemc:Reserve:0.1.5.3-SNAPSHOT-4")
+        compileOnly("com.konghq:unirest-java:3.14.5")
+        compileOnly("com.github.juliomarcopineda:jdbc-stream:0.1.1")
+        compileOnly("net.sourceforge.csvjdbc:csvjdbc:1.0.41")
+        compileOnly("org.dom4j:dom4j:2.1.4")
+        compileOnly("net.essentialsx:EssentialsX:2.20.1")
+        compileOnly("com.rollbar:rollbar-java:1.10.0")
+    }
 
-	/* ------------------------------ Eclipse ------------------------------ */
-	val eclipseCompileOnly = configurations.register("eclipseCompileOnly") {
-		isCanBeResolved = true
-		extendsFrom(configurations.compileOnly.get())
-	}.get()
+    /* ------------------------------ Eclipse ------------------------------ */
+    val eclipseCompileOnly = configurations.register("eclipseCompileOnly") {
+        isCanBeResolved = true
+        extendsFrom(configurations.compileOnly.get())
+    }.get()
 
-	eclipse.classpath.plusConfigurations.add(eclipseCompileOnly)
+    eclipse.classpath.plusConfigurations.add(eclipseCompileOnly)
 
     /* ----------------------------- Shadow -------------------------------- */
     tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
@@ -347,9 +347,9 @@ project(":compatibility:worldguard") {
         compileOnly(project(":quickshop-bukkit"))
         compileOnly(project(":quickshop-api"))
         compileOnly(platformApi)
-        compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.8")
         compileOnly("com.github.juliomarcopineda:jdbc-stream:0.1.1")
         compileOnly("one.util:streamex:0.8.2")
+        compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.8")
     }
 }
 
@@ -372,4 +372,3 @@ tasks.named<Jar>("jar") {
 tasks.named("build") {
     dependsOn(":quickshop-bukkit:copyReleaseJar")
 }
-

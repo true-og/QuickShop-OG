@@ -337,7 +337,7 @@ project(":compatibility:worldedit") {
         compileOnly(project(":quickshop-bukkit"))
         compileOnly(project(":quickshop-api"))
         compileOnly(platformApi)
-        compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.17")
+        compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.15")
     }
 }
 

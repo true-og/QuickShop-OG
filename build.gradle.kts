@@ -146,7 +146,7 @@ project(":platform:quickshop-platform-interface") {
     dependencies {
         api(project(":quickshop-common"))
         compileOnly(platformApi)
-        compileOnly("de.tr7zw:item-nbt-api-plugin:2.12.1")
+        compileOnly("de.tr7zw:item-nbt-api-plugin:2.14.1")
     }
 }
 

@@ -225,7 +225,7 @@ project(":quickshop-bukkit") {
         compileOnly("com.github.juliomarcopineda:jdbc-stream:0.1.1")
         compileOnly("net.sourceforge.csvjdbc:csvjdbc:1.0.41")
         compileOnly("org.dom4j:dom4j:2.1.4")
-        compileOnly("net.essentialsx:EssentialsX:2.20.1")
+        compileOnly("net.essentialsx:EssentialsX:2.21.0")
         compileOnly("com.rollbar:rollbar-java:1.10.0")
     }
 

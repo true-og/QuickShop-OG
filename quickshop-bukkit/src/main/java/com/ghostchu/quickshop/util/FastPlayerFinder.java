@@ -950,7 +950,7 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
 
                 }
 
-                Plugin essPlugin = Bukkit.getPluginManager().getPlugin("Essentials");
+                Plugin essPlugin = Bukkit.getPluginManager().getPlugin("Essentials-OG");
                 if (essPlugin == null || !essPlugin.isEnabled()) {
 
                     return null;
@@ -1000,7 +1000,7 @@ public class FastPlayerFinder implements PlayerFinder, SubPasteItem {
 
                 }
 
-                Plugin essPlugin = Bukkit.getPluginManager().getPlugin("Essentials");
+                Plugin essPlugin = Bukkit.getPluginManager().getPlugin("Essentials-OG");
                 if (essPlugin == null || !essPlugin.isEnabled()) {
 
                     return null;

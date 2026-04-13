@@ -1544,24 +1544,23 @@ public class QuickShop implements QuickShopAPI, Reloadable {
 
             if (!Objects.requireNonNull(vault.getVault()).hasAccount(tax)) {
 
-                Log.debug("Tax account doesn't exists: " + tax);
-                parent.logger().warn(
-                        "QuickShop detected that no tax account exists and will try to create one. If you see any errors, please change the tax-account name in the config.yml to that of the Server owner.");
+                Log.debug("Tax account doesn't exist: " + tax);
+                Log.debug("Attempting to create tax account...");
                 if (vault.getVault().createPlayerAccount(tax)) {
 
-                    parent.logger().info("Tax account created.");
+                    Log.debug("Tax account created.");
 
                 } else {
 
-                    parent.logger().warn(
-                            "Cannot create tax-account, please change the tax-account name in the config.yml to that of the server owner");
+                    Log.debug(
+                            "Cannot create tax account. Consider changing the tax-account name in config.yml to the server owner.");
 
                 }
 
                 if (!vault.getVault().hasAccount(tax)) {
 
-                    parent.logger().warn(
-                            "Player for the Tax-account has never played on this server before and we couldn't create an account. This may cause server lag or economy errors, therefore changing the name is recommended. You may ignore this warning if it doesn't cause any issues.");
+                    Log.debug(
+                            "Tax account player has never joined this server and account creation failed. This may cause economy errors.");
 
                 }
 

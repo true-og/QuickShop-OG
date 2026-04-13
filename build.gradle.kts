@@ -155,7 +155,7 @@ project(":platform:quickshop-platform-spigot-abstract") {
         api(project(":platform:quickshop-platform-interface"))
         compileOnly(platformApi)
         implementation("commons-lang:commons-lang:2.6")
-        compileOnly("de.tr7zw:item-nbt-api-plugin:2.12.1")
+        compileOnly("de.tr7zw:item-nbt-api-plugin:2.14.1")
     }
 }
 
@@ -175,7 +175,6 @@ listOf(
         dependencies {
             api(project(":platform:quickshop-platform-spigot-abstract"))
             compileOnly("org.spigotmc:spigot:$spigotVer:remapped-mojang")
-            compileOnly("de.tr7zw:item-nbt-api-plugin:2.12.1")
         }
     }
 }

@@ -145,6 +145,17 @@ public class SimpleShopPermissionManager implements ShopPermissionManager, Reloa
 
     private void initDefaultConfiguration(@NotNull File file) {
 
+        try {
+
+            plugin.getJavaPlugin().saveResource(file.getName(), false);
+            return;
+
+        } catch (IllegalArgumentException ignored) {
+
+            // Retain the generated fallback for builds that do not package group.yml.
+
+        }
+
         YamlConfiguration yamlConfiguration = new YamlConfiguration();
         yamlConfiguration.set("version", 1);
         for (BuiltInShopPermissionGroup group : BuiltInShopPermissionGroup.values()) {

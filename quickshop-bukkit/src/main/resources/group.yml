@@ -1,0 +1,40 @@
+version: 1
+quickshop-og:
+  blocked: []
+  everyone:
+  - quickshop-og.purchase
+  - quickshop-og.show_information
+  - quickshop-og.preview_shop
+  - quickshop-og.search
+  staff:
+  - quickshop-og.purchase
+  - quickshop-og.show_information
+  - quickshop-og.preview_shop
+  - quickshop-og.search
+  - quickshop-og.access_inventory
+  - quickshop-og.toggle_display
+  - quickshop-og.set_shoptype
+  - quickshop-og.set_price
+  - quickshop-og.set_item
+  - quickshop-og.set_stack_amount
+  - quickshop-og.set_currency
+  - quickshop-og.alert.receive
+  - quickshop-og.set_benefit
+  administrator:
+  - quickshop-og.purchase
+  - quickshop-og.show_information
+  - quickshop-og.preview_shop
+  - quickshop-og.search
+  - quickshop-og.delete
+  - quickshop-og.alert.receive
+  - quickshop-og.access_inventory
+  - quickshop-og.ownership_transfer
+  - quickshop-og.management_permission
+  - quickshop-og.toggle_display
+  - quickshop-og.set_shoptype
+  - quickshop-og.set_price
+  - quickshop-og.set_item
+  - quickshop-og.set_stack_amount
+  - quickshop-og.set_currency
+  - quickshop-og.set_name
+  - quickshop-og.set_benefit

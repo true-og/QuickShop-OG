@@ -64,6 +64,18 @@ public class ItemMarker implements Reloadable, SubPasteItem {
 
     private void initDefaultConfiguration(@NotNull File file) {
 
+        try {
+
+            plugin.getJavaPlugin().saveResource(file.getName(), false);
+            return;
+
+        } catch (IllegalArgumentException ignored) {
+
+            // Retain the generated fallback for builds that do not package
+            // items-lookup.yml.
+
+        }
+
         YamlConfiguration yamlConfiguration = new YamlConfiguration();
         yamlConfiguration.set("version", 1);
         try {

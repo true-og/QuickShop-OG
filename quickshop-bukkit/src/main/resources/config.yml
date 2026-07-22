@@ -132,9 +132,9 @@ database:
   # The database names. (Only required if mysql is true)
   database: quickshop
   # The database username. (Only required if mysql is true)
-  user: root
+  user: ^{MARIADB_USER}
   # The database password. (Only required if mysql is true)
-  password: passwd
+  password: ^{MARIADB_PASSWORD}
   # Set prefix to "none" to remove prefix (Both local and remote will be used).
   prefix: none
   # Should QuickShop use SSL for database connections?  (Only required if mysql is true)

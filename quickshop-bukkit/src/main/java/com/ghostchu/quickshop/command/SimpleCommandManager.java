@@ -420,6 +420,7 @@ public class SimpleCommandManager implements CommandManager, TabCompleter, Comma
                 }
 
                 return container.getExecutor().onTabComplete_Internal(capture(sender), commandLabel, passThroughArgs);
+
             }
 
             return Collections.emptyList();

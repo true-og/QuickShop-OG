@@ -66,8 +66,9 @@ public class SubCommand_ListAll implements CommandHandler<CommandSender> {
         int fromIndex = (requestedPage - 1) * SHOPS_PER_PAGE;
         int toIndex = Math.min(fromIndex + SHOPS_PER_PAGE, shops.size());
 
-        MsgUtil.sendDirectMessage(sender, Component.text("All shops (page " + requestedPage + "/" + pageCount
-                + ", " + shops.size() + " total)", NamedTextColor.GOLD));
+        MsgUtil.sendDirectMessage(sender,
+                Component.text("All shops (page " + requestedPage + "/" + pageCount + ", " + shops.size() + " total)",
+                        NamedTextColor.GOLD));
 
         for (Shop shop : shops.subList(fromIndex, toIndex)) {
 
@@ -78,18 +79,17 @@ public class SubCommand_ListAll implements CommandHandler<CommandSender> {
                     .append(Component.text(" | " + shop.getShopType().name().toLowerCase() + " | ",
                             NamedTextColor.GRAY))
                     .append(Component.text(shop.getPrice(), NamedTextColor.GREEN))
-                    .append(Component.text(" | owner: ", NamedTextColor.GRAY))
-                    .append(shop.ownerName())
-                    .append(Component.text(" | " + worldName + " " + location.getBlockX() + ","
-                            + location.getBlockY() + "," + location.getBlockZ(), NamedTextColor.GRAY));
+                    .append(Component.text(" | owner: ", NamedTextColor.GRAY)).append(shop.ownerName())
+                    .append(Component.text(" | " + worldName + " " + location.getBlockX() + "," + location.getBlockY()
+                            + "," + location.getBlockZ(), NamedTextColor.GRAY));
             MsgUtil.sendDirectMessage(sender, entry);
 
         }
 
         if (requestedPage < pageCount) {
 
-            MsgUtil.sendDirectMessage(sender, Component.text("Next page: /" + commandLabel + " listall "
-                    + (requestedPage + 1), NamedTextColor.YELLOW));
+            MsgUtil.sendDirectMessage(sender, Component
+                    .text("Next page: /" + commandLabel + " listall " + (requestedPage + 1), NamedTextColor.YELLOW));
 
         }
 

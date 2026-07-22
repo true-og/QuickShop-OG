@@ -148,6 +148,8 @@ public class SimpleCommandManager implements CommandManager, TabCompleter, Comma
                 .executor(new SubCommand_Database(plugin)).build());
         registerCmd(CommandContainer.builder().prefix("benefit").permission("quickshop.benefit")
                 .executor(new SubCommand_Benefit(plugin)).build());
+        registerCmd(CommandContainer.builder().prefix("listall").permission("quickshop.listall")
+                .executor(new SubCommand_ListAll(plugin)).build());
 
     }
 
@@ -418,7 +420,6 @@ public class SimpleCommandManager implements CommandManager, TabCompleter, Comma
                 }
 
                 return container.getExecutor().onTabComplete_Internal(capture(sender), commandLabel, passThroughArgs);
-
             }
 
             return Collections.emptyList();
@@ -520,6 +521,7 @@ public class SimpleCommandManager implements CommandManager, TabCompleter, Comma
     }
 
     private enum PermissionType {
+
         REQUIRE, SELECTIVE
     }
 

@@ -84,6 +84,13 @@ import org.slf4j.Logger;
 public class QuickShop implements QuickShopAPI, Reloadable {
 
     /**
+     * Provider name persisted in data.inv_wrapper for the built-in wrapper. Kept as
+     * the upstream Hikari name rather than this fork's plugin name so the database
+     * stays interchangeable with upstream QuickShop-Hikari.
+     */
+    public static final String BUILTIN_INVENTORY_WRAPPER_PROVIDER = "QuickShop-Hikari";
+
+    /**
      * If running environment test
      */
     @Getter
@@ -326,7 +333,9 @@ public class QuickShop implements QuickShopAPI, Reloadable {
         loadChatProcessor();
         loadTextManager();
         logger.info("Register InventoryWrapper...");
-        this.inventoryWrapperRegistry.register(javaPlugin, this.inventoryWrapperManager);
+        this.inventoryWrapperRegistry.register(BUILTIN_INVENTORY_WRAPPER_PROVIDER, this.inventoryWrapperManager);
+        // Accept shops written while this fork's own plugin name was being persisted.
+        this.inventoryWrapperRegistry.registerAlias(javaPlugin.getName(), BUILTIN_INVENTORY_WRAPPER_PROVIDER);
         logger.info("Initializing NexusManager...");
         this.nexusManager = new NexusManager(this);
         logger.info("QuickShop " + javaPlugin.getFork() + " - Early boot step - Complete");

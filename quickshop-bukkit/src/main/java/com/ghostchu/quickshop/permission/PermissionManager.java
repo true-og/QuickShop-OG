@@ -3,6 +3,7 @@ package com.ghostchu.quickshop.permission;
 import com.ghostchu.quickshop.QuickShop;
 import com.ghostchu.quickshop.api.obj.QUser;
 import com.ghostchu.quickshop.api.permission.PermissionProvider;
+import com.ghostchu.quickshop.api.permission.ProviderIsEmptyException;
 import com.ghostchu.quickshop.util.Util;
 import com.ghostchu.quickshop.util.logger.Log;
 import lombok.Getter;
@@ -24,8 +25,24 @@ public class PermissionManager {
     public PermissionManager(QuickShop plugin) {
 
         this.plugin = plugin;
-        provider = new BukkitPermsProvider();
+        provider = selectProvider(plugin);
         plugin.logger().info("Selected permission provider: {}", provider.getName());
+
+    }
+
+    @NotNull
+    private static PermissionProvider selectProvider(QuickShop plugin) {
+
+        try {
+
+            return new LuckPermsPermissionProvider();
+
+        } catch (ProviderIsEmptyException | NoClassDefFoundError e) {
+
+            Log.debug("LuckPerms is not available, falling back to Bukkit superperms.");
+            return new BukkitPermsProvider();
+
+        }
 
     }
 

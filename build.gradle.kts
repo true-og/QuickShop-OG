@@ -215,6 +215,7 @@ project(":quickshop-bukkit") {
         compileOnly(files(protocolLibJar)) // Import Legacy ProtocolLib API.
         compileOnly("me.xanium:GemsEconomy:4.9.3-GCRemake-1.6")
         compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
+        compileOnly("net.luckperms:api:5.5")
         compileOnly("me.clip:placeholderapi:2.11.5")
         compileOnly("net.tnemc:EconomyCore:0.1.2.6-Pre1")
         compileOnly("net.tnemc:Reserve:0.1.5.3-SNAPSHOT-4")

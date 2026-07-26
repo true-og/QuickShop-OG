@@ -469,7 +469,7 @@ public class SimpleShopManager implements ShopManager, Reloadable {
             // Create the basic shop
             ContainerShop shop = new ContainerShop(plugin, -1, info.getLocation(), price, info.getItem(), createQUser,
                     false, ShopType.SELLING, new YamlConfiguration(), null, false, null,
-                    plugin.getJavaPlugin().getName(),
+                    QuickShop.BUILTIN_INVENTORY_WRAPPER_PROVIDER,
                     plugin.getInventoryWrapperManager().mklink(new BukkitInventoryWrapper((holder).getInventory())),
                     null, Collections.emptyMap(), new SimpleBenefit());
             createShop(shop, info.getSignBlock(), info.isBypassed());

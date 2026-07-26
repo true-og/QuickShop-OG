@@ -510,7 +510,7 @@ public final class EnvironmentChecker {
     @EnvCheckEntry(name = "Virtual DisplayItem Support Test", priority = 7, stage = EnvCheckEntry.Stage.AFTER_ON_ENABLE)
     public ResultContainer virtualDisplayWorkingTest() {
 
-        if (!plugin.isDisplayEnabled()) {
+        if (!plugin.isDisplayEnabled() || !plugin.getConfig().getBoolean("shop.display-items")) {
 
             return new ResultContainer(CheckResult.PASSED, "The display are disabled.");
 
@@ -522,7 +522,8 @@ public final class EnvironmentChecker {
 
         }
 
-        if (plugin.getVirtualDisplayItemManager() == null) {
+        var virtualDisplayItemManager = plugin.getVirtualDisplayItemManager();
+        if (virtualDisplayItemManager == null) {
 
             AbstractDisplayItem.setVirtualDisplayDoesntWork(true);
             return new ResultContainer(CheckResult.WARNING,
@@ -530,10 +531,10 @@ public final class EnvironmentChecker {
 
         }
 
-        Throwable testResult = plugin.getVirtualDisplayItemManager().getPacketFactory().testFakeItem();
+        Throwable testResult = virtualDisplayItemManager.getPacketFactory().testFakeItem();
         if (testResult != null) {
 
-            plugin.getVirtualDisplayItemManager().setTestPassed(false);
+            virtualDisplayItemManager.setTestPassed(false);
             AbstractDisplayItem.setVirtualDisplayDoesntWork(true);
             plugin.logger().warn("Failed to load the VirtualDisplayItem, self-test failure", testResult);
             return new ResultContainer(CheckResult.WARNING,

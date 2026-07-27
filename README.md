@@ -16,8 +16,6 @@
 
 [quickshop-original]: https://github.com/KaiKikuchi/QuickShop
 
-[clearlagg]: https://www.spigotmc.org/resources/68271/
-
 [worldguard]: https://dev.bukkit.org/projects/worldguard
 
 [nocheatplus]: https://www.spigotmc.org/resources/nocheatplus.26/
@@ -98,12 +96,6 @@ the latest versions of Minecraft.
 - And much much more!
 
 ## Compatibility Modules
-
-You can download optional modules [here][optional_modules] for compatibility with other plugins.
-
-### [ClearLagg][clearlagg]
-
-- Stops clearlagg from deleting the Display Item on any Shop.
 
 ### [NoCheatPlus][nocheatplus]
 

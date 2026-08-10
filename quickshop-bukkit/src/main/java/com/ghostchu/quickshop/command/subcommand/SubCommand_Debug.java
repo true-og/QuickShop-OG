@@ -1,6 +1,7 @@
 package com.ghostchu.quickshop.command.subcommand;
 
 import com.ghostchu.quickshop.QuickShop;
+import com.ghostchu.quickshop.util.config.EnvironmentPlaceholders;
 import com.ghostchu.quickshop.api.command.CommandHandler;
 import com.ghostchu.quickshop.api.command.CommandParser;
 import com.ghostchu.quickshop.api.shop.Shop;
@@ -296,7 +297,7 @@ public class SubCommand_Debug implements CommandHandler<CommandSender> {
 
             plugin.getJavaPlugin().reloadConfig();
             plugin.getConfig().set("dev-mode", false);
-            plugin.getJavaPlugin().saveConfig();
+            EnvironmentPlaceholders.saveConfig(plugin.getJavaPlugin());
             plugin.getReloadManager().reload();
             plugin.text().of(sender, "command.now-nolonger-debuging").send();
             return;
@@ -305,7 +306,7 @@ public class SubCommand_Debug implements CommandHandler<CommandSender> {
 
         plugin.getJavaPlugin().reloadConfig();
         plugin.getConfig().set("dev-mode", true);
-        plugin.getJavaPlugin().saveConfig();
+        EnvironmentPlaceholders.saveConfig(plugin.getJavaPlugin());
         plugin.getReloadManager().reload();
         plugin.text().of(sender, "command.now-debuging").send();
 

@@ -1569,6 +1569,85 @@ public class SimpleShopManager implements ShopManager, Reloadable {
     }
 
     @Override
+    @NotNull
+    public CompletableFuture<Integer> transferShopsOwnership(@NotNull Collection<Shop> shops, @NotNull UUID newOwner) {
+
+        if (shops.isEmpty()) {
+
+            return CompletableFuture.completedFuture(0);
+
+        }
+
+        // Copied so a caller mutating its own collection cannot race the transfer.
+        List<Shop> targets = new ArrayList<>(shops);
+        return QUserImpl.createAsync(plugin.getPlayerFinder(), newOwner).thenCompose(owner -> {
+
+            if (owner == null) {
+
+                plugin.logger().warn("Cannot transfer shops, unknown player {}.", newOwner);
+                return CompletableFuture.completedFuture(0);
+
+            }
+
+            CompletableFuture<Integer> result = new CompletableFuture<>();
+            // mainThreadRun is fire-and-forget off-thread, so complete the future inside.
+            Util.mainThreadRun(() -> {
+
+                try {
+
+                    result.complete(applyOwnershipTransfer(targets, owner));
+
+                } catch (Throwable throwable) {
+
+                    result.completeExceptionally(throwable);
+
+                }
+
+            });
+            return result;
+
+        });
+
+    }
+
+    // Runs on the main thread, shop.setOwner and the events both require it.
+    private int applyOwnershipTransfer(@NotNull List<Shop> shops, @NotNull QUser newOwner) {
+
+        int transferred = 0;
+        for (Shop shop : shops) {
+
+            QUser previousOwner = shop.getOwner();
+            if (previousOwner.equals(newOwner)) {
+
+                continue;
+
+            }
+
+            if (new ShopOwnershipTransferEvent(shop, previousOwner, newOwner).callCancellableEvent()) {
+
+                Log.debug("Shop ownership transfer was cancelled for shop " + shop.getShopId());
+                continue;
+
+            }
+
+            shop.setOwner(newOwner);
+            UUID newOwnerId = newOwner.getUniqueId();
+            if (newOwnerId != null) {
+
+                // The owner outranks every group, so a stale staff entry would only confuse.
+                shop.setPlayerGroup(newOwnerId, (String) null);
+
+            }
+
+            transferred++;
+
+        }
+
+        return transferred;
+
+    }
+
+    @Override
     public CompletableFuture<?> registerShop(@NotNull Shop shop, boolean persist) {
 
         // save to database
@@ -1640,6 +1719,15 @@ public class SimpleShopManager implements ShopManager, Reloadable {
     }
 
     private void refundShop(Shop shop) {
+
+        if (plugin.getEconomy() == null) {
+
+            // The economy may not be loaded yet, so skip the refund.
+            plugin.logger().warn("Shop deletion refund skipped for shop {}, no economy bridge is loaded.",
+                    shop.getShopId());
+            return;
+
+        }
 
         World world = shop.getLocation().getWorld();
         if (plugin.getConfig().getBoolean("shop.refund")) {

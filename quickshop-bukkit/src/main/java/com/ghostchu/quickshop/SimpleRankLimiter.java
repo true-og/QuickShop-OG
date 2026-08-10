@@ -9,7 +9,6 @@ import com.ghostchu.simplereloadlib.Reloadable;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.ApiStatus;
@@ -45,9 +44,15 @@ public class SimpleRankLimiter implements Reloadable, RankLimiter, SubPasteItem 
             this.limit = limitCfg.getBoolean("use", false);
             def = limitCfg.getInt("default");
             limitCfg = limitCfg.getConfigurationSection("ranks");
-            for (String key : Objects.requireNonNull(limitCfg).getKeys(true)) {
+            limits.clear();
+            // An absent or empty ranks section just means no per-permission limits.
+            if (limitCfg != null) {
 
-                limits.put(key, limitCfg.getInt(key));
+                for (String key : limitCfg.getKeys(true)) {
+
+                    limits.put(key, limitCfg.getInt(key));
+
+                }
 
             }
 

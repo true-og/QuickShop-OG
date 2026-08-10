@@ -47,6 +47,7 @@ import com.ghostchu.quickshop.shop.signhooker.SignHooker;
 import com.ghostchu.quickshop.util.*;
 import com.ghostchu.quickshop.util.config.ConfigUpdateScript;
 import com.ghostchu.quickshop.util.config.ConfigurationUpdater;
+import com.ghostchu.quickshop.util.config.EnvironmentPlaceholders;
 import com.ghostchu.quickshop.util.envcheck.*;
 import com.ghostchu.quickshop.util.logger.Log;
 import com.ghostchu.quickshop.util.matcher.item.BukkitItemMatcherImpl;
@@ -191,6 +192,9 @@ public class QuickShop implements QuickShopAPI, Reloadable {
     private UUID serverUniqueID;
 
     private boolean setupDBonEnableding = false;
+
+    // Guards onLoad and onEnable both migrating the config.
+    private boolean configurationInitialized = false;
     /**
      * Rewrited shoploader, more faster.
      */
@@ -326,7 +330,6 @@ public class QuickShop implements QuickShopAPI, Reloadable {
 
         }
 
-        logger.info("Reading the configuration...");
         initConfiguration();
         logger.info("Loading player name and unique id mapping...");
         this.playerFinder = new FastPlayerFinder(this);
@@ -417,6 +420,14 @@ public class QuickShop implements QuickShopAPI, Reloadable {
 
     private void initConfiguration() {
 
+        if (configurationInitialized) {
+
+            // onLoad already migrated the config, do not repeat it.
+            return;
+
+        }
+
+        logger.info("Reading the configuration...");
         /* Process the config */
         // noinspection ResultOfMethodCallIgnored
         javaPlugin.getDataFolder().mkdirs();
@@ -442,6 +453,7 @@ public class QuickShop implements QuickShopAPI, Reloadable {
         this.serverUniqueID = UUID.fromString(
                 Objects.requireNonNull(getConfig().getString("server-uuid", String.valueOf(UUID.randomUUID()))));
         updateConfig();
+        configurationInitialized = true;
 
     }
 
@@ -725,7 +737,6 @@ public class QuickShop implements QuickShopAPI, Reloadable {
 
         }
 
-        logger.info("Reading the configuration...");
         initConfiguration();
         logger.info("Developers: {}", CommonUtil.list2String(javaPlugin.getPluginMeta().getAuthors()));
         logger.info("Original author: Netherfoam, Timtower, KaiNoMood, sandtechnology");
@@ -785,6 +796,8 @@ public class QuickShop implements QuickShopAPI, Reloadable {
         // shopContainerWatcher = new ShopContainerWatcher();
         shopSaveWatcher = new ShopDataSaveWatcher(this);
         shopSaveWatcher.runTaskTimerAsynchronously(javaPlugin, 0, 20L * 60L * 5L);
+        // Shop loading can refund, so hook the economy first.
+        economyLoader.load();
         /* Load all shops. */
         shopLoader = new ShopLoader(this);
         shopLoader.loadShops();
@@ -805,7 +818,8 @@ public class QuickShop implements QuickShopAPI, Reloadable {
          */
         /* And we have a listener to listen the ServiceRegisterEvent :) */
         Log.debug("Scheduled economy system loading.");
-        Bukkit.getScheduler().runTaskLater(javaPlugin, economyLoader::load, 1);
+        // All plugins are enabled now, so this attempt may warn.
+        Bukkit.getScheduler().runTaskLater(javaPlugin, () -> economyLoader.load(true), 1);
         registerTasks();
         Log.debug("DisplayItem selected: " + AbstractDisplayItem.getNowUsing().name());
         registerCommunicationChannels();
@@ -883,7 +897,7 @@ public class QuickShop implements QuickShopAPI, Reloadable {
                             "Failed to load ProtocolLib support, fallback to real item display and per-player shop info sign will automatically disable.");
                     signHooker = null;
                     getConfig().set("shop.display-type", 0);
-                    javaPlugin.saveConfig();
+                    EnvironmentPlaceholders.saveConfig(javaPlugin);
 
                 }
 
@@ -1106,7 +1120,16 @@ public class QuickShop implements QuickShopAPI, Reloadable {
         if (logWatcher != null) {
 
             logWatcher.runTaskTimerAsynchronously(javaPlugin, 10, 10);
-            logger.info("Log actions is enabled. Actions will be logged in the qs.log file!");
+            // Name the sink that logging.location selects.
+            if (loggingLocation == 0) {
+
+                logger.info("Log actions is enabled. Actions will be logged in the qs.log file!");
+
+            } else {
+
+                logger.info("Log actions is enabled. Actions will be logged into the database!");
+
+            }
 
         }
 
@@ -1465,9 +1488,33 @@ public class QuickShop implements QuickShopAPI, Reloadable {
          */
         public boolean load() {
 
+            return load(false);
+
+        }
+
+        // Tries to load the economy, announceFailure reports a miss at WARN.
+        public boolean load(boolean announceFailure) {
+
+            if (parent.economy != null) {
+
+                // Already hooked, do not rebuild the bridge.
+                return true;
+
+            }
+
             try (PerfMonitor ignored = new PerfMonitor("Loading Economy Bridge")) {
 
-                return setupEconomy();
+                boolean loaded = setupEconomy();
+                if (!loaded && announceFailure) {
+
+                    // Only the post-startup attempt announces failure.
+                    parent.logger().warn(
+                            "No economy bridge could be loaded for economy-type {}. Shop trading, creation, refunds and ongoing fees will not work until an economy provider is installed.",
+                            parent.getConfig().getInt("economy-type"));
+
+                }
+
+                return loaded;
 
             } catch (Exception e) {
 
@@ -1503,6 +1550,8 @@ public class QuickShop implements QuickShopAPI, Reloadable {
 
             if (!abstractEconomy.isValid()) {
 
+                parent.logger().warn("Economy bridge {} reported itself as invalid, refusing to hook it.",
+                        abstractEconomy.getName());
                 parent.setupBootError(BuiltInSolution.econError(), false);
                 return false;
 

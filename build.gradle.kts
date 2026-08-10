@@ -8,8 +8,7 @@ val quickshopVersion = "5.9"
 val purpurApiVersion = "1.19.4-R0.1-SNAPSHOT"
 val javaLanguageVersion = 17
 val jetbrainsAnnotationsVersion = "24.1.0"
-val adventureApiVersion = "4.22.0"
-val adventureExtraVersion = "4.2.0"
+val adventureApiVersion = "4.13.1" // Must match the Adventure that Purpur 1.19.4 bundles.
 val adventurePlatformVersion = "4.3.2"
 val viaversionApi = "4.3.0"
 
@@ -208,8 +207,7 @@ project(":quickshop-bukkit") {
         compileOnly(platformApi)
         compileOnly("net.kyori:adventure-platform-bukkit:$adventurePlatformVersion")
         compileOnly("net.kyori:adventure-platform-viaversion:$adventurePlatformVersion")
-        compileOnly("net.kyori:adventure-text-serializer-ansi:$adventureExtraVersion")
-        compileOnly("net.kyori:adventure-text-serializer-bungeecord:$adventureExtraVersion")
+        compileOnly("net.kyori:adventure-text-serializer-bungeecord:$adventurePlatformVersion")
         compileOnly("com.viaversion:viaversion-api:$viaversionApi")
         compileOnly("com.h2database:h2:2.2.224")
         compileOnly(files(protocolLibJar)) // Import Legacy ProtocolLib API.

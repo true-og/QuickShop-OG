@@ -351,6 +351,20 @@ public interface ShopManager {
     void migrateOwnerToUnlimitedShopOwner(Shop shop);
 
     /**
+     * Transfers the ownership of the given shops to another player.
+     * <p>
+     * Each shop fires a cancellable ShopOwnershipTransferEvent, cancelled shops are
+     * skipped. The new owner's explicit staff entry is cleared, because the owner
+     * already holds every shop permission.
+     *
+     * @param shops    the shops to transfer, shops owned by the target are skipped
+     * @param newOwner the unique id of the player receiving the shops
+     * @return the number of shops that were actually transferred
+     */
+    @NotNull
+    CompletableFuture<Integer> transferShopsOwnership(@NotNull Collection<Shop> shops, @NotNull UUID newOwner);
+
+    /**
      * Register shop to database.
      *
      * @param info The info object

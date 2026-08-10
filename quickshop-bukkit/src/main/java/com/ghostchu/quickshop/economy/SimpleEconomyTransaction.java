@@ -177,7 +177,27 @@ public class SimpleEconomyTransaction implements EconomyTransaction {
     @Override
     public boolean checkBalance() {
 
+        if (economyUnavailable()) {
+
+            return false;
+
+        }
+
         return from == null || (core.getBalance(from, world, currency) >= amount) || allowLoan;
+
+    }
+
+    // Fail the transaction instead of dereferencing a null core.
+    private boolean economyUnavailable() {
+
+        if (core != null) {
+
+            return false;
+
+        }
+
+        this.lastError = "No economy bridge is loaded, the transaction cannot be processed.";
+        return true;
 
     }
 
@@ -196,6 +216,13 @@ public class SimpleEconomyTransaction implements EconomyTransaction {
      */
     @Override
     public boolean commit(@NotNull TransactionCallback callback) {
+
+        if (economyUnavailable()) {
+
+            callback.onFailed(this);
+            return false;
+
+        }
 
         Log.transaction("Transaction begin: Regular Commit --> " + from + " => " + to + "; Amount: " + amount
                 + " Total(after tax): " + amountAfterTax + " Tax: " + tax + ", EconomyCore: " + core.getName());
@@ -439,6 +466,12 @@ public class SimpleEconomyTransaction implements EconomyTransaction {
      */
     @Override
     public boolean failSafeCommit() {
+
+        if (economyUnavailable()) {
+
+            return false;
+
+        }
 
         Log.transaction("Transaction begin: FailSafe Commit --> " + from + " => " + to + "; Amount: " + amount
                 + ", EconomyCore: " + core.getName());

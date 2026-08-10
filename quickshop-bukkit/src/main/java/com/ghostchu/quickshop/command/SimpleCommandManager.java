@@ -92,6 +92,8 @@ public class SimpleCommandManager implements CommandManager, TabCompleter, Comma
                 .permission("quickshop.toggledisplay").executor(new SubCommand_SilentToggleDisplay(plugin)).build());
         registerCmd(CommandContainer.builder().prefix("clean").permission("quickshop.clean")
                 .executor(new SubCommand_Clean(plugin)).build());
+        registerCmd(CommandContainer.builder().prefix("beacon").permission("quickshop.beacon")
+                .executor(new SubCommand_Beacon(plugin)).build());
         registerCmd(CommandContainer.builder().prefix("reload").permission("quickshop.reload")
                 .executor(new SubCommand_Reload(plugin)).build());
         registerCmd(CommandContainer.builder().prefix("about").permission("quickshop.about")

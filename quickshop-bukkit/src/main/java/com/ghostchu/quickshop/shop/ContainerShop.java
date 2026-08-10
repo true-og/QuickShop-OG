@@ -1416,8 +1416,9 @@ public class ContainerShop implements Shop, Reloadable {
             } else {
 
                 plugin.logger().warn(
-                        "Unloading shops from memory, set `debug.delete-corrupt-shops` to true to delete corrupted shops.");
-                plugin.getShopManager().deleteShop(this);
+                        "Unloading shop from memory, set `debug.delete-corrupt-shops` to true to delete corrupted shops.");
+                // Unload only, keep the database row and the signs.
+                plugin.getShopManager().unloadShop(this);
 
             }
 

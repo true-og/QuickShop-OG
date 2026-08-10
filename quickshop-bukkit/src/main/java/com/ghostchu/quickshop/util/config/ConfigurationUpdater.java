@@ -60,7 +60,7 @@ public class ConfigurationUpdater {
     public void update(@NotNull Object configUpdateScript) {
 
         Log.debug("Starting configuration update...");
-        writeServerUniqueId();
+        boolean modified = writeServerUniqueId();
         selectedVersion = configuration.getInt(CONFIG_VERSION_KEY, -1);
         for (Method method : getUpdateScripts(configUpdateScript)) {
 
@@ -111,6 +111,7 @@ public class ConfigurationUpdater {
                 }
 
                 getConfiguration().set(CONFIG_VERSION_KEY, updateScript.version());
+                modified = true;
                 plugin.logger().info("[ConfigUpdater] Configuration updated to version " + updateScript.version());
 
             } catch (Throwable throwable) {
@@ -123,9 +124,19 @@ public class ConfigurationUpdater {
 
         }
 
-        plugin.logger().info("[ConfigUpdater] Saving configuration changes...");
-        plugin.getJavaPlugin().saveConfig();
-        plugin.getJavaPlugin().reloadConfig();
+        if (modified) {
+
+            // Only rewrite the file when a migration changed something.
+            plugin.logger().info("[ConfigUpdater] Saving configuration changes...");
+            EnvironmentPlaceholders.saveConfig(plugin.getJavaPlugin());
+            plugin.getJavaPlugin().reloadConfig();
+
+        } else {
+
+            Log.debug("Configuration is already up to date, skipping save.");
+
+        }
+
         // Delete old example configuration files
         try {
 
@@ -139,14 +150,17 @@ public class ConfigurationUpdater {
 
     }
 
-    private void writeServerUniqueId() {
+    private boolean writeServerUniqueId() {
 
         String serverUUID = plugin.getConfig().getString("server-uuid");
         if (serverUUID == null || serverUUID.isEmpty() || !CommonUtil.isUUID(serverUUID)) {
 
             plugin.getConfig().set("server-uuid", UUID.randomUUID().toString());
+            return true;
 
         }
+
+        return false;
 
     }
 

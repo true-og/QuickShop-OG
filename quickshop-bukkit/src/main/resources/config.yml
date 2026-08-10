@@ -65,7 +65,7 @@ currency: ''
 
 logging:
   # Enable logging?
-  # The log file is located at "plugins/QuickShop/qs.log".
+  # The log file is located at "plugins/QuickShop-OG/qs.log".
   enable: true
   # Should QuickShop log shop trading/creations?
   log-actions: true
@@ -132,9 +132,9 @@ database:
   # The database names. (Only required if mysql is true)
   database: quickshop
   # The database username. (Only required if mysql is true)
-  user: ^{MARIADB_USER}
+  user: $MARIADB_USER
   # The database password. (Only required if mysql is true)
-  password: ^{MARIADB_PASSWORD}
+  password: $MARIADB_PASSWORD
   # Set prefix to "none" to remove prefix (Both local and remote will be used).
   prefix: none
   # Should QuickShop use SSL for database connections?  (Only required if mysql is true)
@@ -168,10 +168,8 @@ limits:
 
   # Here you can bind the limit to specific permissions.
   # Using the same format, you can add as many as you want!
-  ranks:
-    quickshop:
-      # Players with quickshop.example permission can create 20 shops.
-      example: 20
+  # Bind a limit to a permission, for example "quickshop: {vip: 20}".
+  ranks: {}
 
 # The list of blocks that can be used to create shops.
 # By default, chests are added to this list.
@@ -295,7 +293,7 @@ shop:
 
   # This setting is for multi-currency setups.
   # If nothing matches in this list, it falls back to the name of currency itself.
-  alternate-currency-symbol-list: -1
+  alternate-currency-symbol-list: []
 
   # This should fix Vault or an economy plugin incorrectly processing the price and returning a "0" result.
   # If you enable this setting, then QS will force use the "alternate-currency-symbol".
@@ -358,7 +356,7 @@ shop:
 
   # The list of lore keywords that are blocked from being sold.
   # This will not affect existing shops!
-  blacklist-lores: -1
+  blacklist-lores: []
 
   # Protection check
   # This will send a FAKE BlockBreakEvent to check if you can break a block.
@@ -371,8 +369,7 @@ shop:
   cancel-protection-fake-event-before-reach-monitor-listeners: true
 
   # The list of worlds in which protection checking is disabled.
-  protection-checking-blacklist:
-  - disabled_world
+  protection-checking-blacklist: []
 
   # The listener list to skip when protection-checking.
   # Examples:
@@ -387,8 +384,7 @@ shop:
   #
   # - REGEX
   #  It also supports regex.
-  protection-checking-listener-blacklist:
-  - ignored_listener
+  protection-checking-listener-blacklist: []
 
   # How many shops should at max be checked at once for existence?
   max-shops-checks-in-once: 100
@@ -575,7 +571,7 @@ debug:
   # Should we disable the debug logger?
   # This will save a lot of execution time but will make reporting bugs
   # and getting support harder because of the lack of information.
-  disable-debuglogger: true
+  disable-debuglogger: false
   # Log stacktrace when deleting shop?
   shop-deletion: false
   # Delete corrupt shops while loading?
@@ -586,7 +582,7 @@ debug:
 # Turn on this will make QuickShop to execute extra checks and may affect performance.
 # Only turn it on when you updating from old versions.
 legacy-updater:
-  shop-sign: true
+  shop-sign: false
 
 # Set the command alias for qs main command
 # - playershop

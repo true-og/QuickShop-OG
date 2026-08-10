@@ -39,10 +39,21 @@ public class ItemExpression {
 
     }
 
-    private @NotNull Function<ItemStack, Boolean> handleItemReference(@NotNull String item) {
+    @Nullable
+    private Function<ItemStack, Boolean> handleItemReference(@NotNull String item) {
 
         String reference = item.substring(1);
         ItemStack stack = plugin.getItemMarker().get(reference);
+        if (stack == null) {
+
+            // A null require-stack never matches, so drop the rule.
+            plugin.logger().warn(
+                    "Item reference {} is not registered in items-lookup.yml, the rule using it will be ignored. Register it with /qs item first.",
+                    item);
+            return null;
+
+        }
+
         return itemStack -> plugin.getItemMatcher().matches(stack, itemStack);
 
     }
